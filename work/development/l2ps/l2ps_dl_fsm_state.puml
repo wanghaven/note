@@ -1,0 +1,34 @@
+@startuml L2PS DL FSM statechart
+
+title l2ps::pscommon::dispatcherFsm::QueueDispatcherFsmImpl
+
+state "dispatcherDefaultState" as default
+state "dispatcherWaitFdSchedRespState" as waitFdResp
+note "Before enter state machine:\neventToBeDelayed = false, \n eventToBeFreed = true" as N1
+
+[*] -right-> default
+default --> waitFdResp : __event<SlotSynchroInd>__\n processSlotSynchroInd()
+
+waitFdResp : on_entry / eventToPassthrough = true; eventFlushForbidden = true
+waitFdResp : on_exit  / eventToPassthrough = false; eventFlushForbidden = false
+
+
+waitFdResp -> default : __event<FdScheduleResp>__\n processAllFdSchedResp()
+note on link
+    1. if all FdScheduleResp events are received, 
+       then switch the state
+end note
+
+waitFdResp -> default : __event<SlotSynchroInd>__\n abortWaitFdSchedResp()
+note on link
+    1. skippedSlotsCount++,
+    2. if skippedSlotsCount++ > maxSkippedSlotsCount, 
+       then switch the state
+end note
+
+waitFdResp -> waitFdResp : __event<*>__\n handleDelayedEvent()
+note on link
+    1. handle all other events except FdScheduleResp and SlotSynchroInd: 
+       set eventToBeDelayed = true and eventToBeFreed = false
+end note
+@enduml

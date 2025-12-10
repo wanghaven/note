@@ -1,0 +1,42 @@
+@startuml L2PS DL FSM Classes
+
+class StateStartupHandler
+class StateDefaultHandler
+class StateDefaultRouter
+class StateDeleteHandler
+struct QueueFsmImpl 
+{
+    +StateStartupHandler startupHandler
+    +StateDefaultHandler defaultHandler
+    +StateDefaultRouter defaultRouter
+    +StateDeleteHandler deleteHandler
+}
+
+QueueFsmImpl *-- StateStartupHandler
+QueueFsmImpl *-- StateDefaultHandler
+QueueFsmImpl *-- StateDefaultRouter
+QueueFsmImpl *-- StateDeleteHandler
+
+class EmFsmBase
+class EmFsm<FsmImpl>
+class EmFsmRouterWithMsgChecker<FsmImpl, TrivialTrueMessageChecker, db::UnderlyingEoType::other, RoutedMessages...>
+{   
+    +common::stateMachine::Fsm<FsmImpl>& fsm
+    +EventRouter router
+}
+
+class EmFsmRouter as "pscommon::em::EmFsmRouter<FsmImpl, RoutedMessages>"
+class DispatcherStateDefault<QueueFsm, MainComponent>
+class QueueFsm as "dl::em::QueueFsm"
+class DispatcherStateDefault
+class DlDispatcherStateDefault
+
+class DlMainComponent as "dl::sch::MainComponent"
+
+EmFsm --|> EmFsmBase
+EmFsmRouterWithMsgChecker --|> EmFsm : <<bind>> \n (QueueFsmImpl)
+EmFsmRouter ..|> EmFsmRouterWithMsgChecker : <<bind>> \n (QueueFsmImpl, TrivialTrueMessageChecker, db::UnderlyingEoType::other, CellStopSchedulingReq)
+QueueFsm ..|> EmFsmRouter : <<bind>> \n (QueueFsmImpl, CellStopSchedulingReq)
+DlDispatcherStateDefault ..|> DispatcherStateDefault : <<bind>> \n (dl::em::QueueFsm, dl::sch::MainComponent) 
+
+@enduml

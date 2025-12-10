@@ -1,0 +1,272 @@
+@startuml L2PS DL EirpControl Class diagram
+
+' skinparam linetype ortho
+set namespaceSeparator ::
+
+!$MAX_ALL_BEAMS = 2720
+!$MAX_CELL_SEGMENT = 60
+
+package l2ps {
+  namespace db {
+    class EirpInfo {
+      - numberOfCellSegments : numberOfCellSegments_t
+      - normalizedSrsBeamGain : NormalizedSrsBeamGainArray
+      - normalizedSrsTaperingBeamGain : NormalizedSrsBeamGainArray
+      - normalizedLbMMimoPowerSavingSrsBeamGain : NormalizedSrsBeamGainArray
+      - normalizedSubBandBeamGain : NormalizedSubBandBeamGainArray
+      - eirpBeamGainSelector : EirpBeamGainSelector
+
+    }
+
+    class EirpContext {
+      + actEirpControl : bool
+      + actEpic : bool
+      - eirpCurrentConfiguration : EirpInfo
+    }
+
+    class CellStorage {
+      - eirpContext : EirpContext
+    }
+
+    CellStorage *-l- EirpContext
+    EirpContext *-u- EirpInfo
+  }
+
+  namespace dl {
+    namespace db {
+      class "SlotEirpControl" as SlotEirpControl #LightBlue{
+        - eirpDataForSegments : EirpControlSlotDataForSegments
+        - segmentIndicesPerBeam : SegmentIndicesPerBeam*
+        - monitoredCellSegments : vector<numberOfCellSegments_t>
+        - monitoredBeamIdsSet : MonitoredBeamIdsSet&
+        - samplingPeriodTokensRetriever : SamplingPeriodTokensRetriever
+        - consumedTokenCalculator : ConsumedTokenCalculator
+        - monitoredCellSegmentsIndicator : FastBitset<$MAX_CELL_SEGMENT>
+        - eirpRestrictionNotifiedOnSegmentIndicator : FastBitset<$MAX_CELL_SEGMENT>
+        - eirpContext : EirpContext&
+
+        + getRrmNumberOfRemainingRbFromEirp(beamId) : numOfPrb_t
+        + consumeTokensForPdschForFdm(beamId, numOfPrb)
+        + isPrbReductionOccured()
+
+        + isEnoughPrbForEntireDlBandwidth(cell, beamId) : bool
+        + consumeTokensForPdsch()
+        + consumeTokensForDlPdcchOnBeam()
+        + consumeTokensForUlPdcchOnBeam()
+        + consumeTokensForCsiRsPbch()
+        + notifyPrbReductionOccurred(beamId)
+        + updateSegmentIndicesForOneRtBeam(beamId)
+        + setupSegmentInfoIndexation()
+        + reconfigure()
+      }
+      hide SlotEirpControl methods
+
+      class "EirpControlSlotDataForSegments" as EirpControlSlotDataForSegments <<typedef>> {
+        ::common::utils::StaticVectorFixedSize<EirpControlSlotDataForSegment, $MAX_CELL_SEGMENT>
+      }
+
+      class "EirpControlSlotDataForSegment" as EirpControlSlotDataForSegment {
+        - segmentId : numberOfCellSegments_t
+        - isEirpControlActivated : bool
+        - rrmAvailableEirpTokensInCurrentSlot : double
+        - guaranteedTokensPerSymbol : double
+        - slotsPerPeriod : double
+        - currentSlotInPeriod : double
+        - tokensConsumedInPeriod : double
+        - rrmEirpControlTokenInTheBucket : double
+      }
+
+      class "cell::eirp::SegmentBeamMappings" as SegmentBeamMappings <<typedef>> {
+        ::common::utils::SharedVector<SegmentBeamMapping>
+      }
+
+      class "cell::eirp::SegmentBeamMapping" as SegmentBeamMapping {
+        - segmentIndex : numberOfCellSegments_t
+        - tokensPerRb : TokensPerRb
+      }
+
+      class "CellDynamicSpecificData" as CellDynamicSpecificData {
+        - eirpData : cell::eirp::Data
+        - bucketManager : BucketManager
+      }
+
+      class "cell::eirp::Data" as EirpData {
+        - eirpControl : EirpControlCellDb
+        - epicData : EpicData
+      }
+
+      class "cell::eirp::epic::Data" as EpicData #LightBlue {
+        - ues : UE[16]
+        - uesPerSegments : UesPerSegments
+      }
+
+      class "EirpControlCellDb" as EirpControlCellDb {
+        - **eirpControlSlotPerSlot : shared_ptr<SlotEirpControl>**
+        + segmentIndicesPerBeam : cell::eirp::SegmentIndicesPerBeam
+      }
+
+      class "cell::eirp::SegmentIndicesPerBeam" as SegmentIndicesPerBeam <<typedef>> {
+        ::common::utils::StrongIndexArray<SegmentBeamMappings, SsbPmiBeamId, $MAX_ALL_BEAMS>
+      }
+
+      class "BucketManager" as BucketManager {
+        - monitoredBuckets : MonitoredBucketMapping
+        - monitoredBeamsSet : pscommon::eirp::MonitoredBeamIdsSet
+      }
+
+      CellDynamicSpecificData *-d- EirpData
+      CellDynamicSpecificData *-r- BucketManager
+
+      EirpData *-u- EpicData
+      EirpData *-r- EirpControlCellDb
+      EirpControlCellDb o-d- SlotEirpControl : [owns]\n(allocated on cell setup)
+      EirpControlCellDb *-r- SegmentIndicesPerBeam : [contains]
+
+      SlotEirpControl *-l- EirpControlSlotDataForSegments : [contains]
+      SlotEirpControl o-r- EirpContext : [reference]
+      SlotEirpControl -u-> "1" SegmentIndicesPerBeam : segmentIndicesPerBeam *
+      EirpControlSlotDataForSegments o-l- "0..$MAX_CELL_SEGMENT" EirpControlSlotDataForSegment : [contains]
+      SegmentIndicesPerBeam *-u- "$MAX_ALL_BEAMS" SegmentBeamMappings : [contains]
+      SegmentBeamMappings *-l- "0..$MAX_CELL_SEGMENT" SegmentBeamMapping : [contains]
+    }
+
+
+    namespace sch {
+      class "sch::eirp::EirpResourceCalculator" as EirpResourceCalculator {
+        - slotEirpControl : SlotEirpControl&
+        - cellDynamicData : CellDynamicData&
+        - eirpBeamIdHelper : EirpBeamIdHelper
+      }
+
+      class "sch::fdm::Scheduler" as FdmScheduler #LightCyan {
+        - **slotEirpControlCopy : SlotEirpControl**
+        - eirpResourceCalculator : EirpResourceCalculator
+        - beamIdsCalculator : BeamIdsCalculator
+        - roundRobin : RoundRobin
+        - muEnhScheduler : MuEnhScheduler
+
+        + FdmScheduler()
+        + getSlotEirpControl() : SlotEirpControl&
+        + initEirpResources()
+        + prepareScheduling()
+        + distributeResources()
+        + doMuMimoEnhanceSchedule()
+      }
+      ' Notes '
+      note bottom of FdmScheduler
+        **FdmScheduler Operations**: construct temporary every slot
+        1. **FdmScheduler()**
+        - constructs eirpResourceCalculator
+        - constructs slotEirpControlCopy
+        - constructs roundRobin
+        - constructs muEnhScheduler
+
+        2. initEirpResources()
+        - Copy from eirpControlSlotPerSlot to slotEirpControlCopy
+
+        3. distributeResources()
+        - exhaustive: construct ExhaustiveDistribution to distribute resources
+        - non exhaustive:
+        - rat0: call roundRobin.distributeResources()
+        - rat1: call roundRobin.distributeResourcesForResAllocType1(),
+        it constructs distributionStrategyResAllocType1
+        which also constructs a new slotEirpControl instance,
+        then calls distributionStrategyResAllocType1.distributeResourcesForMultiBwp()
+
+        4. doMuMimoEnhanceSchedule(): called after distributeResources()
+        - calls muEnhScheduler.schedule()
+      end note
+
+      class "sch::fdm::RoundRobin" as RoundRobin {
+        - slotEirpControl : SlotEirpControl&
+        - cellDynamicData : CellDynamicData&
+
+        + RoundRobin()
+        + distributeResourcesForResAllocType1()
+        + distributeRat1MuMimoResources()
+      }
+
+      class "sch::fdm::DistributionStrategyResAllocType1" as DistributionStrategyResAllocType1 {
+
+        + DistributionStrategyResAllocType1()
+        + distributeResourcesForMultiBwp()
+        + distributeResourcesForMuMimo()
+      }
+
+      class "sch::fdm::DistributionStrategyType1Base" as DistributionStrategyType1Base #LightCyan {
+        - **slotEirpControl : SlotEirpControl**
+        - cellDynamicData : CellDynamicData&
+        - eirpResourceCalculator : EirpResourceCalculator
+        - beamIdsCalculator : BeamIdsCalculator
+        + distributeResourcesEirp()
+      }
+
+      class "sch::muMimoEnhance::Scheduler" as MuEnhScheduler {
+        - ratSelector : RatSelector
+        - roundRobin : RoundRobin
+
+        + schedule()
+      }
+
+      class "sch::muMimoEnhance::RatSelector" as RatSelector {
+        - ratType : RatType
+
+        + RatSelector()
+        + schedule()
+      }
+
+      ' Represent the type alias with a stereotype'
+      class "sch::muMimoEnhance::RatType" as RatType <<typedef>> {
+        std::variant<Rat0MuMimoScheduler, Rat1MuMimoScheduler>
+      }
+      note right of RatType
+        Select one of:
+        - Rat0MuMimoScheduler
+        - Rat1MuMimoScheduler
+      end note
+
+      class "sch::muMimoEnhance::Rat0MuMimoScheduler" as Rat0MuMimoScheduler <<typedef>> {
+        + schedule()
+        + doWrrForInitTx()
+      }
+
+      class "sch::muMimoEnhance::Rat1MuMimoScheduler" as Rat1MuMimoScheduler <<typedef>> {
+        + schedule()
+        + doWrrForInitTx()
+      }
+
+      class "sch::muMimoEnhance::CommonMuMimoScheduler<T>" as CommonMuMimoScheduler <<template>> {
+        roundRobin : RoundRobin&
+      }
+    }
+
+    db -[hidden]d-> sch
+    EirpResourceCalculator o-u- SlotEirpControl : [reference]
+    DistributionStrategyType1Base *-u- SlotEirpControl : [contains]
+    FdmScheduler *-u- SlotEirpControl : [contains]
+    RoundRobin o-u- SlotEirpControl : [reference]
+
+
+    EirpResourceCalculator -[hidden]right-> FdmScheduler
+    FdmScheduler *-r- RoundRobin : [contains]
+    FdmScheduler *-l- EirpResourceCalculator : [contains]
+    FdmScheduler *-d- MuEnhScheduler : [contains]
+
+    MuEnhScheduler *-u- RoundRobin : [contains]
+    MuEnhScheduler *-d- RatSelector : [contains]
+
+    RatSelector -[hidden]right-> RatType
+    RatSelector *-r- RatType : [contains]
+    RatType .u.> Rat0MuMimoScheduler : [alternative]
+    RatType .u.> Rat1MuMimoScheduler : [alternative]
+    Rat0MuMimoScheduler -u-|> CommonMuMimoScheduler : <<T=Rat0MuMimoScheduler>>
+    Rat1MuMimoScheduler -u-|> CommonMuMimoScheduler : <<T=Rat1MuMimoScheduler>>
+
+    CommonMuMimoScheduler o-u- RoundRobin : [reference]
+    DistributionStrategyResAllocType1 -u-|> DistributionStrategyType1Base : <<extends>>
+
+    RoundRobin .d.> "1" DistributionStrategyResAllocType1 : [constructs]\ndistributeResourcesForResAllocType1()
+  }
+  db -[hidden]r-> dl
+}
+@enduml
