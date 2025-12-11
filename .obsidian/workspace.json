@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
+                "file": "work/nokia/development/Tool/Scripts.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "l2ps_dl_sch_td"
+              "title": "Scripts"
             }
           }
         ]
@@ -169,13 +169,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
+                "file": "work/nokia/development/Tool/Scripts.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of l2ps_dl_sch_td"
+              "title": "Outline of Scripts"
             }
           },
           {
@@ -208,15 +208,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "fff4e216ff7c54a8",
+  "active": "3f40968bd9b03026",
   "lastOpenFiles": [
-    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_usermodify.md",
-    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
-    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_fd.md",
-    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
+    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
-    "work/nokia/development/Tool/Scripts.md",
+    "personal/private/个人信息.md",
     "personal/collection/UltraEdit.md",
+    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
+    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
+    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_usermodify.md",
+    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_fd.md",
+    "work/nokia/development/Tool/Scripts.md",
     "work/nokia",
     "personal/program",
     "personal/collection/Regular Expressions.md",
@@ -240,8 +242,6 @@
     "personal/technology/technology/Windows/让TortoiseSVN仅导出新增或修改过(变更过)的文件.md",
     "personal/technology/technology/Windows/批处理命令.md",
     "personal/technology/technology/Windows/批处理-callstart.md",
-    "personal/technology/technology/Windows/在Dell XPS 13安装WIN10和ubuntu双系统 - 如梦亦.md",
-    "personal/technology/technology/Windows/合并分卷压缩文件.md",
     "personal/technology/technology/Windows",
     "personal/technology/technology/VoLTE",
     "personal/technology/technology/TCP-IP",
