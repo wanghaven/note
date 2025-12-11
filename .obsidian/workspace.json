@@ -11,10 +11,14 @@
             "id": "3f40968bd9b03026",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
+                "mode": "preview",
+                "source": true
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "l2ps_dl_sch_td"
             }
           }
         ]
@@ -165,12 +169,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of l2ps_dl_sch_td"
             }
           },
           {
@@ -188,7 +193,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 227.5
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -203,20 +208,30 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7c7b3698c32aa2ac",
+  "active": "fff4e216ff7c54a8",
   "lastOpenFiles": [
+    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_usermodify.md",
+    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
+    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_fd.md",
+    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/development/Tool/Scripts.md",
+    "personal/collection/UltraEdit.md",
+    "work/nokia",
+    "personal/program",
+    "personal/collection/Regular Expressions.md",
+    "personal/program/VsCode.md",
+    "personal/technology/linux/Install dpdk.md",
+    "personal/technology/Wireless",
+    "personal/technology/linux/Emulating ARM on Debian Ubuntu.md",
     "大纲.base",
     "2025-12-11.md",
     "personal/technology/linux/Linux show occupied port number of an application.md",
-    "personal/technology/linux/Emulating ARM on Debian Ubuntu.md",
-    "personal/technology/linux/Install dpdk.md",
     "personal/collection/WebPage.md",
     "personal/technology/linux/Linux下代码运行时间的高精度测量.md",
     "personal/technology/linux/Linux commands.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
     "personal/technology/linux/Install ubuntu server.md",
-    "personal/collection/Regular Expressions.md",
-    "personal/collection/VsCode.md",
     "work/development/Tool/Scripts.md",
     "resources/imags",
     "resources/imags/VsCode_Shortcuts.png",
@@ -227,20 +242,11 @@
     "personal/technology/technology/Windows/批处理-callstart.md",
     "personal/technology/technology/Windows/在Dell XPS 13安装WIN10和ubuntu双系统 - 如梦亦.md",
     "personal/technology/technology/Windows/合并分卷压缩文件.md",
-    "personal/technology/technology/Windows/windows应用UWP无法使用系统代理 - 简书.md",
-    "personal/technology/technology/Windows/Windows activation code.md",
-    "personal/technology/technology/Windows/Start wsl.md",
-    "personal/technology/technology/Windows/Msys.md",
-    "personal/technology/technology/Windows/How to Fix File System Error 107374.md",
     "personal/technology/technology/Windows",
-    "personal/technology/technology/VoLTE/VOIP.md",
     "personal/technology/technology/VoLTE",
     "personal/technology/technology/TCP-IP",
     "personal/technology/technology/Programing",
     "personal/technology/technology/Others",
-    "personal/technology/technology/Office",
-    "personal/technology/technology/Network",
-    "personal/technology/technology/LTE",
     "Pasted image 20251211220919.png",
     "Pasted image 20251211220836.png",
     "Untitled.canvas"
