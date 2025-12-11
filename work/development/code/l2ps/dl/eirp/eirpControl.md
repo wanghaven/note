@@ -1,4 +1,18 @@
+# L2PS DL EirpControl
+
+## Current EIRP Design
+- **SlotSynchroInd**
+  - **PRE and TD**
+    - CSI-RS Scheduling: 
+      CsiRsSendReq::accumulateCsiRsNormalizedTransmittedPowerForBeamId()
+      CsiRsSendReq::accumulateCsiRsTrackingNormalizedPowerForOneBeam()
+      CsiRsSendReq::accumulateCsiRsBeamMgmtNormalizedPowerForOneBeam()
+ 
+## class diagram
+```plantuml
 @startuml L2PS DL EirpControl Class diagram
+!pragma graphviz svg
+' scale 1920*1080
 
 ' skinparam linetype ortho
 set namespaceSeparator ::
@@ -270,3 +284,6 @@ package l2ps {
   db -[hidden]r-> dl
 }
 @enduml
+```
+## Sequence chart
+TODO
