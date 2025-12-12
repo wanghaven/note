@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "f02dffc8dfa81ad0",
+        "id": "a6d04aaceca37bb6",
         "type": "tabs",
         "children": [
           {
-            "id": "3f40968bd9b03026",
+            "id": "72f41edd31fd556d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "personal/collection/UltraEdit.md",
-                "mode": "preview",
-                "source": true
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "UltraEdit"
+              "title": "New tab"
             }
           }
         ]
@@ -193,7 +189,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 309.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -208,13 +204,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3f40968bd9b03026",
+  "active": "fff4e216ff7c54a8",
   "lastOpenFiles": [
+    "New Rich Text Format.rtf",
+    "personal/collection/UltraEdit.md",
     "work/nokia/development/Tool/Scripts.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "personal/private/个人信息.md",
-    "personal/collection/UltraEdit.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_usermodify.md",
@@ -241,7 +238,6 @@
     "personal/technology/technology/linux/Install ubuntu server.md",
     "personal/technology/technology/Windows/让TortoiseSVN仅导出新增或修改过(变更过)的文件.md",
     "personal/technology/technology/Windows/批处理命令.md",
-    "personal/technology/technology/Windows/批处理-callstart.md",
     "personal/technology/technology/Windows",
     "personal/technology/technology/VoLTE",
     "personal/technology/technology/TCP-IP",
