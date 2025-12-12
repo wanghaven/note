@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/technology/Markdown/Syntax.md",
-                "mode": "source",
+                "file": "personal/AI/Obsidian+AI构建知识网络.md",
+                "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Syntax"
+              "title": "Obsidian+AI构建知识网络"
             }
           }
         ]
@@ -108,13 +108,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "personal/technology/Markdown/Syntax.md",
+                "file": "personal/AI/Obsidian+AI构建知识网络.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Syntax"
+              "title": "Outline of Obsidian+AI构建知识网络"
             }
           },
           {
@@ -188,8 +188,7 @@
               "title": "All properties"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -210,11 +209,11 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "7c7b3698c32aa2ac",
+  "active": "7cd58c53863c314b",
   "lastOpenFiles": [
+    "personal/technology/Markdown/Syntax.md",
     "personal/technology/Vscode/Operation.md",
     "personal/technology/Vscode",
-    "personal/technology/Markdown/Syntax.md",
     "personal/technology/Markdown",
     "personal/AI/Obsidian+AI构建知识网络.md",
     "personal/AI",
