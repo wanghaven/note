@@ -3,5 +3,6 @@
   "nativeMenus": false,
   "enabledCssSnippets": [],
   "accentColor": "",
-  "cssTheme": "Minimal"
+  "cssTheme": "",
+  "theme": "system"
 }
