@@ -2,5 +2,6 @@
   "textFontFamily": "",
   "nativeMenus": false,
   "enabledCssSnippets": [],
-  "accentColor": ""
+  "accentColor": "",
+  "cssTheme": "Minimal"
 }

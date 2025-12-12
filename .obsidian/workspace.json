@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/development/Tool/Scripts.md",
+                "file": "personal/collection/UltraEdit.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Scripts"
+              "title": "UltraEdit"
             }
           }
         ]
@@ -210,6 +210,7 @@
   },
   "active": "3f40968bd9b03026",
   "lastOpenFiles": [
+    "work/nokia/development/Tool/Scripts.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "personal/private/个人信息.md",
@@ -218,7 +219,6 @@
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_td.md",
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_usermodify.md",
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_fd.md",
-    "work/nokia/development/Tool/Scripts.md",
     "work/nokia",
     "personal/program",
     "personal/collection/Regular Expressions.md",
