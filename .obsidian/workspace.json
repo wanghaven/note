@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/AI/Obsidian+AI构建知识网络.md",
+                "file": "personal/private/个人信息.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "Obsidian+AI构建知识网络"
+              "title": "个人信息"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 314.5
+    "width": 265.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -108,13 +108,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "personal/AI/Obsidian+AI构建知识网络.md",
-                "followCursor": false,
+                "file": "personal/private/个人信息.md",
+                "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Obsidian+AI构建知识网络"
+              "title": "Outline of 个人信息"
             }
           },
           {
@@ -188,11 +188,12 @@
               "title": "All properties"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 309.5
+    "width": 271.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -204,45 +205,50 @@
       "templates:Insert template": false,
       "markdown-importer:Open format converter": false,
       "obsidian-git:Open Git source control": false,
-      "command-palette:Open command palette": false,
-      "translate:Open translation view": false,
-      "remotely-save:Remotely Save": false
+      "remotely-save:Remotely Save": false,
+      "command-palette:Open command palette": false
     }
   },
   "active": "7cd58c53863c314b",
   "lastOpenFiles": [
+    "personal/private/汪海娇.md",
+    "personal/private/个人信息.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "personal/AI/obsidian with AI/通过LM Studio在Obsidian中使用本地大模型.md",
+    "personal/collection/Regular Expressions.md",
+    "personal/collection/Markdown for Obsidian.md",
+    "personal/technology/linux/Linux show occupied port number of an application.md",
     "personal/technology/Markdown/Syntax.md",
+    "personal/technology/Wireless/5G-NR/5G-NR SSB and cell search.md",
+    "personal/technology/Wireless/5G-NR/5G-NR PDCCH.md",
+    "personal/private/软件序列号.md",
+    "personal/AI/obsidian with AI/Obsidian Copilot插件.md",
+    "personal/AI/obsidian with AI/Custom Frames + Open Webui.md",
+    "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
+    "personal/AI/obsidian with AI",
+    "personal/AI/obsidian with AI/Obsidian主流AI插件以及与AI的链接方式.md",
+    "personal/AI/obsidian with AI/Obsidian中的AI插件.md",
+    "personal/AI/obsidian with AI/Obsidian中使用GPT5.md",
+    "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
+    "personal/AI/obsidian with AI/Obsidian：LLM接管Obsidian知识库 vs Local REST API + MCP、n8n 的深入对比.md",
+    "personal/AI/obsidian with AI/Obsidian local rest api + MCP.md",
+    "personal/AI/obsidian with AI/Open WebUI vs Obsidian Copilot.md",
     "personal/technology/Vscode/Operation.md",
     "personal/technology/Vscode",
     "personal/technology/Markdown",
-    "personal/AI/Obsidian+AI构建知识网络.md",
     "personal/AI",
     "personal/technology/linux/Install dpdk.md",
-    "personal/collection/Regular Expressions.md",
     "personal/collection/WebPage.md",
     "personal/collection/UltraEdit.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
     "personal/technology/linux/Install ubuntu server.md",
-    "personal/technology/Wireless/5G-NR/5G-NR Physical Channel - DL.md",
-    "personal/technology/Wireless/5G-NR/5G-NR PDCCH.md",
-    "personal/technology/Wireless/Algorithm/MMSE Detection algorithm.md",
-    "Daily/2025-12-12.md",
     "Daily",
-    "2025-12-12.md",
     "Untitled.base",
-    "personal/technology/Wireless/5G-NR/5G-NR Physical Channel - UL.md",
     "personal/technology/Wireless/5G-NR",
     "personal/technology/Wireless/Algorithm",
-    "personal/technology/linux/Linux show occupied port number of an application.md",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
-    "personal/technology/Wireless/5G-NR/5G-NR Physical Channels and Modulation.md",
     "personal/technology/Wireless/5G-NR",
-    "personal/technology/Wireless/5G-NR/5G-NR PRACH and Random Access.md",
-    "personal/technology/Wireless/5G-NR/5G-NR Precoding Resource Block Group.md",
-    "personal/technology/Wireless/5G-NR/5G-NR References Definitions, symbols and abbreviations.md",
-    "personal/technology/Wireless/5G-NR/5G-NR Sounding Reference Signal.md",
-    "personal/technology/Wireless/5G-NR/5G-NR SSB and cell search.md",
     "personal/technology/Wireless/Unconfirmed 635058.crdownload",
     "resources/imags/PDCCH_USS.png",
     "resources/imags/PDCCH_REGBudlingIndex.png",
@@ -252,10 +258,6 @@
     "resources/imags/PDCCH_Blind_Decoding.png",
     "resources/imags/PDCCH_Aggregation.png",
     "resources/imags/Coreset_REG.png",
-    "personal/technology/linux/Emulating ARM on Debian Ubuntu.md",
-    "work/nokia/development/tool/Scripts.md",
-    "work/nokia/development/tool",
-    "personal/private/实验室.md",
     "Untitled.canvas"
   ]
 }

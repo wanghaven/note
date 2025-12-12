@@ -1,0 +1,10 @@
+{
+	"nodes":[
+		{"id":"a1b2c3d4e5f6a1b1","type":"text","text":"### 方式一：AI 插件\n\n**概述:**\n最主流的方式。在Obsidian内安装AI插件，直接与笔记交互，实现无缝的AI写作、问答等功能。\n🔌 **连接方式:** API Key (云端) & 本地大模型 (离线)\n💡 **适合场景:** 日常笔记、内容创作、知识库问答\n🛠️ **主流插件:** Copilot, Text Generator, Smart Connections","x":-640,"y":-620,"width":460,"height":240,"color":"1"},
+		{"id":"a1b2c3d4e5f6a1b2","type":"text","text":"### 方式二：内嵌网页AI (WebUI)\n\n**概述:**\n在Obsidian中内嵌一个完整的网页AI应用。无需切换窗口，即可使用多模态、多对话等强大功能。\n🚀 **核心优势:** 沉浸式体验、多模态交互、保持心流\n🛠️ **实现工具:** Custom Frames + Open WebUI, Docker Desktop","x":-20,"y":-620,"width":460,"height":240,"color":"2"},
+		{"id":"a1b2c3d4e5f6a1b3","type":"text","text":"### 方式三：API: MCP与工作流\n\n**概述:**\n硬核进阶玩法。通过插件提供Obsidian API，让外部自动化工具来调用和操作。\n 💡 **应用场景:** 自动化工作流 (n8n) & MCP客户端\n⚙️ **核心插件:** Local REST API","x":-640,"y":-300,"width":460,"height":220,"color":"3"},
+		{"id":"a1b2c3d4e5f6a1b4","type":"text","text":"### 方式四：直接文件操作 (Filesystem)\n\n**概述:**\n利用Obsidian本地文件特性，让Cursor等AI原生工具直接批量读写整个知识库，适合构建和重构。\n✅ **优势:** 批量操作、AI原生能力\n❌ **局限:** 无法触发Obsidian内部插件/模板","x":-20,"y":-300,"width":460,"height":220,"color":"4"},
+		{"id":"a1b2c3d4e5f6a1b5","type":"text","text":"### 方式五：云端AI辅助 (Cloud)\n\n**概述:**\n将知识库上传至NotebookLM等云端AI，弥补Obsidian处理PDF、视频等短板，解锁更多辅助学习功能。\n🤝 **功能互补:** 多媒体处理 & 深度学习辅助\n🎓 **典型工具:** Google NotebookLM","x":-320,"y":-20,"width":440,"height":220,"color":"5"}
+	],
+	"edges":[]
+}
