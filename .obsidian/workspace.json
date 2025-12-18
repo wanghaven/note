@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "077e90cc577f5ce5",
+        "id": "c17d889ca4dc8bd4",
         "type": "tabs",
         "children": [
           {
-            "id": "7cd58c53863c314b",
+            "id": "b9285f0196049e9a",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "split-diff-view",
               "state": {
-                "file": "personal/private/个人信息.md",
-                "mode": "preview",
-                "source": true
+                "aFile": "personal/private/个人信息.md",
+                "bFile": "personal/private/个人信息.md",
+                "aRef": ""
               },
-              "icon": "lucide-file",
-              "title": "个人信息"
+              "icon": "diff",
+              "title": "Diff: 个人信息"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -108,13 +108,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "personal/private/个人信息.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 个人信息"
+              "title": "Outline"
             }
           },
           {
@@ -209,14 +208,16 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7cd58c53863c314b",
+  "active": "b9285f0196049e9a",
   "lastOpenFiles": [
-    "personal/private/汪海娇.md",
     "personal/private/个人信息.md",
+    "personal/private/实验室.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "personal/collection/Markdown for Obsidian.md",
+    "work/project",
+    "personal/private/汪海娇.md",
     "personal/AI/obsidian with AI/通过LM Studio在Obsidian中使用本地大模型.md",
     "personal/collection/Regular Expressions.md",
-    "personal/collection/Markdown for Obsidian.md",
     "personal/technology/linux/Linux show occupied port number of an application.md",
     "personal/technology/Markdown/Syntax.md",
     "personal/technology/Wireless/5G-NR/5G-NR SSB and cell search.md",
@@ -241,7 +242,6 @@
     "personal/collection/WebPage.md",
     "personal/collection/UltraEdit.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
-    "personal/technology/linux/Install ubuntu server.md",
     "Daily",
     "Untitled.base",
     "personal/technology/Wireless/5G-NR",
@@ -249,7 +249,6 @@
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
     "personal/technology/Wireless/5G-NR",
-    "personal/technology/Wireless/Unconfirmed 635058.crdownload",
     "resources/imags/PDCCH_USS.png",
     "resources/imags/PDCCH_REGBudlingIndex.png",
     "resources/imags/PDCCH_CCEIndex.png",
