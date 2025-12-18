@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "c17d889ca4dc8bd4",
+        "id": "1ac9329a186c4807",
         "type": "tabs",
         "children": [
           {
-            "id": "b9285f0196049e9a",
+            "id": "8b6fb681cbc8e45d",
             "type": "leaf",
             "state": {
-              "type": "split-diff-view",
-              "state": {
-                "aFile": "personal/private/个人信息.md",
-                "bFile": "personal/private/个人信息.md",
-                "aRef": ""
-              },
-              "icon": "diff",
-              "title": "Diff: 个人信息"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -208,9 +204,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b9285f0196049e9a",
+  "active": "8b6fb681cbc8e45d",
   "lastOpenFiles": [
     "personal/private/个人信息.md",
+    "conflict-files-obsidian-git.md",
     "personal/private/实验室.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "personal/collection/Markdown for Obsidian.md",
@@ -241,7 +238,6 @@
     "personal/technology/linux/Install dpdk.md",
     "personal/collection/WebPage.md",
     "personal/collection/UltraEdit.md",
-    "personal/technology/linux/Install TensorFlow with pip.md",
     "Daily",
     "Untitled.base",
     "personal/technology/Wireless/5G-NR",
