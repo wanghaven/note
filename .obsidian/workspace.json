@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/private/个人信息.md",
-                "mode": "preview",
+                "file": "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "个人信息"
+              "title": "CB012971 Dual Boost Zero-forcing MU MIMO"
             }
           }
         ]
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 303.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -108,13 +108,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "personal/private/个人信息.md",
+                "file": "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 个人信息"
+              "title": "Outline of eirpControl"
             }
           },
           {
@@ -193,7 +193,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 339.5
+    "width": 294.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -211,10 +211,15 @@
   },
   "active": "6cd2fb6ebda01ab4",
   "lastOpenFiles": [
+    "personal/technology/linux/Emulating ARM on Debian Ubuntu.md",
+    "personal/technology/linux/Install dpdk.md",
+    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming",
+    "work/nokia/development/code/l2ps/dl/beamforming",
     "personal/private/个人信息.md",
     "conflict-files-obsidian-git.md",
     "personal/private/实验室.md",
-    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "personal/collection/Markdown for Obsidian.md",
     "work/project",
     "personal/private/汪海娇.md",
@@ -240,16 +245,11 @@
     "personal/technology/Vscode",
     "personal/technology/Markdown",
     "personal/AI",
-    "personal/technology/linux/Install dpdk.md",
-    "personal/collection/WebPage.md",
-    "personal/collection/UltraEdit.md",
     "Daily",
     "Untitled.base",
     "personal/technology/Wireless/5G-NR",
-    "personal/technology/Wireless/Algorithm",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
-    "personal/technology/Wireless/5G-NR",
     "resources/imags/PDCCH_USS.png",
     "resources/imags/PDCCH_REGBudlingIndex.png",
     "resources/imags/PDCCH_CCEIndex.png",
