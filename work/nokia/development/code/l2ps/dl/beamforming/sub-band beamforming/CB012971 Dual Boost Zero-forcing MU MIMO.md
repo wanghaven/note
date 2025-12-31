@@ -99,9 +99,9 @@ Rat1MuMimoExhaustiveScheduler ..> PairingGroupHandler : consumes PG info
 ```
 ## Integration to scheduling phase
 ### POST
-**Function:** `PairingGroupHandler::buildPairingGroups()`
+#### **Function:** `PairingGroupHandler::buildPairingGroups()`
 
-***Source code:***
+##### ***Source code:***
 ```cpp
 void PairingGroupHandler::buildPairingGroups(const l2ps::utils::Xsfn& currentXsfn)
 {
@@ -152,7 +152,7 @@ bool PairingGroupData::addUe(
     return true;
 }
 ```
-**Algorithm:**
+##### **Algorithm:**
 1. Clear existing groups
 2. For each candidate UE in `highBufferSbBfUeList`:
    - Try to add UE to existing group (correlation check)
@@ -160,14 +160,15 @@ bool PairingGroupData::addUe(
 3. Consolidate 2-UE groups (merge or keep separate based on correlation)
 4. Update token buckets for each group
 
-**Complexity:** O(N × G × C)
+##### **Complexity:** 
+O(N × G × C)
 - N = number of SB-BF UEs
 - G = number of groups (4)
 - C = correlation checks (2-3 per UE)
 
 ### PRE
-**Function:** `PairingGroupUeSelector::selectUeToBoostPriority()`
-***Source code***:
+#### **Function:** `PairingGroupUeSelector::selectUeToBoostPriority()`
+##### ***Source code***:
 ```cpp
 uint8_t PairingGroupUeSelector::selectUeToBoostPriority(
     uint8_t cs1ListSize,

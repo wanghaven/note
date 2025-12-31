@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+                "file": "personal/private/个人信息.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CB012971 Dual Boost Zero-forcing MU MIMO"
+              "title": "个人信息"
             }
           }
         ]
@@ -108,13 +108,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+                "file": "personal/private/个人信息.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of eirpControl"
+              "title": "Outline of 个人信息"
             }
           },
           {
@@ -209,11 +209,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "6cd2fb6ebda01ab4",
+  "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
+    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "personal/technology/linux/Emulating ARM on Debian Ubuntu.md",
     "personal/technology/linux/Install dpdk.md",
-    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming",
     "work/nokia/development/code/l2ps/dl/beamforming",
