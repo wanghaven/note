@@ -99,7 +99,7 @@ Rat1MuMimoExhaustiveScheduler ..> PairingGroupHandler : consumes PG info
 ```
 ## Integration to scheduling phase
 ### POST
-#### **Function:** `PairingGroupHandler::buildPairingGroups()`
+#### **Function:** PairingGroupHandler::**buildPairingGroups**()
 
 ##### ***Source code:***
 ```cpp
@@ -167,7 +167,7 @@ O(N × G × C)
 - C = correlation checks (2-3 per UE)
 
 ### PRE
-#### **Function:** `PairingGroupUeSelector::selectUeToBoostPriority()`
+#### **Function:**  PairingGroupUeSelector::**selectUeToBoostPriority**()`
 ##### ***Source code***:
 ```cpp
 uint8_t PairingGroupUeSelector::selectUeToBoostPriority(
