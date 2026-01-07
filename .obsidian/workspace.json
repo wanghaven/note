@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/private/个人信息.md",
+                "file": "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "个人信息"
+              "title": "PARALLEL_SCHEDULING_DESIGN"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "nokia-sbell",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 303.5
+    "width": 205.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -108,13 +108,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "personal/private/个人信息.md",
+                "file": "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 个人信息"
+              "title": "Outline of PARALLEL_SCHEDULING_DESIGN"
             }
           },
           {
@@ -211,6 +211,14 @@
   },
   "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
+    "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN_0.1.md",
+    "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
+    "personal/technology/linux/Install TensorFlow with pip.md",
+    "work/project/Parallel Scheduling/Poc",
+    "work/project/Parallel Scheduling",
+    "personal/private/汪海娇.md",
+    "personal/private/个人信息.md",
+    "personal/technology/linux/Install ubuntu server.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_sch_fd.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
@@ -219,7 +227,6 @@
     "personal/AI/obsidian with AI/Obsidian：LLM接管Obsidian知识库 vs Local REST API + MCP、n8n 的深入对比.md",
     "personal/AI/obsidian with AI/Obsidian Copilot插件.md",
     "personal/AI/obsidian with AI/Custom Frames + Open Webui.md",
-    "personal/private/个人信息.md",
     "personal/technology/Wireless/5G-NR/5G-NR SSB and cell search.md",
     "personal/technology/Wireless/5G-NR/5G-NR Physical Channel - DL.md",
     "Untitled.md",
@@ -231,23 +238,16 @@
     "personal/private/实验室.md",
     "personal/collection/Markdown for Obsidian.md",
     "work/project",
-    "personal/private/汪海娇.md",
     "personal/AI/obsidian with AI/通过LM Studio在Obsidian中使用本地大模型.md",
     "personal/collection/Regular Expressions.md",
     "personal/technology/linux/Linux show occupied port number of an application.md",
     "personal/technology/Markdown/Syntax.md",
-    "personal/private/软件序列号.md",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "personal/AI/obsidian with AI",
-    "personal/AI/obsidian with AI/Obsidian主流AI插件以及与AI的链接方式.md",
-    "personal/AI/obsidian with AI/Obsidian中的AI插件.md",
-    "personal/AI/obsidian with AI/Obsidian中使用GPT5.md",
     "personal/technology/Vscode",
     "personal/technology/Markdown",
     "personal/AI",
     "Daily",
-    "Untitled.base",
-    "personal/technology/Wireless/5G-NR",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
     "resources/imags/PDCCH_USS.png",
