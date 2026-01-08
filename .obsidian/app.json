@@ -4,7 +4,7 @@
   "showLineNumber": true,
   "tabSize": 2,
   "showInlineTitle": true,
-  "readableLineLength": false,
+  "readableLineLength": true,
   "pdfExportSettings": {
     "pageSize": "A4",
     "landscape": false,
@@ -12,5 +12,6 @@
     "downscalePercent": 100
   },
   "alwaysUpdateLinks": true,
-  "promptDelete": false
+  "promptDelete": false,
+  "strictLineBreaks": true
 }

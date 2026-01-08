@@ -1,8 +1,9 @@
 {
-  "textFontFamily": "",
+  "textFontFamily": "JetBrains Mono,Nokia Pure Headline Chinese,Microsoft YaHei",
   "nativeMenus": false,
   "enabledCssSnippets": [],
   "accentColor": "",
   "cssTheme": "",
-  "theme": "system"
+  "theme": "system",
+  "monospaceFontFamily": "JetBrains Mono,Ubuntu Mono derivative Powerline,Cascadia Mono"
 }
