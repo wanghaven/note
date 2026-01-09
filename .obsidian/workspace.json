@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 252.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -212,9 +212,11 @@
   "active": "0babe7cb1078b432",
   "lastOpenFiles": [
     "work/nokia/development/code/l2ps/dl/sch/td.md",
-    "work/nokia/development/code/l2ps/dl/sch/uegroup.md",
-    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
+    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/development/code/l2ps/dl/sch/uegroup.md",
     "work/nokia/development/code/l2ps/dl/sch/BC440E6.tmp",
     "work/nokia/development/code/l2ps/dl/sch/BC44425.tmp",
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_ue_sch.md~RF1a3624.TMP",
@@ -232,7 +234,6 @@
     "personal/private/汪海娇.md",
     "personal/technology/linux/Install ubuntu server.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
-    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "personal/technology/Wireless/5G-NR/5G-NR PDCCH.md",
     "personal/AI/obsidian with AI/Obsidian：LLM接管Obsidian知识库 vs Local REST API + MCP、n8n 的深入对比.md",
     "personal/AI/obsidian with AI/Obsidian Copilot插件.md",
