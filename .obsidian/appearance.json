@@ -5,5 +5,6 @@
   "accentColor": "",
   "cssTheme": "",
   "theme": "system",
-  "monospaceFontFamily": "JetBrains Mono,Ubuntu Mono derivative Powerline,Cascadia Mono"
+  "monospaceFontFamily": "JetBrains Mono,Ubuntu Mono derivative Powerline,Cascadia Mono",
+  "baseFontSize": 13
 }

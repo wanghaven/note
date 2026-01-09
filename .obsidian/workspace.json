@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+                "file": "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "eirpControl"
+              "title": "PARALLEL_SCHEDULING_DESIGN"
             }
           }
         ]
@@ -212,10 +212,10 @@
   "active": "0babe7cb1078b432",
   "lastOpenFiles": [
     "work/nokia/development/code/l2ps/dl/sch/td.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
-    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/development/code/l2ps/dl/sch/uegroup.md",
     "work/nokia/development/code/l2ps/dl/sch/BC440E6.tmp",
     "work/nokia/development/code/l2ps/dl/sch/BC44425.tmp",
