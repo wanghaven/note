@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "eb2bd7909251684c",
+        "id": "929dcd190853b67f",
         "type": "tabs",
         "children": [
           {
-            "id": "0babe7cb1078b432",
+            "id": "502df5a3299838ff",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
-                "mode": "preview",
-                "source": true
+                "file": "personal/private/个人信息.md",
+                "mode": "source",
+                "source": false
               },
               "icon": "lucide-file",
-              "title": "PARALLEL_SCHEDULING_DESIGN"
+              "title": "个人信息"
             }
           }
         ]
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 252.5
+    "width": 275.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -209,10 +209,19 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "0babe7cb1078b432",
+  "active": "502df5a3299838ff",
   "lastOpenFiles": [
-    "work/nokia/development/code/l2ps/dl/sch/td.md",
+    "work/nokia/architecture/l2ps/l2ps",
+    "work/nokia/architecture/l2ps/L2PS_ARCHITECTURE_MAP.md",
+    "fd/FD_ARCHITECTURE_OVERVIEW.md",
+    "fd",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
+    "work/nokia/architecture/l2ps",
+    "work/nokia/architecture/New folder",
+    "work/nokia/architecture",
+    "work/nokia/New folder",
+    "work/nokia/development/code/l2ps/dl/sch/td.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
@@ -222,13 +231,7 @@
     "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_ue_sch.md~RF1a3624.TMP",
     "work/nokia/development/code/l2ps/dl/sch/BC4360A.tmp",
     "work/nokia/development/code/l2ps/dl/sch/BC4F007.tmp",
-    "work/nokia/development/code/l2ps/dl/sch/BC45DD8.tmp",
-    "work/nokia/development/code/l2ps/dl/sch/BC49BC.tmp",
-    "Untitled 1.base",
-    "Untitled.base",
-    "work/nokia/development/code/l2ps/dl/sch/l2ps_dl_ue_sch.pu",
     "personal/private/个人信息.md",
-    "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
     "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN_0.1.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
     "personal/private/汪海娇.md",
@@ -244,9 +247,6 @@
     "personal/technology/linux/Emulating ARM on Debian Ubuntu.md",
     "personal/technology/linux/Install dpdk.md",
     "conflict-files-obsidian-git.md",
-    "personal/private/实验室.md",
-    "personal/collection/Markdown for Obsidian.md",
-    "personal/AI/obsidian with AI/通过LM Studio在Obsidian中使用本地大模型.md",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",

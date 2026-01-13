@@ -1474,11 +1474,10 @@ stop
 
 note bottom
     **isFiltered() Implementation:**
-    ```
+    
     bool isFiltered(rnti) const {
         return (dlFdToUlCore and filter.hasKey(rnti));
     }
-    ```
     
     Combines:
     • Pipeline mode check (dlFdToUlCore)
@@ -2768,17 +2767,6 @@ bool fdScheduleOnPairCore(const Xsfn& xsfn) const
 | Stress tests (NRT message flood) | ✅ Passing | 1000 msgs/slot, no buffer overflow        |
 | Multi-slot stability             | ✅ Passing | 10,000 slots continuous execution         |
 | Error injection tests            | ✅ Passing | Unscheduled UEs, dropped messages         |
-
----
-
-## Revision History
-
-| Version | Date       | Author | Changes                                                                                                                                                                                                                                                            |
-| ------- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1.0     | 2026-01-06 | System | Initial design document                                                                                                                                                                                                                                            |
-| 2.0     | 2026-01-06 | System | Updated with PlantUML diagrams, multi-slot view, fillCs2Filter() clarification                                                                                                                                                                                     |
-| 3.0     | 2026-01-07 | System | Added CS1 protection analysis, isFiltered() details, complete protection mechanisms, remaining issues                                                                                                                                                              |
-| 4.0     | 2026-01-07 | System | Added comprehensive PlantUML diagrams: Component Interaction Overview, Class Diagram with relationships, Message Flow Sequence Diagram, 5 detailed Protection Flow Charts (CS1 Selection, Single-UE Filtering, Multi-UE Filtering, Timer Deferral, Message Replay) |
 
 ---
 

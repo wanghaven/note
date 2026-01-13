@@ -1,10 +1,10 @@
 {
-  "textFontFamily": "JetBrains Mono,Nokia Pure Headline Chinese,Microsoft YaHei",
+  "textFontFamily": "Maple Mono NF CN,Nokia Pure Headline Chinese",
   "nativeMenus": false,
   "enabledCssSnippets": [],
   "accentColor": "",
   "cssTheme": "",
   "theme": "system",
-  "monospaceFontFamily": "JetBrains Mono,Ubuntu Mono derivative Powerline,Cascadia Mono",
-  "baseFontSize": 13
+  "monospaceFontFamily": "Ubuntu Mono derivative Powerline",
+  "baseFontSize": 14
 }
