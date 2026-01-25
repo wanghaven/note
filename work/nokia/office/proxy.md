@@ -13,7 +13,7 @@
 2. defraprx-fihelprx.glb.nsn-net.net:8080
 3. 10.144.1.10:8080
 
-# 自定义PAC代理
+## 自定义PAC代理
 ```javascript
 // Customized funcitons added here
 var isHome = null;
