@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/private/汪海娇.md",
+                "file": "personal/private/历年收支.md",
                 "mode": "preview",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
-              "title": "汪海娇"
+              "title": "历年收支"
             }
           }
         ]
@@ -92,8 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5,
-    "collapsed": true
+    "width": 310.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -212,9 +211,11 @@
   },
   "active": "819292d9c160c9d7",
   "lastOpenFiles": [
+    "personal/private/实验室.md",
+    "personal/private/汪海娇.md",
+    "personal/private/个人信息.md",
     "personal/private/软件序列号.md",
     "personal/private/历年收支.md",
-    "personal/private/个人信息.md",
     "personal/collection/Markdown for Obsidian.md",
     "personal/collection/Regular Expressions.md",
     "2026年新年红包.md",
@@ -224,7 +225,6 @@
     "Untitled 1.canvas",
     "Untitled 5.base",
     "Untitled 4.base",
-    "personal/private/汪海娇.md",
     "Untitled 3.base",
     "Untitled 2.base",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
@@ -249,7 +249,6 @@
     "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN_0.1.md",
     "personal/technology/linux/Install ubuntu server.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
-    "personal/technology/Wireless/5G-NR/5G-NR PDCCH.md",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
