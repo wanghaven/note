@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/private/历年收支.md",
+                "file": "personal/private/汪海娇.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "历年收支"
+              "title": "汪海娇"
             }
           }
         ]
@@ -92,7 +92,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5
+    "width": 310.5,
+    "collapsed": true
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -211,11 +212,12 @@
   },
   "active": "819292d9c160c9d7",
   "lastOpenFiles": [
-    "personal/collection/Markdown for Obsidian.md",
+    "personal/private/软件序列号.md",
     "personal/private/历年收支.md",
+    "personal/private/个人信息.md",
+    "personal/collection/Markdown for Obsidian.md",
     "personal/collection/Regular Expressions.md",
     "2026年新年红包.md",
-    "personal/private/个人信息.md",
     "Untitled.base",
     "Untitled 1.base",
     "Untitled.canvas",
@@ -248,7 +250,6 @@
     "personal/technology/linux/Install ubuntu server.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "personal/technology/Wireless/5G-NR/5G-NR PDCCH.md",
-    "personal/AI/obsidian with AI/Obsidian：LLM接管Obsidian知识库 vs Local REST API + MCP、n8n 的深入对比.md",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
