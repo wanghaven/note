@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 310.5
+    "width": 270.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -209,7 +209,7 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "819292d9c160c9d7",
+  "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
     "personal/technology/Vscode/Operation.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
