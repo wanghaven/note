@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/private/汪海娇.md",
+                "file": "personal/collection/UltraEdit.md",
                 "mode": "source",
-                "source": true
+                "source": false
               },
               "icon": "lucide-file",
-              "title": "汪海娇"
+              "title": "UltraEdit"
             }
           }
         ]
@@ -211,11 +211,19 @@
   },
   "active": "819292d9c160c9d7",
   "lastOpenFiles": [
+    "personal/technology/Vscode/Operation.md",
+    "personal/technology/linux/Install TensorFlow with pip.md",
+    "personal/technology/linux/Install dpdk.md",
+    "personal/AI/obsidian with AI/Obsidian中的AI插件.md",
+    "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
+    "personal/AI/obsidian with AI/Obsidian local rest api + MCP.md",
+    "personal/AI/obsidian with AI/Custom Frames + Open Webui.md",
+    "personal/AI/obsidian with AI/Obsidian Copilot插件.md",
+    "personal/private/汪海娇.md",
+    "personal/private/软件序列号.md",
     "personal/private/实验室.md",
     "personal/private/历年收支.md",
     "personal/private/个人信息.md",
-    "personal/private/汪海娇.md",
-    "personal/private/软件序列号.md",
     "personal/collection/Markdown for Obsidian.md",
     "personal/collection/Regular Expressions.md",
     "2026年新年红包.md",
@@ -237,18 +245,10 @@
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "www.nicecloud.com.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
-    "personal/technology/linux/Install TensorFlow with pip.md",
-    "personal/technology/linux/Install dpdk.md",
     "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
     "work/nokia/architecture/l2ps/l2ps",
-    "work/nokia/architecture/l2ps/L2PS_ARCHITECTURE_MAP.md",
     "work/nokia/development/code/l2ps/dl/fd",
     "work/nokia/architecture/l2ps",
-    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
-    "work/nokia/development/code/l2ps/dl/sch/uegroup.md",
-    "work/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN_0.1.md",
-    "personal/technology/linux/Install ubuntu server.md",
-    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
