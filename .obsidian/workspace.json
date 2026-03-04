@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "f2942cceaca3a1cb",
+        "id": "d578fbd96613ace2",
         "type": "tabs",
         "children": [
           {
-            "id": "819292d9c160c9d7",
+            "id": "d7df67ffb22d13d7",
             "type": "leaf",
             "state": {
-              "type": "split-diff-view",
-              "state": {
-                "aFile": ".obsidian/appearance.json",
-                "bFile": ".obsidian/appearance.json",
-                "aRef": ""
-              },
-              "icon": "diff",
-              "title": "Diff: appearance.json"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -209,8 +205,9 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "819292d9c160c9d7",
+  "active": "d7df67ffb22d13d7",
   "lastOpenFiles": [
+    "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
     "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
@@ -245,7 +242,6 @@
     "work/nokia/office",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "www.nicecloud.com.md",
-    "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
     "work/nokia/architecture/l2ps/l2ps",
     "work/nokia/development/code/l2ps/dl/fd",
     "work/nokia/architecture/l2ps",
