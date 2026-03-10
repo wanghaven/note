@@ -11,10 +11,14 @@
             "id": "d7df67ffb22d13d7",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "type": "split-diff-view",
+              "state": {
+                "aFile": ".obsidian/workspace.json",
+                "bFile": ".obsidian/workspace.json",
+                "aRef": ""
+              },
+              "icon": "diff",
+              "title": "Diff: workspace.json"
             }
           }
         ]
@@ -207,6 +211,7 @@
   },
   "active": "d7df67ffb22d13d7",
   "lastOpenFiles": [
+    "personal/private/个人信息.md",
     "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
     "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
@@ -223,7 +228,6 @@
     "personal/private/软件序列号.md",
     "personal/private/实验室.md",
     "personal/private/历年收支.md",
-    "personal/private/个人信息.md",
     "personal/collection/Markdown for Obsidian.md",
     "personal/collection/Regular Expressions.md",
     "2026年新年红包.md",
