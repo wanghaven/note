@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "d578fbd96613ace2",
+        "id": "557eb651aa3b3ca3",
         "type": "tabs",
         "children": [
           {
-            "id": "d7df67ffb22d13d7",
+            "id": "1270c698fc94183e",
             "type": "leaf",
             "state": {
-              "type": "split-diff-view",
-              "state": {
-                "aFile": ".obsidian/workspace.json",
-                "bFile": ".obsidian/workspace.json",
-                "aRef": ""
-              },
-              "icon": "diff",
-              "title": "Diff: workspace.json"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -92,7 +88,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 315.5
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -209,13 +206,19 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "d7df67ffb22d13d7",
+  "active": "1270c698fc94183e",
   "lastOpenFiles": [
-    "personal/private/个人信息.md",
+    "work/nokia/development/code/l1/L1_Timing_Window.md",
     "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
+    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
+    "work/nokia/development/code/l2ps/dl/sch/fd.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+    "work/nokia/development/code/l1/L1 timing restrition.md",
+    "work/nokia/development/code/l1",
+    "personal/private/个人信息.md",
     "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
-    "work/nokia/development/code/l2ps/dl/sch/fd.md",
     "personal/collection/UltraEdit.md",
     "personal/technology/Vscode/Operation.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
@@ -239,16 +242,10 @@
     "Untitled 4.base",
     "Untitled 3.base",
     "Untitled 2.base",
-    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/office/proxy.md",
-    "work/nokia/office/reimburse.md",
-    "work/nokia/development/code/l2ps/dl/fd/FD_ARCHITECTURE_OVERVIEW.md",
     "work/nokia/office",
-    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
-    "www.nicecloud.com.md",
     "work/nokia/architecture/l2ps/l2ps",
     "work/nokia/development/code/l2ps/dl/fd",
-    "work/nokia/architecture/l2ps",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
