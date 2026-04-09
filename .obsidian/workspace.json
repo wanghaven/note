@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "557eb651aa3b3ca3",
+        "id": "8f585353c5a5ae7d",
         "type": "tabs",
         "children": [
           {
-            "id": "1270c698fc94183e",
+            "id": "e853b4557878426e",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -209,8 +209,15 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "1270c698fc94183e",
+  "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
+    "Untitled.md",
+    "work/nokia/devops",
+    "personal/technology/linux/Linux commands.md",
+    "Untitled.base",
+    "personal/private/个人信息.md",
+    "personal/technology/Wireless/Algorithm/MMSE Detection algorithm.md",
+    "personal/technology/Vscode/Operation.md",
     "work/nokia/feature/Untitled.md",
     "work/nokia/development/code/l1/L1_Timing_Window.md",
     "work/nokia/feature",
@@ -221,11 +228,9 @@
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l1/L1 timing restrition.md",
     "work/nokia/development/code/l1",
-    "personal/private/个人信息.md",
     "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
     "personal/collection/UltraEdit.md",
-    "personal/technology/Vscode/Operation.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
     "personal/technology/linux/Install dpdk.md",
     "personal/AI/obsidian with AI/Obsidian中的AI插件.md",
@@ -235,11 +240,6 @@
     "personal/private/汪海娇.md",
     "personal/private/软件序列号.md",
     "personal/private/实验室.md",
-    "personal/private/历年收支.md",
-    "personal/collection/Markdown for Obsidian.md",
-    "personal/collection/Regular Expressions.md",
-    "2026年新年红包.md",
-    "Untitled.base",
     "Untitled 1.base",
     "Untitled.canvas",
     "Untitled 1.canvas",
@@ -248,7 +248,6 @@
     "Untitled 3.base",
     "Untitled 2.base",
     "work/nokia/office",
-    "work/nokia/architecture/l2ps/l2ps",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/VsCode_Shortcuts.png",
     "resources/imags/CoreSet_mapping.png",
