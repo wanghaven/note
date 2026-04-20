@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "247650367bf9a4e7",
+        "id": "bd9a67667b585c6e",
         "type": "tabs",
         "children": [
           {
-            "id": "5b6f96c452144721",
+            "id": "91ab91dde59b9223",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/architecture/l2ps/deployment/Marlin.md",
+                "file": "work/nokia/feature/DL MU-MIMO.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Marlin"
+              "title": "DL MU-MIMO"
             }
           }
         ]
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 304.5
+    "width": 200
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -209,31 +209,34 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "fff4e216ff7c54a8",
+  "active": "91ab91dde59b9223",
   "lastOpenFiles": [
+    "personal/collection/Latex.md",
+    "Untitled.base",
+    "work/nokia/feature/DL MU-MIMO.md",
+    "personal/collection/Markdown for Obsidian.md",
+    "work/nokia/feature/Timing.md",
+    "work/nokia/architecture/l2ps/deployment/Marlin.md",
+    "work/nokia/architecture/l2ps/deployment/Snowfish.md",
+    "work/nokia/architecture/l2ps/hw/Snowfish.md",
+    "work/nokia/architecture/l2ps/hw/Marlin.md",
+    "personal/private/个人信息.md",
     "resources/imags/ABIP_deployment.png",
     "resources/imags/ABIP_deployment.png",
     "resources/imags/ABIP_deployment_Detail.png",
-    "work/nokia/architecture/l2ps/deployment/Snowfish.md",
-    "work/nokia/architecture/l2ps/deployment/Marlin.md",
     "resources/imags/ABIO_deployment_Detail.png",
     "Pasted image 20260413175648.png",
     "resources/imags/ABIO_deployment.png",
-    "work/nokia/architecture/l2ps/hw/Snowfish.md",
-    "work/nokia/architecture/l2ps/hw/Marlin.md",
     "work/nokia/architecture/l2ps/deployment",
     "resources/imags/Marlin.png",
     "resources/imags/snowfish.png",
-    "Untitled.base",
     "resources/imags/VsCode_Shortcuts.png",
-    "personal/private/个人信息.md",
     "work/nokia/architecture/l2ps/hw",
     "Untitled.md",
     "work/nokia/devops",
     "personal/technology/linux/Linux commands.md",
     "personal/technology/Wireless/Algorithm/MMSE Detection algorithm.md",
     "personal/technology/Vscode/Operation.md",
-    "work/nokia/feature/Untitled.md",
     "work/nokia/development/code/l1/L1_Timing_Window.md",
     "work/nokia/feature",
     "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
@@ -248,9 +251,6 @@
     "personal/collection/UltraEdit.md",
     "personal/technology/linux/Install TensorFlow with pip.md",
     "personal/technology/linux/Install dpdk.md",
-    "personal/AI/obsidian with AI/Obsidian中的AI插件.md",
-    "personal/AI/obsidian with AI/Obsidian local rest api + MCP.md",
-    "personal/AI/obsidian with AI/Custom Frames + Open Webui.md",
     "Untitled 1.base",
     "Untitled.canvas",
     "Untitled 1.canvas",
@@ -258,7 +258,6 @@
     "Untitled 4.base",
     "Untitled 3.base",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
-    "resources/imags/CoreSet_mapping.png",
-    "resources/imags/PDCCH_USS.png"
+    "resources/imags/CoreSet_mapping.png"
   ]
 }

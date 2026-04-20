@@ -1,10 +1,10 @@
 {
-  "textFontFamily": "Nokia Pure Headline Chinese",
+  "textFontFamily": "",
   "nativeMenus": true,
   "enabledCssSnippets": [],
   "accentColor": "",
   "cssTheme": "",
   "theme": "system",
-  "monospaceFontFamily": "Ubuntu Mono derivative Powerline",
-  "baseFontSize": 12
+  "monospaceFontFamily": "",
+  "baseFontSize": 16
 }
