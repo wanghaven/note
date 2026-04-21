@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "bd9a67667b585c6e",
+        "id": "8f82eba789c8e1f1",
         "type": "tabs",
         "children": [
           {
-            "id": "91ab91dde59b9223",
+            "id": "dc435c9e9e17251a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/feature/DL MU-MIMO.md",
-                "mode": "source",
+                "file": "personal/private/个人信息.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DL MU-MIMO"
+              "title": "个人信息"
             }
           }
         ]
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 417.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -193,7 +193,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 218.5
+    "width": 350.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -209,12 +209,38 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "91ab91dde59b9223",
+  "active": "dc435c9e9e17251a",
   "lastOpenFiles": [
-    "personal/collection/Latex.md",
-    "Untitled.base",
+    "personal/private/汪海娇.md",
+    "Note.code-workspace",
+    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_RULES.md",
+    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Investigation_Request.md",
+    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Agent_Knowledge_Framework.md",
+    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Agent.md",
+    "work/nokia/ai/gnb/cplane/PR_Agent",
+    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_Investigation_Request.md",
+    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_RULES.md",
+    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_Agent_Knowledge_Framework.md",
+    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_Agent.md",
+    "work/nokia/ai/gnb/cplane/PR_agent",
+    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_RULES.md",
+    "work/nokia/ai/gnb/cplane/agent/CPLANE_RULES.md",
+    "work/nokia/ai/gnb/cplane/agent/CPLANE_Investigation_Request.md",
+    "work/nokia/ai/gnb/cplane/agent/CPLANE_Agent_Knowledge_Framework.md",
+    "work/nokia/ai/gnb/cplane/agent/CPLANE_Agent.md",
+    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_Agent.md",
+    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_Agent_Knowledge_Framework.md",
+    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_Investigation_Request.md",
     "work/nokia/feature/DL MU-MIMO.md",
+    "work/nokia/ai/gnb/cplane/agent/PR",
+    "work/nokia/ai/gnb/cplane/agent",
+    "work/nokia/ai/gnb/cplane",
+    "work/nokia/ai/gnb",
+    "work/nokia/ai/agents/cplane",
+    "work/nokia/ai/agents",
+    "work/nokia/ai",
     "personal/collection/Markdown for Obsidian.md",
+    "personal/collection/Latex.md",
     "work/nokia/feature/Timing.md",
     "work/nokia/architecture/l2ps/deployment/Marlin.md",
     "work/nokia/architecture/l2ps/deployment/Snowfish.md",
@@ -227,36 +253,11 @@
     "resources/imags/ABIO_deployment_Detail.png",
     "Pasted image 20260413175648.png",
     "resources/imags/ABIO_deployment.png",
-    "work/nokia/architecture/l2ps/deployment",
     "resources/imags/Marlin.png",
     "resources/imags/snowfish.png",
     "resources/imags/VsCode_Shortcuts.png",
-    "work/nokia/architecture/l2ps/hw",
-    "Untitled.md",
-    "work/nokia/devops",
-    "personal/technology/linux/Linux commands.md",
-    "personal/technology/Wireless/Algorithm/MMSE Detection algorithm.md",
-    "personal/technology/Vscode/Operation.md",
-    "work/nokia/development/code/l1/L1_Timing_Window.md",
-    "work/nokia/feature",
-    "work/nokia/project/Parallel Scheduling/Poc/PARALLEL_SCHEDULING_DESIGN.md",
-    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
-    "work/nokia/development/code/l2ps/dl/sch/fd.md",
-    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
-    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
-    "work/nokia/development/code/l1/L1 timing restrition.md",
-    "work/nokia/development/code/l1",
-    "personal/AI/obsidian with AI/Obsidian+AI构建知识网络.md",
-    "work/nokia/development/code/l2ps/dl/sch/td.md",
-    "personal/collection/UltraEdit.md",
-    "personal/technology/linux/Install TensorFlow with pip.md",
-    "personal/technology/linux/Install dpdk.md",
-    "Untitled 1.base",
     "Untitled.canvas",
     "Untitled 1.canvas",
-    "Untitled 5.base",
-    "Untitled 4.base",
-    "Untitled 3.base",
     "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
     "resources/imags/CoreSet_mapping.png"
   ]
