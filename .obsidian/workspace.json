@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 417.5
+    "width": 293.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -193,7 +193,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 350.5
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -209,7 +209,7 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "dc435c9e9e17251a",
+  "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
     "personal/private/汪海娇.md",
     "Note.code-workspace",
