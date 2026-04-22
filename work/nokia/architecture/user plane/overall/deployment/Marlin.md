@@ -1,4 +1,4 @@
-![[Pasted image 20260413181919.png]]
+![[ABIP_deployment_Detail.png]]
 # 506 - 5G Full FDD - Classical
 
 | 506 | 5G Full FDD - Classical |            |                   |          |                                                                                                              |            |              |           |             |              |            |       |       |          |       |         |       |       |       |       |       |        |        |        |        |        |        |        |        |        |        |        |        |        |        |               |                        |                          |                           |                      |                |              |

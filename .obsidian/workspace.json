@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "personal/private/个人信息.md",
-                "mode": "preview",
+                "file": "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "个人信息"
+              "title": "5G User Plane Roadmap and Architecture"
             }
           }
         ]
@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 293.5
+    "width": 374.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -209,44 +209,46 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "7c7b3698c32aa2ac",
+  "active": "fff4e216ff7c54a8",
   "lastOpenFiles": [
-    "personal/private/汪海娇.md",
-    "Note.code-workspace",
-    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_RULES.md",
-    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Investigation_Request.md",
-    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Agent_Knowledge_Framework.md",
-    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Agent.md",
-    "work/nokia/ai/gnb/cplane/PR_Agent",
-    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_Investigation_Request.md",
-    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_RULES.md",
-    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_Agent_Knowledge_Framework.md",
-    "work/nokia/ai/gnb/cplane/PR_agent/CPLANE_Agent.md",
-    "work/nokia/ai/gnb/cplane/PR_agent",
-    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_RULES.md",
-    "work/nokia/ai/gnb/cplane/agent/CPLANE_RULES.md",
-    "work/nokia/ai/gnb/cplane/agent/CPLANE_Investigation_Request.md",
-    "work/nokia/ai/gnb/cplane/agent/CPLANE_Agent_Knowledge_Framework.md",
-    "work/nokia/ai/gnb/cplane/agent/CPLANE_Agent.md",
-    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_Agent.md",
-    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_Agent_Knowledge_Framework.md",
-    "work/nokia/ai/gnb/cplane/agent/PR/CPLANE_Investigation_Request.md",
-    "work/nokia/feature/DL MU-MIMO.md",
-    "work/nokia/ai/gnb/cplane/agent/PR",
-    "work/nokia/ai/gnb/cplane/agent",
-    "work/nokia/ai/gnb/cplane",
-    "work/nokia/ai/gnb",
-    "work/nokia/ai/agents/cplane",
-    "work/nokia/ai/agents",
-    "work/nokia/ai",
+    "work/nokia/architecture/user plane/overall",
+    "work/nokia/architecture/user plane/overall/deployment/Snowfish.md",
+    "work/nokia/architecture/user plane/overall/deployment/Marlin.md",
+    "work/nokia/architecture/user plane/overall/hw/Marlin.md",
+    "work/nokia/architecture/user plane/overall/hw/Snowfish.md",
+    "work/nokia/architecture/user plane/hw/Roadmap.md",
     "personal/collection/Markdown for Obsidian.md",
-    "personal/collection/Latex.md",
-    "work/nokia/feature/Timing.md",
-    "work/nokia/architecture/l2ps/deployment/Marlin.md",
-    "work/nokia/architecture/l2ps/deployment/Snowfish.md",
+    "work/nokia/architecture/user plane/5G User Plane Roadmap and Architecture.md",
+    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
+    "work/nokia/architecture/user plane/overall/Roadmap and Architecture",
+    "work/nokia/architecture/user plane/overall/hw",
+    "work/nokia/architecture/user plane/overall/deployment",
+    "work/nokia/architecture/user plane/l2ps/addressing",
+    "work/nokia/architecture/user plane/l2ps",
     "work/nokia/architecture/l2ps/hw/Snowfish.md",
     "work/nokia/architecture/l2ps/hw/Marlin.md",
+    "work/nokia/architecture/l2ps/hw/Roadmap.md",
+    "work/nokia/architecture/l2ps/deployment/Marlin.md",
+    "work/nokia/architecture/l2ps/deployment/Snowfish.md",
+    "work/nokia/architecture/l2ps/hw",
+    "work/nokia/architecture/l2ps/addressing",
+    "work/nokia/architecture/l2ps/deployment",
+    "work/nokia/architecture/l2ps",
+    "personal/collection/Regular Expressions.md",
+    "personal/collection/WebPage.md",
+    "personal/collection/UltraEdit.md",
+    "personal/private/软件序列号.md",
+    "personal/private/汪海娇.md",
+    "personal/private/实验室.md",
+    "personal/private/历年收支.md",
     "personal/private/个人信息.md",
+    "work/nokia/architecture/user plane/common/Configuration Codel.md",
+    "convert_pdf.py",
+    "Pasted image 20260422150838.png",
+    "work/nokia/architecture/user plane/common/Decomposition.md",
+    "resources/imags/HW_Roadmap.png",
+    "work/nokia/ai/gnb/uplane/FH_parameters.md",
+    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Investigation_Request.md",
     "resources/imags/ABIP_deployment.png",
     "resources/imags/ABIP_deployment.png",
     "resources/imags/ABIP_deployment_Detail.png",
@@ -255,10 +257,8 @@
     "resources/imags/ABIO_deployment.png",
     "resources/imags/Marlin.png",
     "resources/imags/snowfish.png",
-    "resources/imags/VsCode_Shortcuts.png",
     "Untitled.canvas",
     "Untitled 1.canvas",
-    "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas",
-    "resources/imags/CoreSet_mapping.png"
+    "personal/AI/obsidian with AI/Obsidian连接AI的五种方式.canvas"
   ]
 }
