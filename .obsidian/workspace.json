@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "8f82eba789c8e1f1",
+        "id": "f1e3df7b4e7bdbfc",
         "type": "tabs",
         "children": [
           {
-            "id": "dc435c9e9e17251a",
+            "id": "8c83cee6d94b33f4",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "5G User Plane Roadmap and Architecture"
+              "title": "New tab"
             }
           }
         ]
@@ -53,7 +49,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "SWIFT",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -88,11 +84,12 @@
               "title": "实验室"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 257.5
+    "width": 200
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -211,10 +208,11 @@
   },
   "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
+    "personal/private/个人信息.md",
+    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
     "work/nokia/architecture/user plane/l2ps/5G-L2-PS Architecture Summary.md",
     "work/nokia/architecture/user plane/overall/5G-L2-PS Architecture Summary.md",
     "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.backup.md",
-    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
     "work/nokia/architecture/user plane/overall",
     "work/nokia/architecture/user plane/overall/deployment/Snowfish.md",
     "work/nokia/architecture/user plane/overall/deployment/Marlin.md",
@@ -244,7 +242,6 @@
     "personal/private/汪海娇.md",
     "personal/private/实验室.md",
     "personal/private/历年收支.md",
-    "personal/private/个人信息.md",
     "work/nokia/architecture/user plane/common/Configuration Codel.md",
     "Pasted image 20260422150838.png",
     "work/nokia/architecture/user plane/common/Decomposition.md",
