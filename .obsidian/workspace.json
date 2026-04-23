@@ -92,7 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 374.5
+    "width": 257.5
   },
   "right": {
     "id": "2defeddcef257f86",
@@ -193,7 +193,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 348.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -209,8 +209,12 @@
       "remotely-save:Remotely Save": false
     }
   },
-  "active": "fff4e216ff7c54a8",
+  "active": "7c7b3698c32aa2ac",
   "lastOpenFiles": [
+    "work/nokia/architecture/user plane/l2ps/5G-L2-PS Architecture Summary.md",
+    "work/nokia/architecture/user plane/overall/5G-L2-PS Architecture Summary.md",
+    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.backup.md",
+    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
     "work/nokia/architecture/user plane/overall",
     "work/nokia/architecture/user plane/overall/deployment/Snowfish.md",
     "work/nokia/architecture/user plane/overall/deployment/Marlin.md",
@@ -219,7 +223,6 @@
     "work/nokia/architecture/user plane/hw/Roadmap.md",
     "personal/collection/Markdown for Obsidian.md",
     "work/nokia/architecture/user plane/5G User Plane Roadmap and Architecture.md",
-    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
     "work/nokia/architecture/user plane/overall/Roadmap and Architecture",
     "work/nokia/architecture/user plane/overall/hw",
     "work/nokia/architecture/user plane/overall/deployment",
@@ -243,12 +246,9 @@
     "personal/private/历年收支.md",
     "personal/private/个人信息.md",
     "work/nokia/architecture/user plane/common/Configuration Codel.md",
-    "convert_pdf.py",
     "Pasted image 20260422150838.png",
     "work/nokia/architecture/user plane/common/Decomposition.md",
     "resources/imags/HW_Roadmap.png",
-    "work/nokia/ai/gnb/uplane/FH_parameters.md",
-    "work/nokia/ai/gnb/cplane/PR_Agent/CPLANE_Investigation_Request.md",
     "resources/imags/ABIP_deployment.png",
     "resources/imags/ABIP_deployment.png",
     "resources/imags/ABIP_deployment_Detail.png",
