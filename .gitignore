@@ -1,4 +1,5 @@
-.vscode
-.obsidian
-.trash
+.vscode/
+.obsidian/
+.trash/
+.git/
 *.code-workspace
