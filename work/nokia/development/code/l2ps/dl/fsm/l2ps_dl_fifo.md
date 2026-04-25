@@ -8,7 +8,7 @@ class StateStartupHandler
 class StateDefaultHandler
 class StateDefaultRouter
 class StateDeleteHandler
-struct QueueFsmImpl 
+class QueueFsmImpl 
 {
     +StateStartupHandler startupHandler
     +StateDefaultHandler defaultHandler
