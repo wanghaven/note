@@ -275,7 +275,6 @@ ___粗斜体___
 ## 图片
 
 ![Obsidian Logo](https://obsidian.md/images/obsidian-logo-gradient.svg "Obsidian Logo")
-![[VsCode_Shortcuts.png]]
 
 
 ---
