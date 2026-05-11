@@ -4,21 +4,22 @@
 
 **3.0-1.0-1**  (ID: `11110587`)
 
-L2RT Algorithms L2RT Doors SFS requirements ownership is shared between specification groups.
+L2RT Algorithms
+L2RT Doors SFS requirements ownership is shared between specification groups.
 
 Ownership of each L2RT chapter is defined by "**SG Lead " Doors Object.**
 
 Document Owners of L2RT chapter are preferably assigned within SG Lead.
 
-|  |  |   
----|---|---|---  
-**Specification Group** | **Acronym** | **Prime Lead** | **Main Scope**  
-Beamforming and MIMO | BF_MIMO | Fan, Paul (Nokia - DE/Ulm) | Beamforming, SU and MU MIMO techniques and beam tracking procedures  
-Downlink Scheduler | DLS | Janczyk, Georg Raffael (Nokia - DE/Ulm) | DL scheduler algorithms for slot based DL resource allocation and DL link adaptation  
-Uplink Scheduler | ULS | Golderer, Ralf (Nokia - DE/Ulm) | UL scheduler algorithms for slot based UL resource allocation and UL link adaptation  
-QoS and End User Experience | QoS | Liu, Lucy (NSB - CN/Beijing) | Service related functions: QoS, Slicing, MORAN, mIoT, URLLC…  
-Radio Resource Management | RRM | Turon, Lukasz (Nokia - PL/Krakow) | Slow allocation of radio resources and interworking with C-Plane procedures  
-Carrier Aggregation and Multi Connectivity | CA | Huang, Jingbo (NSB - CN/Hangzhou) | Carrier Aggregation and multi connectivity aspects (eg NR-U, LAA)
+|  |  |  |  |
+| --- | --- | --- | --- |
+| **Specification Group** | **Acronym** | **Prime Lead** | **Main Scope** |
+| Beamforming and MIMO | BF\_MIMO | Fan, Paul (Nokia - DE/Ulm) | Beamforming, SU and MU MIMO techniques and beam tracking procedures |
+| Downlink Scheduler | DLS | Janczyk, Georg Raffael (Nokia - DE/Ulm) | DL scheduler algorithms for slot based DL resource allocation and DL link adaptation |
+| Uplink Scheduler | ULS | Golderer, Ralf (Nokia - DE/Ulm) | UL scheduler algorithms for slot based UL resource allocation and UL link adaptation |
+| QoS and End User Experience | QoS | Liu, Lucy (NSB - CN/Beijing) | Service related functions: QoS, Slicing, MORAN, mIoT, URLLC… |
+| Radio Resource Management | RRM | Turon, Lukasz (Nokia - PL/Krakow) | Slow allocation of radio resources and interworking with C-Plane procedures |
+| Carrier Aggregation and Multi Connectivity | CA | Huang, Jingbo (NSB - CN/Hangzhou) | Carrier Aggregation and multi connectivity aspects (eg NR-U, LAA) |
 
 ---
 

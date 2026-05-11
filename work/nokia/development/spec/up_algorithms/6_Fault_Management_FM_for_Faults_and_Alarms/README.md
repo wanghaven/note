@@ -4,7 +4,8 @@
 
 **6.0-2.0-1**  (ID: `11230057`)
 
-Fault Management (FM) for Faults and Alarms When an error occurs, application informs OAM of the faulty situation by reporting a raw fault indication to it as described in 5G_UP_2724_replaced([11391923](https://dn-prod.ext.net.nokia.com/rm/resources/BI_ufbP2fvkEe-AqvopbP1qhQ)). A raw fault launches a specific BTS Fault (several raw faults can launch the same BTS Fault). Each fault has an individual fault ID, which can be used to identify the fault.
+Fault Management (FM) for Faults and Alarms
+When an error occurs, application informs OAM of the faulty situation by reporting a raw fault indication to it as described in 5G\_UP\_2724\_replaced([11391923](https://dn-prod.ext.net.nokia.com/rm/resources/BI_ufbP2fvkEe-AqvopbP1qhQ)). A raw fault launches a specific BTS Fault (several raw faults can launch the same BTS Fault). Each fault has an individual fault ID, which can be used to identify the fault.
 
 Overall there are two categories of BTS Faults:
 
@@ -24,9 +25,10 @@ For the application handling of faults is similar regardless of the category.
 
 **6.0-3.0-1**  (ID: `11230070`)
 
-Fault Management (FM) for Faults and Alarms Alarms are defined as part of CP2 feature work. Faults can be defined as part of CP2 and/or CP3.
+Fault Management (FM) for Faults and Alarms
+Alarms are defined as part of CP2 feature work. Faults can be defined as part of CP2 and/or CP3.
 
-Each alarm and fault is associated with a Managed Object Class (MOC), see 5G_UP_2718_replaced([11391877](https://dn-prod.ext.net.nokia.com/rm/resources/BI_ufbP0_vkEe-AqvopbP1qhQ)).
+Each alarm and fault is associated with a Managed Object Class (MOC), see 5G\_UP\_2718\_replaced([11391877](https://dn-prod.ext.net.nokia.com/rm/resources/BI_ufbP0_vkEe-AqvopbP1qhQ)).
 
 Alarms and faults are defined in NIDD, for more details see process guidelines in:
 
@@ -42,8 +44,9 @@ In general, one should always consider the need and purpose carefully before int
 
 **6.0-4.0-1**  (ID: `11230086`)
 
-Fault Management (FM) for Faults and Alarms User Plane faults and alarms are defined in NIDD (see 5G_UP_ALG_15492_replaced([11230065](https://dn-prod.ext.net.nokia.com/rm/resources/BI_kysJ8fvSEe-AqvopbP1qhQ)) for guidance).
+Fault Management (FM) for Faults and Alarms
+User Plane faults and alarms are defined in NIDD (see 5G\_UP\_ALG\_15492\_replaced([11230065](https://dn-prod.ext.net.nokia.com/rm/resources/BI_kysJ8fvSEe-AqvopbP1qhQ)) for guidance).
 
-For how User Plane applications shall report faults see 5G_UP_2724_replaced([11391923](https://dn-prod.ext.net.nokia.com/rm/resources/BI_ufbP2fvkEe-AqvopbP1qhQ)).
+For how User Plane applications shall report faults see 5G\_UP\_2724\_replaced([11391923](https://dn-prod.ext.net.nokia.com/rm/resources/BI_ufbP2fvkEe-AqvopbP1qhQ)).
 
 ---

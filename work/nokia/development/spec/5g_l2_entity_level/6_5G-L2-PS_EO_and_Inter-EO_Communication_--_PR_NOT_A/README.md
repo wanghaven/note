@@ -4,9 +4,10 @@
 
 **6.0-1.0-4**  (ID: `11241166`)
 
-5G-L2-PS EO and Inter-EO Communication -- PR NOT ACCEPTABLE ! Review Materials:
+5G-L2-PS EO and Inter-EO Communication -- PR NOT ACCEPTABLE !
+Review Materials:
 
-[zip_desc][Unsupported file type for text extraction: .zip][/zip_desc][zip_path]https://storage.googleapis.com/dng_files/attachments/m24dng_5G_L2_Entity_Level_file15864_0.zip[/zip_path]
+[zip\_desc][Unsupported file type for text extraction: .zip][/zip\_desc][zip\_path]https://storage.googleapis.com/dng\_files/attachments/m24dng\_5G\_L2\_Entity\_Level\_file15864\_0.zip[/zip\_path]
 
 ---
 
