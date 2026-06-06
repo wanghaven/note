@@ -1,5 +1,6 @@
 .vscode/
 .trash/
 .git/
+.obsidian/*.json
 temp/
 *.code-workspace
