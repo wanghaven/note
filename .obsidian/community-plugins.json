@@ -1,7 +1,7 @@
 [
-  "mermaid-popup",
-  "obsidian-git",
   "obsidian-plantuml",
+  "obsidian-git",
   "editor-width-slider",
+  "mermaid-popup",
   "obsidian-image-toolkit"
 ]
