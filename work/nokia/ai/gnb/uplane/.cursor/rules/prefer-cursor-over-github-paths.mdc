@@ -1,0 +1,46 @@
+---
+alwaysApply: true
+---
+
+# Path resolution: prefer `.cursor/` over `.github/` for agents, skills, rules
+
+The gNB repository (typically mounted at `/workspace`) is migrating
+shared AI assets from `.github/{agents,skills,rules,instructions,prompts}/`
+to `.cursor/{agents,skills,rules}/`. During the transition many agent
+files, skill files, `AGENTS.md` files, and subagent prompts still spell
+their cross-references with the legacy `.github/` prefix while the
+actual canonical copy now lives under `.cursor/`.
+
+When you (the AI) encounter a path that starts with — or contains the
+segment — `/.github/agents/`, `/.github/skills/`, `/.github/rules/`,
+`/.github/instructions/`, or `/.github/prompts/` anywhere inside the
+gNB workspace (markdown links, inline backticked paths, YAML front
+matter, shell commands, subagent prompts you forward, etc.), resolve
+the path with this two-step lookup:
+
+1. Substitute `/.github/` with `/.cursor/` in the path and try to read /
+   reference the resulting `.cursor/...` path first. If that file or
+   directory exists, use it and silently treat the rewrite as the
+   intended target.
+2. Only if the rewritten `.cursor/...` path does not exist, fall back
+   to the original `.github/...` path.
+
+This rewrite applies **only to the five subdirectories listed above**
+(shared AI assets). Do not rewrite unrelated `.github/` paths such as
+`.github/workflows/`, `.github/CODEOWNERS`, `.github/ISSUE_TEMPLATE/`,
+`.github/PULL_REQUEST_TEMPLATE.md`, or any other GitHub-platform file —
+those remain authoritative under `.github/`.
+
+When you delegate to a subagent and the prompt template you are about
+to send contains a `.github/{agents|skills|rules|instructions|prompts}/`
+path, rewrite it to `.cursor/...` first (after verifying the target
+exists) before sending the prompt, so the subagent sees the canonical
+location directly.
+
+If both `.cursor/...` and `.github/...` exist and their contents
+differ, prefer `.cursor/...` and note the divergence to the user — that
+is a migration-cleanup signal, not a real conflict for path resolution.
+
+This is a transitional rule. As authors migrate their references the
+`.github/` form will disappear from new files; the rule should stay in
+effect until the legacy copies are removed.

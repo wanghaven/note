@@ -1,0 +1,13 @@
+# Cursor chat transcripts — local-only, contain ticket / internal-architecture
+# discussions that should not be pushed to a shared repo.
+.specstory/
+
+# Local pipeline run logs if mirrored under the pack (canonical default is
+# ~/Downloads/l2ps-feature-runs/ per l2ps-feature-pipeline.agent.md).
+l2ps-feature-runs/
+
+# Editor / OS junk.
+*.swp
+*.swo
+*~
+.DS_Store

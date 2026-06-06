@@ -191,8 +191,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ace3aec21a28cf79",
+  "active": "a0e2505d896851d4",
   "lastOpenFiles": [
+    "work/nokia/ai/gnb/uplane/README.md",
+    "work/nokia/ai/gnb/uplane/AGENTS.md",
+    "work/nokia/ai/gnb/uplane",
     "conflict-files-obsidian-git.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/architecture/user plane/l2ps/5G-L2-PS Architecture.md",
