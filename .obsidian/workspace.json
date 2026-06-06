@@ -1,24 +1,24 @@
 {
   "main": {
-    "id": "c0b4c9367c5d726c",
+    "id": "cee8865ae1caa004",
     "type": "split",
     "children": [
       {
-        "id": "0fa1c31e75793afd",
+        "id": "052194b7d6d9c5d2",
         "type": "tabs",
         "children": [
           {
-            "id": "ace3aec21a28cf79",
+            "id": "f2dc562e8a869ba4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
+                "file": "work/nokia/architecture/user plane/l2ps/5G-L2-PS Architecture Summary.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "l2ps_srsbm"
+              "title": "5G-L2-PS Architecture Summary"
             }
           }
         ]
@@ -27,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "ed3eb80afd48227d",
+    "id": "64feedb63052b60d",
     "type": "split",
     "children": [
       {
-        "id": "06527078a04ceccf",
+        "id": "bac18d34afee9fe4",
         "type": "tabs",
         "children": [
           {
-            "id": "7427198b993e63e9",
+            "id": "247341f75a286ff0",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -48,7 +48,7 @@
             }
           },
           {
-            "id": "63cae432c4e64f31",
+            "id": "f8af32871c0f6e52",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -65,7 +65,7 @@
             }
           },
           {
-            "id": "59554a4901f0dfde",
+            "id": "00739c432ba1892b",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -78,18 +78,18 @@
       }
     ],
     "direction": "horizontal",
-    "width": 219.5
+    "width": 300
   },
   "right": {
-    "id": "fce9e8cb4cfa5a06",
+    "id": "ce77c5308b4e7104",
     "type": "split",
     "children": [
       {
-        "id": "cf0e48fba99b5649",
+        "id": "f514b40e93ba6881",
         "type": "tabs",
         "children": [
           {
-            "id": "deacaa39705edba8",
+            "id": "1b8734a3c859feb6",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -107,7 +107,7 @@
             }
           },
           {
-            "id": "012f026e25d6f764",
+            "id": "8e489ad68f2814c2",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
@@ -120,7 +120,7 @@
             }
           },
           {
-            "id": "844e437ae6771040",
+            "id": "077c3a5579c4b0ee",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -135,7 +135,7 @@
             }
           },
           {
-            "id": "244ba0af0e70e694",
+            "id": "2eae85dd89abd317",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -149,7 +149,7 @@
             }
           },
           {
-            "id": "715004a47cfbfb9c",
+            "id": "85c01bf15a183f71",
             "type": "leaf",
             "state": {
               "type": "outline",
@@ -163,7 +163,7 @@
             }
           },
           {
-            "id": "a0e2505d896851d4",
+            "id": "f79f7efe4c0a6ddd",
             "type": "leaf",
             "state": {
               "type": "git-view",
@@ -191,12 +191,23 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ace3aec21a28cf79",
+  "active": "f2dc562e8a869ba4",
   "lastOpenFiles": [
+    "work/nokia/architecture/user plane/overall/Roadmap and Architecture/5G User Plane Roadmap and Architecture.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm_mermaid.md",
-    "未命名.base",
-    "work/nokia/development/code/l2ps/dl/sch/fd.md",
-    "work/nokia/development/code/l2ps/dl/sch/td.md"
+    "personal/technology/Wireless/o-ran/images/SRS_BF_DL_Layer_Channel_Index_UeId.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_general_cplane_procedure.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_Stream_Baesd_UL_BF.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_Example_Of_SRS_Block_Diagram.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_SRS_Span_definition.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_Port_Based_UL_BF.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_Joint_UL_BF.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_DL_Layer_Index_UeId.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_DL_Port_Channel_Index_UeId.png",
+    "personal/technology/Wireless/o-ran/images/SRS_BF_Block_Diagram.png",
+    "personal/technology/Wireless/o-ran/images",
+    "personal/technology/Wireless/o-ran/R005_12.7_SRS-BF_System_Architecture_Analysis.md",
+    "personal/technology/Wireless/o-ran"
   ]
 }
