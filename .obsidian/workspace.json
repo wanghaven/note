@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d5ffa75726076dd7",
+        "id": "7addbf9ecdbe9ea1",
         "type": "tabs",
         "children": [
           {
-            "id": "490cd682bb4911c7",
+            "id": "3da04d7eaf365fdd",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -187,27 +187,20 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "490cd682bb4911c7",
+  "active": "3da04d7eaf365fdd",
   "lastOpenFiles": [
-    "work/nokia/development/code/l2ps/l2ps_ulsch.md",
-    "work/nokia/development/code/l2ps/l2ps_srsbm.md",
-    "work/nokia/development/code/l2ps/l2ps_fd.md",
-    "work/nokia/development/code/l2ps/l2ps_dlsch.md",
     "work/nokia/development/code/l2ps/l2ps_bbrm.md",
-    "work/nokia/development/code/l2ps/l2ps_dlsch_mermaid.md",
-    "work/nokia/development/code/l2ps/l2ps_ulsch_mermaid.md",
-    "work/nokia/development/code/l2ps/l2ps_fd_mermaid.md",
-    "work/nokia/development/code/l2ps/l2ps_bbrm_mermaid.md",
-    "work/nokia/development/code/l2ps/l2ps_srsbm_mermaid.md",
+    "work/nokia/development/code/l2ps/l2ps_dlsch.md",
+    "work/nokia/development/code/l2ps/l2ps_ulsch.md",
+    "work/nokia/development/code/l2ps/l2ps_fd.md",
     "work/nokia/development/code/l2ps/l2ps_dl_fsm_fifo.md",
-    "work/nokia/development/code/l2ps/l2ps_dl_sch_fd.md",
-    "work/nokia/development/code/l2ps/l2ps_dl_sch_td.md",
     "work/nokia/development/feature/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+    "work/nokia/development/code/l2ps/l2ps_srsbm.md",
     "work/nokia/ai/gnb/uplane/README.md",
     "work/nokia/ai/gnb/uplane/AGENTS.md",
     "work/nokia/ai/gnb/uplane",
