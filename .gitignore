@@ -2,5 +2,5 @@
 .trash/
 .git/
 .obsidian/*.json
-temp/
 *.code-workspace
+temp/

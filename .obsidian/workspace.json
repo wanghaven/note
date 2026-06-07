@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "bd9dc8d0ad80a3dd",
+        "id": "1a8aad05f066fd19",
         "type": "tabs",
         "children": [
           {
-            "id": "8582d57be10f509c",
+            "id": "27872cca720c1cb8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "work/nokia/development/feature/CB012971 Dual Boost Zero-forcing MU MIMO.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "CB012971 Dual Boost Zero-forcing MU MIMO"
+              "title": "新标签页"
             }
           }
         ]
@@ -191,12 +187,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7427198b993e63e9",
+  "active": "a0e2505d896851d4",
   "lastOpenFiles": [
+    "work/nokia/development/feature/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
-    "work/nokia/development/feature/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/l2ps_dl_fsm_fifo.md",
