@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "0fa1c31e75793afd",
+        "id": "bd9dc8d0ad80a3dd",
         "type": "tabs",
         "children": [
           {
-            "id": "ace3aec21a28cf79",
+            "id": "8582d57be10f509c",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "l2ps_srsbm"
+              "title": "新标签页"
             }
           }
         ]
@@ -78,7 +74,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 219.5
+    "width": 391.5
   },
   "right": {
     "id": "fce9e8cb4cfa5a06",
@@ -193,16 +189,21 @@
   },
   "active": "a0e2505d896851d4",
   "lastOpenFiles": [
+    "work/nokia/development/code/l2ps/dl/sch/td.md",
+    "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
+    "work/nokia/development/code/l2ps/dl/sch/fd.md",
+    "work/nokia/development/feature/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+    "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
+    "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
+    "work/nokia/development/code/l2ps/dl/l2ps_dl_fsm_fifo.md",
+    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/ai/gnb/uplane/README.md",
     "work/nokia/ai/gnb/uplane/AGENTS.md",
     "work/nokia/ai/gnb/uplane",
     "conflict-files-obsidian-git.md",
-    "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm.md",
     "work/nokia/architecture/user plane/l2ps/5G-L2-PS Architecture.md",
     "work/nokia/architecture/user plane/l2ps/L2PS_Architecture.md",
     "work/nokia/development/code/l2ps/srsBm/l2ps_srsbm_mermaid.md",
-    "未命名.base",
-    "work/nokia/development/code/l2ps/dl/sch/fd.md",
-    "work/nokia/development/code/l2ps/dl/sch/td.md"
+    "未命名.base"
   ]
 }
