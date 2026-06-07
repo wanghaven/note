@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "1a8aad05f066fd19",
+        "id": "d5ffa75726076dd7",
         "type": "tabs",
         "children": [
           {
-            "id": "27872cca720c1cb8",
+            "id": "490cd682bb4911c7",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -187,16 +187,27 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a0e2505d896851d4",
+  "active": "490cd682bb4911c7",
   "lastOpenFiles": [
+    "work/nokia/development/code/l2ps/l2ps_ulsch.md",
+    "work/nokia/development/code/l2ps/l2ps_srsbm.md",
+    "work/nokia/development/code/l2ps/l2ps_fd.md",
+    "work/nokia/development/code/l2ps/l2ps_dlsch.md",
+    "work/nokia/development/code/l2ps/l2ps_bbrm.md",
+    "work/nokia/development/code/l2ps/l2ps_dlsch_mermaid.md",
+    "work/nokia/development/code/l2ps/l2ps_ulsch_mermaid.md",
+    "work/nokia/development/code/l2ps/l2ps_fd_mermaid.md",
+    "work/nokia/development/code/l2ps/l2ps_bbrm_mermaid.md",
+    "work/nokia/development/code/l2ps/l2ps_srsbm_mermaid.md",
+    "work/nokia/development/code/l2ps/l2ps_dl_fsm_fifo.md",
+    "work/nokia/development/code/l2ps/l2ps_dl_sch_fd.md",
+    "work/nokia/development/code/l2ps/l2ps_dl_sch_td.md",
     "work/nokia/development/feature/CB012971 Dual Boost Zero-forcing MU MIMO.md",
     "work/nokia/development/code/l2ps/dl/sch/td.md",
     "work/nokia/development/code/l2ps/dl/fsm/l2ps_dl_fifo.md",
     "work/nokia/development/code/l2ps/dl/sch/fd.md",
     "work/nokia/development/code/l2ps/dl/eirp/eirpControl.md",
     "work/nokia/development/code/l2ps/dl/beamforming/sub-band beamforming/CB012971 Dual Boost Zero-forcing MU MIMO.md",
-    "work/nokia/development/code/l2ps/l2ps_dl_fsm_fifo.md",
-    "work/nokia/development/code/l2ps/l2ps_srsbm.md",
     "work/nokia/ai/gnb/uplane/README.md",
     "work/nokia/ai/gnb/uplane/AGENTS.md",
     "work/nokia/ai/gnb/uplane",

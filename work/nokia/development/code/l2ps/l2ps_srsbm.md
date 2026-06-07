@@ -11,33 +11,45 @@
 SRS-BM 是 L2-PS per-cell-group EO 之一，EO 名称形态为 `L2RtPool<P>_L2PsSrsBmYy`。每个 SRS-BM EO 有两个 atomic queue：普通事件队列 `L2PsSrsXxYy` 和调度时间队列 `L2PsSrtXxYy`。它消费来自 SGNL、DL、UL、L1-UL 和平台 slot timer 的内部事件，输出 DL/UL beam selection 结果以及 DL CoMa power/correlation measurement。
 
 ```mermaid
-%%{init: {"flowchart": {"curve": "linear", "nodeSpacing": 30, "rankSpacing": 60}}}%%
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 50}}}%%
 flowchart LR
-    subgraph Inputs[" "]
-        direction TB
-        CPRT[CP-RT / SGNL<br/>psCell psUser]
-        Platform[SlotSynchroService]
-        L1UL[L1-UL]
-        DLSCH_IN[DL Scheduler EO]
-        ULSCH_IN[UL Scheduler EO]
+    %% External sources
+    CPRT["L3 · CP-RT"]
+
+    %% L2-PS subgraph
+    subgraph L2PS["L2 · PS"]
+        direction LR
+        SGNL["Signaling"]
+        SYNC[SlotSynchro]
+        DLSCH[DL SCH]
+        ULSCH[UL SCH]
+        SRSBM[SRS-BM]
     end
 
-    SRSBM[SRS-BM EO<br/>L2PsSrsXxYy<br/>L2PsSrtXxYy]
-
-    subgraph Outputs[" "]
-        direction TB
-        DLSCH_OUT[DL Scheduler EO]
-        ULSCH_OUT[UL Scheduler EO]
+    %% L1 subgraph
+    subgraph L1["L1"]
+        L1RX[L1 UL]
     end
 
-    CPRT -->|CellGroupSetupReq<br/>CellSetupReq<br/>UserSetupReq<br/>UserModifyReq<br/>UserDeleteInd<br/>BeamConfigUpdateReq| SRSBM
-    Platform -->|SlotSynchroInd<br/>Start/StopSlotSynchroInd| SRSBM
-    L1UL -->|SrsReceiveRespBmPs| SRSBM
-    DLSCH_IN -->|DlToSrsBmIntraUpdate<br/>SlotTypeTrigger| SRSBM
-    ULSCH_IN -->|UlToSrsSlotTypeSync| SRSBM
+    %% L3 → SGNL → SRS-BM
+    CPRT -->|CellSetupReq / UserSetupReq| SGNL
+    SGNL -->|InternalCellSetupReq / InternalUserSetupReq / BeamConfigUpdateReq| SRSBM
 
-    SRSBM -->|SrsBeamSelectionInd<br/>SrsComaMeasurementInd| DLSCH_OUT
-    SRSBM -->|UlSrsBeamSelectionInd| ULSCH_OUT
+    %% L2-PS internal inputs
+    SYNC -->|SlotSynchroInd / Start-StopSlotSynchroInd| SRSBM
+    DLSCH -->|DlToSrsBmIntraUpdate / SlotTypeTrigger| SRSBM
+    ULSCH -->|UlToSrsSlotTypeSync| SRSBM
+
+    %% L1 feedback
+    L1RX -->|SrsReceiveRespBmPs| SRSBM
+
+    %% SRS-BM outputs
+    SRSBM -->|SrsBeamSelectionInd / SrsComaMeasurementInd| DLSCH
+    SRSBM -->|UlSrsBeamSelectionInd| ULSCH
+
+    %% Responses
+    SRSBM -.->|InternalSetupResp| SGNL
+    SGNL -.->|SetupResp| CPRT
 ```
 
 ## 2. Top-Level Class Overview
@@ -559,7 +571,7 @@ SRS-BM has two processing modes:
 - TDD FR1 with `scheUePoolingAllowed`: L1 SRS responses are stored in `CircularFifoSrsReceiveRespBmPs`; slot sync, slot-type trigger, and slot continuation decide when and how much to process. Atomic mode can stop mid-message when `SrsBmBudget` is exceeded and resume later.
 
 ```mermaid
-%%{init: {"flowchart": {"curve": "linear", "nodeSpacing": 20, "rankSpacing": 50}}}%%
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 20, "rankSpacing": 50}}}%%
 flowchart TB
     Resp[L1 SrsReceiveRespBmPs]
     Handler[SrsReceiveRespBmPsHandler]
@@ -661,7 +673,7 @@ sequenceDiagram
 ### 14.1 Module Decomposition
 
 ```mermaid
-%%{init: {"flowchart": {"curve": "linear", "nodeSpacing": 30, "rankSpacing": 60}}}%%
+%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
 flowchart LR
     subgraph shell["EO Shell"]
         direction TB
@@ -1007,7 +1019,7 @@ sequenceDiagram
 ### 14.6 Coupling Analysis
 
 ```mermaid
-%%{init: {"flowchart": {"curve": "linear"}}}%%
+%%{init: {"flowchart": {"curve": "basis"}}}%%
 flowchart TB
     subgraph coupling["Module Dependency Matrix"]
         direction LR
@@ -1158,7 +1170,72 @@ srsBm/
 - **FSM 兼容**：`handleEvent` 的 `bool` 返回值逻辑保持不变 — Lifecycle FSM 仍然在 CellSetupReq 时返回 `true` 触发 startup→default 转换。
 - **消息兼容**：所有外部消息 ID 和 payload 格式不变，只是内部组织改变。
 
-## 15. Reading Map
+### 14.12 Boundary clarifications (consistent with other EO refactorings)
+
+| # | Item | Clarification |
+|---|------|---------------|
+| 1 | Module 6 "Output Gateway" | Sole producer of `SrsBeamSelectionInd` / `DlSrsBeamSelectionInd` / `UlSrsBeamSelectionInd` / `DlSrsComaPowerInd` to DL SCH (M2 / M4) and UL SCH (M2). |
+| 2 | Module 2 "Response Buffer" | Sole consumer of `SrsReceiveRespBmPs` from L1-UL. Output Gateway uses the resulting beam data via `DlBeamResultStore` / `UlBeamResultStore`. |
+| 3 | Module 7 "Slot Scheduler" | Subscribes to `SlotSynchroInd` (own slot tick); orchestrates the pipeline (Buffer → CoMa → Calculators → Output). |
+| 4 | `RuntimePolicy` | SRS-BM-local; computed once at CellSetup. Other EOs have functionally equivalent stores (`CellConfigStore` / `TimeBudgetStore`). |
+
+## 15. Cross-EO Refactoring Consistency
+
+This section validates that the SRS-BM refactoring above is mutually consistent with the parallel proposals in `l2ps_dlsch_mermaid.md`, `l2ps_ulsch_mermaid.md`, `l2ps_fd_mermaid.md`, and `l2ps_bbrm_mermaid.md`. **You are here: SRS-BM**.
+
+### 15.1 Common refactoring shape
+
+| Property                              | SRS-BM (here) | DL SCH      | UL SCH      | FD EO       | BBRM        |
+| ------------------------------------- | ------------- | ----------- | ----------- | ----------- | ----------- |
+| Module count                          | **7**         | 7           | 7           | 6           | 7           |
+| Has Event Dispatcher module?          | **No (FSM)**  | No (FSM)    | No (FSM)    | Yes (M1)    | Yes (M1)    |
+| Has Orchestrator / Pipeline module?   | **Yes (M7)**  | Yes (M1)    | Yes (M1)    | Yes (M2)    | No (M6 sync)|
+| Single-writer DB store invariant      | **✓**         | ✓           | ✓           | ✓           | ✓           |
+| ≤ 4 public methods per module         | **✓** (mostly; M1 has 6) | ✓ | ✓        | ✓           | ✓           |
+| Self-Check Table                      | **✓**         | ✓           | ✓           | ✓           | ✓           |
+| Hot-path fixed-size storage           | **✓**         | ✓           | ✓           | ✓           | ✓           |
+
+### 15.2 Inter-EO message-to-module mapping (SRS-BM endpoint highlighted)
+
+| Message                                    | Producer EO (Module)                          | Consumer EO (Module)                          |
+| ------------------------------------------ | --------------------------------------------- | --------------------------------------------- |
+| `SrsReceiveRespBmPs`                       | L1-UL                                         | **SRS-BM (M2 Response Buffer)**               |
+| `SrsBeamSelectionInd` / `DlSrsBeamSelectionInd` | **SRS-BM (M6 Output Gateway)**           | DL SCH (M2 Eligibility Engine, via UE DB beam state) |
+| `UlSrsBeamSelectionInd`                    | **SRS-BM (M6 Output Gateway)**                | UL SCH (M2 Pre-Scheduler)                     |
+| `DlSrsComaPowerInd` / `SrsComaMeasurementInd` | **SRS-BM (M6 Output Gateway)**             | DL SCH (M4 Resource Allocator / M2 Eligibility) |
+| `MeasurementSlotTrigger`                   | DL/UL SCH (slot tick relay)                   | **SRS-BM (M7 Slot Scheduler)**                |
+| `CellSetupReq` / `UserSetupReq` / `*DeleteReq` | SGNL EO                                   | **SRS-BM (M1 Lifecycle)**, DL SCH (M7), UL SCH (M6), FD EO (M1), BBRM (M2) |
+| `SlotSynchroInd` / `SlotSynchroIndCont`    | Platform Timer / FD EO                        | **SRS-BM (M7 Slot Scheduler)**                |
+| `StreamStartInd` / `StreamStopInd`         | TTI tracer / mgmt                             | (n/a for SRS-BM directly; consumed by FD EO M1)|
+
+### 15.3 DB store namespace check (no collisions)
+
+Each EO owns its DB stores; identically-named stores in different docs are distinct.
+
+| Logical concept   | SRS-BM (here)                | DL SCH                                 | UL SCH                  | FD EO                                | BBRM                                |
+| ----------------- | ---------------------------- | -------------------------------------- | ----------------------- | ------------------------------------ | ----------------------------------- |
+| Cell config       | **`CellConfigStore` (SRS-BM local)** | `CellConfigStore` (DL local)   | (Cell DB)               | (pointer hand-off from DL SCH)       | `CellConfigStore` (pool config)     |
+| UE state          | **`UeRegistry` (SRS-BM local)** | `UeEligibilityStore` + `UeMetricStore` | (UE DB)              | `EoDb`                               | `UePoolStore`                        |
+| Beam result       | **`DlBeamResultStore` + `UlBeamResultStore`** | (consumed via UE state)  | (consumed via UE state) | (consumed via UE state)              | (n/a)                                |
+| CoMa              | **`DlCoMaStore` + `UlCoMaStore`** | (n/a)                              | (n/a)                   | (n/a)                                | (n/a)                                |
+| Runtime policy    | **`RuntimePolicy` (immutable after setup)** | `TimeBudgetStore`           | `Slot Dynamic DB`       | (slot-scoped)                        | `SyncStore`                          |
+
+### 15.4 Observed cross-EO issues and resolutions
+
+| # | Issue                                                                           | Resolution                                                                                                                                |
+| - | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | SRS-BM has 4 beam/CoMa stores; DL/UL SCH refactorings reference "beam state" but no dedicated store | DL/UL consume beam result via UE DB updates (the SRS-BM Output Gateway writes per-UE beam fields). No shared store, only message passing. |
+| 2 | SRS-BM `RuntimePolicy` has no equivalent in DL SCH refactoring                   | DL SCH equivalent is `CellConfigStore` (set once at setup, read-only thereafter) + `TimeBudgetStore` (slot-scoped). Each EO computes its own. |
+| 3 | SRS-BM Module 7 is the Orchestrator (last); DL/UL SCH put Orchestrator at M1     | Numbering convention only — functionally equivalent. SRS-BM's pipeline reads naturally Lifecycle → Buffer → CoMa → Calc → Output → Sched. |
+| 4 | SRS-BM does not have an Event Dispatcher (vs BBRM / FD EO)                       | SRS-BM dispatch is handled by the existing 3-state Lifecycle FSM (Startup / Default / Delete). Same approach as DL SCH and UL SCH.        |
+| 5 | SRS-BM `MeasurementSlotTrigger` source is DL/UL slot tick relay                  | Cross-EO trigger; SRS-BM M7 treats it as an external slot event (same as `SlotSynchroInd`). No timing-skew risk because all EOs share the platform timer. |
+| 6 | DL/UL CRTP sharing (`SrsBmManager`) is dropped by SRS-BM refactoring             | DL Beam Calculator (M4) and UL Beam Calculator (M5) are independent; no cross-coupling. Aligns with DL/UL SCH refactoring's "no CRTP sharing" rule. |
+
+**Conclusion**: The five refactoring proposals are **mutually consistent**. SRS-BM is the only EO producing beam/CoMa data; DL/UL/FD/BBRM all consume it via typed messages (`SrsBeamSelectionInd` family) or via UE-DB beam-state updates. No DB store is shared across EOs.
+
+---
+
+## 16. Reading Map
 
 | Topic                                 | Code                                                                                                                                                                                    |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
