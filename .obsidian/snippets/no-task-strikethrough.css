@@ -1,0 +1,18 @@
+/* 取消"已完成任务"的删除线（阅读视图 + 实时预览都覆盖） */
+.markdown-rendered .task-list-item.is-checked,
+.markdown-rendered .task-list-item.is-checked *,
+.markdown-source-view .task-list-item.is-checked,
+.markdown-source-view .task-list-item.is-checked *,
+.cm-line:has(.task-list-item-checkbox:checked),
+.cm-line:has(.task-list-item-checkbox:checked) * {
+  text-decoration: none !important;
+}
+
+/* 如不想让完成项变灰/变淡，取消下面注释即可 */
+/*
+.markdown-rendered .task-list-item.is-checked,
+.markdown-source-view .task-list-item.is-checked {
+  color: var(--text-normal) !important;
+  opacity: 1 !important;
+}
+*/
