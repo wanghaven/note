@@ -1,6 +1,8 @@
 .vscode/
 .trash/
 .git/
-.obsidian/*.json
+.obsidian/app.json
+.obsidian/appearance.json
+.obsidian/core-plugins.json
 *.code-workspace
 temp/
