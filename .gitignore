@@ -1,8 +1,8 @@
 .vscode/
 .trash/
 .git/
-GeminiHelper/
-copilot/
+.GeminiHelper/
+.copilot/
 .obsidian/app.json
 .obsidian/appearance.json
 .obsidian/core-plugins.json
