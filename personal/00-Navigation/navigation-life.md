@@ -24,7 +24,8 @@ aliases:
 
 ## Contacts
 
-- [[contacts]]
+- [[lab]]
+- [[mobile]]
 
 ## Finance
 
