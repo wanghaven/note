@@ -4,7 +4,7 @@
   "debounce": 3,
   "localJar": "C:/apps/scripts/plantuml.jar",
   "javaPath": "java",
-  "dotPath": "dot",
+  "dotPath": "C:/apps/Graphviz/bin/dot.exe",
   "defaultProcessor": "png",
   "cache": 60,
   "exportPath": ""
