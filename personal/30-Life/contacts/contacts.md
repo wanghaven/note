@@ -1,3 +1,15 @@
+---
+title: 通讯录
+date: 2026-06-11
+tags:
+  - personal/life
+  - personal/contacts
+status: draft
+aliases:
+  - 实验室
+  - 通讯录
+---
+
 # 诸静老师实验室联系方式 2012-2
 |姓名|手机|家庭电话|单位|邮箱|
 |---|---|---|---|---|

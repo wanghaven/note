@@ -1,3 +1,14 @@
+---
+title: 个人信息
+date: 2026-06-11
+tags:
+  - personal/life
+  - personal/info
+status: draft
+aliases:
+  - 个人信息
+  - 账号信息
+---
 
 # 账号信息
 

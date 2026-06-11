@@ -16,12 +16,11 @@ aliases:
 
 ## Personal Information
 
-- [[个人信息]]
+- [[personal-profile]]
 
 ## Family
 
-- [[汪海娇]]
-- [[实验室]]
+- [[wang-haijiao]]
 
 ## Contacts
 
@@ -29,11 +28,11 @@ aliases:
 
 ## Finance
 
-- [[历年收支]]
+- [[income-expense]]
 
 ## Digital Life
 
-- [[软件序列号]]
+- [[software-licenses]]
 
 ## Related
 
