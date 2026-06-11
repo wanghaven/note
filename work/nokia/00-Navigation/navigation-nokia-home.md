@@ -28,10 +28,10 @@ aliases:
 
 ## Current Work Areas
 
-- [[5G-L2-PS Architecture]]
-- [[DL MU-MIMO]]
-- [[eirpControl]]
-- [[CB012971 Dual Boost Zero-forcing MU MIMO]]
+- [[l2ps-architecture]]
+- [[dl-mu-mimo]]
+- [[eirp-control]]
+- [[dual-boost-zero-forcing-mu-mimo]]
 
 ## Related
 

@@ -16,11 +16,11 @@ aliases:
 
 ## Code Reading
 
-- [[l2ps_bbrm]]
-- [[l2ps_dlsch]]
-- [[l2ps_fd]]
-- [[l2ps_srsbm]]
-- [[l2ps_ulsch]]
+- [[l2ps-bbrm]]
+- [[l2ps-dlsch]]
+- [[l2ps-fd]]
+- [[l2ps-srsbm]]
+- [[l2ps-ulsch]]
 
 ## Key Flows
 

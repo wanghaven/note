@@ -16,13 +16,14 @@ aliases:
 
 ## System Architecture
 
-- [[5G-L2-PS Architecture]]
+- [[l2ps-architecture]]
+- [[5g-user-plane-roadmap-architecture]]
 
 ## Component Architecture
 
-- [[eirpControl]]
-- [[DL MU-MIMO]]
-- [[CB012971 Dual Boost Zero-forcing MU MIMO]]
+- [[eirp-control]]
+- [[dl-mu-mimo]]
+- [[dual-boost-zero-forcing-mu-mimo]]
 
 ## Execution Model
 
@@ -40,6 +41,13 @@ aliases:
 ## Architecture Decisions
 
 - 
+
+## Deployment
+
+- [[snowfish-hardware]]
+- [[snowfish-deployment]]
+- [[marlin-hardware]]
+- [[marlin-deployment]]
 
 ## Related
 

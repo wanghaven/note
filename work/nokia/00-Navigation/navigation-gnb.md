@@ -26,7 +26,7 @@ aliases:
 
 ## L2PS
 
-- [[5G-L2-PS Architecture]]
+- [[l2ps-architecture]]
 - [[2.2_DL_Scheduler]]
 - [[6.1_EO_Overview]]
 - [[6.9_PS-SRSBM_EO]]
