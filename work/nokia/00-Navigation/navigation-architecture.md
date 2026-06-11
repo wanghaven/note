@@ -22,7 +22,7 @@ aliases:
 ## Component Architecture
 
 - [[eirp-control]]
-- [[dl-mu-mimo]]
+- [[mu-sinr-calculation]]
 - [[dual-boost-zero-forcing-mu-mimo]]
 
 ## Execution Model

@@ -29,7 +29,7 @@ aliases:
 ## Current Work Areas
 
 - [[l2ps-architecture]]
-- [[dl-mu-mimo]]
+- [[mu-sinr-calculation]]
 - [[eirp-control]]
 - [[dual-boost-zero-forcing-mu-mimo]]
 
