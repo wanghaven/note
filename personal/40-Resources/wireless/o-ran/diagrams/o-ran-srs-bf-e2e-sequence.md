@@ -1,4 +1,21 @@
-@startuml
+---
+title: O-RAN SRS-BF E2E Sequence
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - o-ran
+  - diagram
+status: draft
+aliases:
+  - O-RAN SRS-BF E2E Sequence
+---
+
+# O-RAN SRS-BF E2E Sequence
+
+```plantuml
+
+@startuml O-RAN SRS-BF E2E Sequence
 autonumber
 participant "O-DU" as DU
 participant "O-RU" as RU
@@ -23,3 +40,4 @@ DU -> RU : ST5 schedule command
 RU -> RU : Calculate BF weights from retained CI
 RU -> UE : DL BF TX and/or UL BF RX path execution
 @enduml
+```

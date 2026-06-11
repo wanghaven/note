@@ -1,4 +1,24 @@
-@startuml
+---
+title: O-RAN SRS-BF Computational Flow
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - o-ran
+  - diagram
+status: draft
+aliases:
+  - O-RAN SRS-BF Computational Flow
+---
+
+# O-RAN SRS-BF Computational Flow
+
+```plantuml
+
+@startuml O-RAN SRS-BF Computational Flow
+!pragma graphviz svg
+' scale 1920*1080
+
 top to bottom direction
 rectangle "Air SRS -> Ysrs" as IN
 rectangle "SRS-CE (RU)\nport-domain channel estimation" as CE
@@ -18,3 +38,4 @@ Q --> ULP : UL
 DLP --> APPLY
 ULP --> APPLY
 @enduml
+```
