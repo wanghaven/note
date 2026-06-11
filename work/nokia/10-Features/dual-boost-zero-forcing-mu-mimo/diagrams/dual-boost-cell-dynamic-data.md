@@ -1,8 +1,27 @@
-@startuml
+---
+title: Dual Boost Cell Dynamic Data
+date: 2026-06-11
+tags:
+  - work/nokia/diagram
+  - dual-boost-zero-forcing-mu-mimo
+status: draft
+aliases:
+  - Dual Boost Cell Dynamic Data
+---
+
+# Dual Boost Cell Dynamic Data
+
+```plantuml
+
+@startuml Dual Boost Cell Dynamic Data
+!pragma graphviz svg
+' scale 1920*1080
+
+' skinparam linetype ortho
 skinparam classAttributeIconSize 0
+set namespaceSeparator ::
 
 package "CellDynamicData" {
-
   class "**PairingGroupHandler**" as PairingGroupHandler {
     --
     +buildPairingGroups()
@@ -21,8 +40,6 @@ package "CellDynamicData" {
     pairingGroup[4]
   }
 
-  PairingGroupArray "1" *-- "4" PairingGroupData
-
   class SrsRtBfUeCorrelationTable {
     +getCorrelation(rnti1, rnti2) : float
   }
@@ -32,30 +49,15 @@ package "CellDynamicData" {
     +invalidCount : uint8_t
   }
 
-  SrsRtBfUeCorrelationTable "1" *-- "32x32 (lower triangle)" CorrelationEntry
-
   class HighBufferSbBfUeList {
     unordered_set<Rnti>
   }
 
+  PairingGroupArray "1" *-- "4" PairingGroupData
+  SrsRtBfUeCorrelationTable "1" *-- "32x32 (lower triangle)" CorrelationEntry
   PairingGroupHandler *-- PairingGroupArray
   PairingGroupHandler *-- SrsRtBfUeCorrelationTable
   PairingGroupHandler *-- HighBufferSbBfUeList
 }
-
-class PairingGroupUeSelector <<PRE Phase>> {
-  +selectUeToBoostPriority()
-  +selectNormalBoostPGUe()
-  +selectHighPriorityBoostPGUe()
-}
-
-class Rat1ZfVirtualUeGenerator <<FDM Phase>> {
-  +generateVirtualUes()
-  +buildVirtualByRootUe()
-  +copyZfMuUeFromCandidateList()
-}
-
-PairingGroupUeSelector ..> PairingGroupHandler : uses
-Rat1MuMimoExhaustiveScheduler ..> PairingGroupHandler : consumes PG info
-
 @enduml
+```

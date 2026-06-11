@@ -9,104 +9,26 @@ aliases: []
 ---
 
 ## System Architecture
+
+> [!note]
+> The original PlantUML diagrams have been split into focused Markdown diagram notes so Obsidian can render each diagram directly while keeping the source text readable for AI review.
+
 ### High-Level Data Flow
-```plantuml
-@startuml
-rectangle "**L1-UL**" as L1 {
-  rectangle "**SRS Receiption**:\nStore channel matrix H (2 PRB granularity)\nCalculate UE-UE correlation: corr(UE_i, UE_j) " as SrsReception
-}
 
-rectangle "L2-PS Scheduler" as L2 {
-  rectangle "**HandleSrsRtBfPsUeCorrelation**:\nUpdate correlation table" as SrsRespHandler
+![[diagrams/dual-boost-data-flow]]
 
-  rectangle "Post (Slot N)" as POST {
-    rectangle "**buildPairingGroups()**\nGroup UEs with Low correction\nMax 4 groups, max 4 UEs per group" as buildPG
-  }
-  rectangle "PRE (Slot N+1)" as PRE {
-    rectangle "**selectUeToBoostPriority()**\nSelect all UEs from each group to CS1List\nUse token buckets for fairness" as SelectUe
-  }    
-  rectangle "TD (Slot N+1)" as TD {
-    rectangle "**updatePairGroupUeSubPriorit()**\nApply priority boost" as UpdateSubPriority
-  }
-  rectangle "FDM (Slot N+1)" as FDM {
-    rectangle "**generateVirtualUes()**\nGenerate MU VUEs" as GenVitualUe
-  }
-  
-  SelectUe -[hidden]l- UpdateSubPriority
-  UpdateSubPriority -[hidden]l- GenVitualUe
-}
-SrsReception -d-> SrsRespHandler : SrsReceiveRespRtBfPs (ueCorrelation(i, j))
-SrsRespHandler -d-> buildPG
-buildPG -d-> SelectUe
-SelectUe -r-> UpdateSubPriority
-UpdateSubPriority -r-> GenVitualUe
+### Package Overview
 
-@enduml
-```
-### Component Diagram
-```plantuml
-@startuml
-skinparam classAttributeIconSize 0
+![[diagrams/dual-boost-overview]]
 
-package "CellDynamicData" {
+### Cell Dynamic Data
 
-  class "**PairingGroupHandler**" as PairingGroupHandler {
-    --
-    +buildPairingGroups()
-    +updateCorrelation()
-    +getGroupByRnti(rnti)
-  }
+![[diagrams/dual-boost-cell-dynamic-data]]
 
-  class PairingGroupData {
-    +pairUeList : vector<Rnti>
-    +tokenBucket : uint8_t
-    --
-    +isEmpty() : bool
-  }
+### Scheduling Integration
 
-  class PairingGroupArray {
-    pairingGroup[4]
-  }
+![[diagrams/dual-boost-scheduling-integration]]
 
-  PairingGroupArray "1" *-- "4" PairingGroupData
-
-  class SrsRtBfUeCorrelationTable {
-    +getCorrelation(rnti1, rnti2) : float
-  }
-
-  class CorrelationEntry {
-    +avgCorrelation : float
-    +invalidCount : uint8_t
-  }
-
-  SrsRtBfUeCorrelationTable "1" *-- "32x32 (lower triangle)" CorrelationEntry
-
-  class HighBufferSbBfUeList {
-    unordered_set<Rnti>
-  }
-
-  PairingGroupHandler *-- PairingGroupArray
-  PairingGroupHandler *-- SrsRtBfUeCorrelationTable
-  PairingGroupHandler *-- HighBufferSbBfUeList
-}
-
-class PairingGroupUeSelector <<PRE Phase>> {
-  +selectUeToBoostPriority()
-  +selectNormalBoostPGUe()
-  +selectHighPriorityBoostPGUe()
-}
-
-class Rat1ZfVirtualUeGenerator <<FDM Phase>> {
-  +generateVirtualUes()
-  +buildVirtualByRootUe()
-  +copyZfMuUeFromCandidateList()
-}
-
-PairingGroupUeSelector ..> PairingGroupHandler : uses
-Rat1MuMimoExhaustiveScheduler ..> PairingGroupHandler : consumes PG info
-
-@enduml
-```
 ## Integration to scheduling phase
 ### POST
 #### **Function:** PairingGroupHandler::**buildPairingGroups**()
