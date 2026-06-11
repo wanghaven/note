@@ -1,3 +1,14 @@
+---
+title: timing window
+date: 2026-06-11
+tags:
+  - work/nokia/project
+  - feature-development
+status: draft
+aliases:
+  - timing window
+---
+
 # timing window
 
 | Message                                                                        | time (NTU) | time (us) |

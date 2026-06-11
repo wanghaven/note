@@ -1,3 +1,13 @@
+---
+title: ABIO
+date: 2026-06-11
+tags:
+  - work/nokia/architecture
+status: draft
+aliases:
+  - ABIO
+---
+
 # ABIO
 ![[ABIO_deployment_Detail.png]]
 

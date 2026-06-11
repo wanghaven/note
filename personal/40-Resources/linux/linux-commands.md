@@ -1,3 +1,13 @@
+---
+title: Linux Commands
+date: 2026-06-11
+tags:
+  - personal/resource
+  - linux
+status: draft
+aliases: []
+---
+
 - 打包： tar -cf soft.tar soft 
 	Tar:   tar-cvf /home/vivek/projects.tar/home/vivek/projects
 - 解包： tar -xf soft.tar soft 

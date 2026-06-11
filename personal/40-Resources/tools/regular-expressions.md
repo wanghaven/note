@@ -1,3 +1,14 @@
+---
+title: [符号解释]([https://www.cnblogs.com/yirlin/archive/2006/04/12/373222.html](https://www.cnblogs.com/yirlin/archive/2006/04/12/373222.html))
+date: 2026-06-11
+tags:
+  - personal/resource
+  - tools
+status: draft
+aliases:
+  - [符号解释]([https://www.cnblogs.com/yirlin/archive/2006/04/12/373222.html](https://www.cnblogs.com/yirlin/archive/2006/04/12/373222.html))
+---
+
 # [符号解释]([https://www.cnblogs.com/yirlin/archive/2006/04/12/373222.html](https://www.cnblogs.com/yirlin/archive/2006/04/12/373222.html))
 |          字符 | 描述   |
 |----------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

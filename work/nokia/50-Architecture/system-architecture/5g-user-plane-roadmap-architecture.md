@@ -1,3 +1,13 @@
+---
+title: 5G User Plane Roadmap and Architecture
+date: 2026-06-11
+tags:
+  - work/nokia/architecture
+status: draft
+aliases:
+  - 5G User Plane Roadmap and Architecture
+---
+
 # 5G User Plane Roadmap and Architecture
 
 # Part 1 — High-Level Architecture

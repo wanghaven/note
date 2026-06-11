@@ -1,3 +1,14 @@
+---
+title: Obsidian AI Plugin Integration Methods
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
+---
+
 
 
 ## 一、主流的 Obsidian AI 插件概览

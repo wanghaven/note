@@ -1,3 +1,14 @@
+---
+title: 快捷键
+date: 2026-06-11
+tags:
+  - personal/resource
+  - tools
+status: draft
+aliases:
+  - 快捷键
+---
+
 # 快捷键
 
 ![[VsCode_Shortcuts.png]]

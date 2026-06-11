@@ -1,3 +1,15 @@
+---
+title: 学习一个陌生知识领域_建立学习路径和知识库框架
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases:
+  - 学习一个陌生知识领域_建立学习路径和知识库框架
+---
+
   
 # 学习一个陌生知识领域_建立学习路径和知识库框架
 利用人工智能（AI）作为执行工具，在Obsidian中构建结构化、可扩展的个人知识库，并以此为基础进行高效、深入的学习。

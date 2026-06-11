@@ -1,3 +1,13 @@
+---
+title: SnowFish 20cx and 24cx key features
+date: 2026-06-11
+tags:
+  - work/nokia/architecture
+status: draft
+aliases:
+  - SnowFish 20cx and 24cx key features
+---
+
 ![[snowfish.png]]
 # SnowFish 20cx and 24cx key features
 ```

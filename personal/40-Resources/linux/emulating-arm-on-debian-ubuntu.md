@@ -1,3 +1,14 @@
+---
+title: armel packages also exist
+date: 2026-06-11
+tags:
+  - personal/resource
+  - linux
+status: draft
+aliases:
+  - armel packages also exist
+---
+
 [Emulating ARM on Debian Ubuntu](https://gist.github.com/bruce30262/e0f12eddea638efe7332#file-armdebianubuntu-md)
 
 You might want to read [this](http://www.memetic.org/raspbian-benchmarking-armel-vs-armhf/) to get an introduction to armel vs armhf.

@@ -1,3 +1,14 @@
+---
+title: L2-PS UL Scheduler (ulSch) Architecture And Mermaid Diagrams
+date: 2026-06-11
+tags:
+  - work/nokia/implementation
+  - l2ps
+status: draft
+aliases:
+  - L2-PS UL Scheduler (ulSch) Architecture And Mermaid Diagrams
+---
+
 # L2-PS UL Scheduler (ulSch) Architecture And Mermaid Diagrams
 
 **Scope.** This document describes the architecture of the **UL Scheduler EO** (`L2RtPool<P>_L2PsUlYySch`) within the L2-PS subsystem. It covers the per-cell-group UL scheduling pipeline for **FR1** (TDD and FDD), including RACH, PRE/TD/FD scheduling, PUSCH/PUCCH management, SRS, CoMP, link adaptation, DRX, overload control, and inter-band CA coordination.

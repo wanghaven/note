@@ -14,6 +14,7 @@ aliases:
   - MNIST MLP 学习笔记
   - 神经网络日报 2026-06-08
 source: c:/work/code/others/neuralnetworks/mlp
+status: draft
 ---
 
 # MLP 手写数字识别与优化（2026-06-08 · 首份完整日报）

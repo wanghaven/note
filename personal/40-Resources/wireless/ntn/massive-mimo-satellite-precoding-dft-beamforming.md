@@ -1,3 +1,14 @@
+---
+title: Massive MIMO Satellite Precoding DFT Beamforming
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - ntn
+status: draft
+aliases: []
+---
+
 ## 1. 论文封面与基本信息
 
 - **论文原标题：** Joint Linear Precoding and DFT Beamforming Design for Massive MIMO Satellite Communication

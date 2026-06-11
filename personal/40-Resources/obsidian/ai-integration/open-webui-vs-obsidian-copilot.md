@@ -1,3 +1,14 @@
+---
+title: Open Webui Vs Obsidian Copilot
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
+---
+
 ### Obsidian AI 工作流对比：Custom Frames + Open WebUI vs. Obsidian Copilot
 
 | 特性维度 | Custom Frames + Open WebUI | Obsidian Copilot |

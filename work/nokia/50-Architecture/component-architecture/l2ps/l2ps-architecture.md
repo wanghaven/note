@@ -1,3 +1,14 @@
+---
+title: L2-PS (Layer 2 Packet Scheduler) — Architecture
+date: 2026-06-11
+tags:
+  - work/nokia/architecture
+  - l2ps
+status: draft
+aliases:
+  - L2-PS (Layer 2 Packet Scheduler) — Architecture
+---
+
 # L2-PS (Layer 2 Packet Scheduler) — Architecture
 
 **Scope.** This document covers **L2-PS only** (not `L2-PS-LEGACY`) and **FR1 only** (TDD and FDD). FR2 paths are intentionally excluded.

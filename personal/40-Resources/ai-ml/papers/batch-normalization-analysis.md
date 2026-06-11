@@ -1,3 +1,14 @@
+---
+title: Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift —— 全文翻译与详细解析
+date: 2026-06-11
+tags:
+  - personal/resource
+  - ai-ml
+status: draft
+aliases:
+  - Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift —— 全文翻译与详细解析
+---
+
 # Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift —— 全文翻译与详细解析
 
 > [!info] 论文信息

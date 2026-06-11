@@ -1,3 +1,14 @@
+---
+title: Attention Is All You Need —— 全文翻译与详细解析
+date: 2026-06-11
+tags:
+  - personal/resource
+  - ai-ml
+status: draft
+aliases:
+  - Attention Is All You Need —— 全文翻译与详细解析
+---
+
 # Attention Is All You Need —— 全文翻译与详细解析
 
 > [!info] 论文信息

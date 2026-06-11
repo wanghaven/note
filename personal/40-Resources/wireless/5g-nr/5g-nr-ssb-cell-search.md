@@ -1,3 +1,14 @@
+---
+title: 5g NR SSB Cell Search
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
+---
+
 [5G SSB与小区搜索 | Marshall](https://marshallcomm.cn/2017/12/29/nr-v200-l1-ssb/)
 ## 前言
 

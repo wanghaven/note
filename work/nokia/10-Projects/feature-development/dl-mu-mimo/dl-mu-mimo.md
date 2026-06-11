@@ -1,3 +1,14 @@
+---
+title: CB008305
+date: 2026-06-11
+tags:
+  - work/nokia/project
+  - feature-development
+status: draft
+aliases:
+  - CB008305
+---
+
 # CB008305
 ## MU-SINR calculation
 ### WB BF UEs paired with oDFT beams

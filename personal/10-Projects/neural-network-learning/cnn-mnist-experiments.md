@@ -18,6 +18,7 @@ aliases:
 source: C:/work/code/others/neuralnetworks/cnn
 related: "[[mlp-mnist-experiments]]"
 vault_path: personal/technology/aiml/study
+status: draft
 ---
 
 # CNN 手写数字识别与实验 · 2026-06-08（同步更新 2026-06-12）

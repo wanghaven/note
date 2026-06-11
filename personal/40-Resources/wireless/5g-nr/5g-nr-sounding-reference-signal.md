@@ -3,6 +3,13 @@ title: 5G Sounding Reference Signal
 source: https://marshallcomm.cn/2020/11/21/r15_sounding_reference_signal/
 published: 2020-11-21
 created: 2025-12-12
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
 ---
 Note: 本文基于 3GPP Rel15 (2020-09) 版本规范。
 

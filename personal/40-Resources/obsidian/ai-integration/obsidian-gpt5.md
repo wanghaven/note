@@ -1,3 +1,14 @@
+---
+title: Obsidian GPT5
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
+---
+
 
 
 ## 🚀 GPT-5 核心亮点与优势

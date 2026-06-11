@@ -1,3 +1,15 @@
+---
+title: 教程：在 Obsidian 中集成 Open WebUI 作为 AI 聊天中心
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases:
+  - 教程：在 Obsidian 中集成 Open WebUI 作为 AI 聊天中心
+---
+
 
 # 教程：在 Obsidian 中集成 Open WebUI 作为 AI 聊天中心
 

@@ -4,6 +4,13 @@ source: "https://marshallcomm.cn/2017/10/24/nr-v110-l1-channel-modulation-dl/"
 published: 2017-10-24
 created: 2025-12-12
 description: "上接《5G-NR物理信道与调制v1.1.0》下行链路 Scope References Definitions, symbols and abbreviations 帧结构与物理资源 通用函数 上行链路 5G-NR物理信道与调制-上行链路v1.1.0 下行链路 概述 物理信道概述 下行链路物理信道对应于一组资源粒子（REs）的集合，用于承载源自高层的信息。本规范定义了如下下"
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
 ---
 ## 帧结构与物理资源
 

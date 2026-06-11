@@ -1,3 +1,14 @@
+---
+title: Lm Studio Local LLM Obsidian
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
+---
+
 
 **核心流程**：LM Studio 负责在本地运行模型并创建一个API 服务器，Obsidian Copilot 插件向本地大模型API发送请求。
 

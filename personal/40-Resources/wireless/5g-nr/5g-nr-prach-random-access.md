@@ -3,6 +3,13 @@ title: "5G PRACH与随机接入"
 source: "https://marshallcomm.cn/2017/12/29/nr-v200-l1-prach/"
 published: 2017-12-29
 created: 2025-12-12
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
 ---
 ## PRACH
 

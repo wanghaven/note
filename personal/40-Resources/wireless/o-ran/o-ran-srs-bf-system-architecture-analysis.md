@@ -1,3 +1,15 @@
+---
+title: O-RAN WG4 CUS R005 Section 12.7 Analysis
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - o-ran
+status: draft
+aliases:
+  - O-RAN WG4 CUS R005 Section 12.7 Analysis
+---
+
 # O-RAN WG4 CUS R005 Section 12.7 Analysis  
 ## SRS-based Beamforming (SRS-BF) System Architecture Deep Dive
 

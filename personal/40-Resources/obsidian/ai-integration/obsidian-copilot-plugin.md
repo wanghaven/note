@@ -1,3 +1,14 @@
+---
+title: Obsidian Copilot Plugin
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
+---
+
 
 
 ## 1. 概述

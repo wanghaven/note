@@ -1,3 +1,14 @@
+---
+title: L2-PS SRS-BM Architecture And Mermaid Diagrams
+date: 2026-06-11
+tags:
+  - work/nokia/implementation
+  - l2ps
+status: draft
+aliases:
+  - L2-PS SRS-BM Architecture And Mermaid Diagrams
+---
+
 # L2-PS SRS-BM Architecture And Mermaid Diagrams
 
 本文档根据 `/workspace/uplane/L2-PS/src/srsBm/` 代码和 `L2PS_Architecture.md` 更新。它不再只是 PlantUML 到 Mermaid 的机械转换，而是把 SRS Beam Management 在 L2-PS 运行时中的位置、类关系、主要事件流、当前设计问题和可重构方向放在一起。

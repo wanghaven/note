@@ -1,3 +1,15 @@
+---
+title: 核心思路
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases:
+  - 核心思路
+---
+
 # 核心思路
 Obsidian 的 Vault 是本地文件夹，但其内部机制（模版、backlinks、metadataCache 等）只有通过 **Obsidian 自身 API** 才能安全调用。  
 Local REST API 插件的作用，就是把这些内部 API 暴露为 HTTP 接口，从而可以被 **MCP 客户端**（如 Claude Desktop、Cursor、n8n）调用。  

@@ -1,3 +1,13 @@
+---
+title: Install Tensorflow With Pip
+date: 2026-06-11
+tags:
+  - personal/resource
+  - linux
+status: draft
+aliases: []
+---
+
 ## 1 Install the Python development environment on your system
 Python 3 Python 2.7
 Check if your Python environment is already configured:

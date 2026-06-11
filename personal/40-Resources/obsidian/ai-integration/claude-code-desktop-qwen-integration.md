@@ -4,6 +4,13 @@ source: "https://blog.csdn.net/gaoguosheng/article/details/161228206"
 published: 2026-05-19
 created: 2026-06-08
 description: "文章浏览阅读1.2k次，点赞13次，收藏11次。《ClaudeCodeDesktop最新版接入第三方大模型教程》摘要：针对ClaudeCodeDesktop V1.7196.0版本禁用第三方模型的问题，本文提供CCSwitch网关+开发者模式的解决方案。通过四步实现：1)开启开发者模式；2)CCSwitch配置模型网关（支持通义、DeepSeek等主流模型）；3)绑定本地网关地址；4)实测验证。该方法无需官方订阅，保留原生功能，解决访问限制，支持多模型切换。文中包含详细配置步骤和常见错误排查指南，帮助用户低成本实现大模型自由。（149字）"
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
 ---
 
 文章标签：

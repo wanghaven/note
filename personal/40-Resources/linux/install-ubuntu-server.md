@@ -1,3 +1,13 @@
+---
+title: Install Ubuntu Server
+date: 2026-06-11
+tags:
+  - personal/resource
+  - linux
+status: draft
+aliases: []
+---
+
 ## 1 Install openssh server
 安装ssh: apt-get install openssh-server
 备份sshd配置文件:  sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak

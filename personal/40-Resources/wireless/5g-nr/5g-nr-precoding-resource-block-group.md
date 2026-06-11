@@ -3,6 +3,13 @@ title: NR PRG
 source: https://marshallcomm.cn/2020/03/07/nr_prg/
 published: 2020-03-07
 created: 2025-12-12
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
 ---
 ## PRG
 

@@ -1,3 +1,13 @@
+---
+title: Install Dpdk
+date: 2026-06-11
+tags:
+  - personal/resource
+  - linux
+status: draft
+aliases: []
+---
+
 ## 1 Enabling root account:
 	sudo passwd -u root
 	sudo passwd root

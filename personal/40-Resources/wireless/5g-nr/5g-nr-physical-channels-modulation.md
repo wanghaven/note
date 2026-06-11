@@ -4,6 +4,13 @@ source: "https://marshallcomm.cn/2017/10/23/nr-v110-l1-channel-modulation/"
 published: 2017-10-23
 created: 2025-12-12
 description: "Marshall：5G NR物理层规范已更新到v1.1.0版本，本文整理了38.211规范v1.1.0版，同时宣告v1.0.0版本过时"
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
 ---
 
 ## 帧结构与物理资源

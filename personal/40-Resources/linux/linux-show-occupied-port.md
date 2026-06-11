@@ -1,3 +1,13 @@
+---
+title: Linux Show Occupied Port
+date: 2026-06-11
+tags:
+  - personal/resource
+  - linux
+status: draft
+aliases: []
+---
+
 
 [Linux查看端口占用 netstat netstat端口占用 linux端口 进程端口](https://blog.csdn.net/lmb1612977696/article/details/99956151)
 ### 1 首先查看程序的进程号

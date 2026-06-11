@@ -1,3 +1,13 @@
+---
+title: 506 - 5G Full FDD - Classical
+date: 2026-06-11
+tags:
+  - work/nokia/architecture
+status: draft
+aliases:
+  - 506 - 5G Full FDD - Classical
+---
+
 ![[ABIP_deployment_Detail.png]]
 # 506 - 5G Full FDD - Classical
 

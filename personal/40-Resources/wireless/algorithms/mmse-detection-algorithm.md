@@ -4,6 +4,12 @@ source: "https://marshallcomm.cn/2018/12/22/algorithm-mmse-detection/"
 published: 2018-12-22
 created: 2025-12-12
 
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+status: draft
+aliases: []
 ---
 
 考虑发送端具有 $Nt$ 根发送天线，接收端具有 $Nr$ 根接收天线，在一个时隙内信道为准静态平坦衰落情况下，接收信号可表示为

@@ -1,3 +1,14 @@
+---
+title: L2-PS DL Scheduler (dlSch) Architecture And Mermaid Diagrams
+date: 2026-06-11
+tags:
+  - work/nokia/implementation
+  - l2ps
+status: draft
+aliases:
+  - L2-PS DL Scheduler (dlSch) Architecture And Mermaid Diagrams
+---
+
 # L2-PS DL Scheduler (dlSch) Architecture And Mermaid Diagrams
 
 **Scope.** This document covers the DL Scheduler EO (`L2RtPool<P>_L2PsDlYySch`) and its companion FD Scheduler EO (`L2RtPool<P>_L2PsFdYySch`). Together they implement per-slot downlink scheduling for FR1 cells (TDD and FDD). The DL Scheduler is the most complex per-cell-group EO in L2-PS.

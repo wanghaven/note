@@ -1,3 +1,14 @@
+---
+title: L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And Mermaid Diagrams
+date: 2026-06-11
+tags:
+  - work/nokia/implementation
+  - l2ps
+status: draft
+aliases:
+  - L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And Mermaid Diagrams
+---
+
 # L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And Mermaid Diagrams
 
 **Scope.** This document describes the **DL-only** FD Scheduler Execution Object (`L2RtPool<P>_L2PsFdYySch`, queue name pattern `L2PsFdsDDYy`). It is the back-half of the DL scheduling pipeline that the **DL Scheduler EO** (`L2PsDlYySch`) hands work off to. The FD EO performs per-UE MCS/TBS computation, PDSCH/PDCCH L1 message building, SIB / Paging / MSG2 scheduling, throughput pooling shaving, and L1 message emission for one subcell at a time.

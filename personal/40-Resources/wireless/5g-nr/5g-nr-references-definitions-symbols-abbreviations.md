@@ -3,6 +3,13 @@ title: "5G 帧结构、物理资源与物理信道"
 source: "https://marshallcomm.cn/2017/12/17/nr-v200-l1-channel-modulation/"
 published: 2017-12-17
 created: 2025-12-12
+date: 2026-06-11
+tags:
+  - personal/resource
+  - wireless
+  - 5g-nr
+status: draft
+aliases: []
 ---
 ## 帧结构与物理资源
 

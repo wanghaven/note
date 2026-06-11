@@ -1,3 +1,14 @@
+---
+title: Obsidian AI Plugins
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases: []
+---
+
 
 #### Obsidian 主流AI插件功能对比
 

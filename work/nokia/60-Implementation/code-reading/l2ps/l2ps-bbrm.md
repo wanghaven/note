@@ -1,3 +1,14 @@
+---
+title: L2-PS BBRM (Baseband Resource Manager) Architecture And Mermaid Diagrams
+date: 2026-06-11
+tags:
+  - work/nokia/implementation
+  - l2ps
+status: draft
+aliases:
+  - L2-PS BBRM (Baseband Resource Manager) Architecture And Mermaid Diagrams
+---
+
 # L2-PS BBRM (Baseband Resource Manager) Architecture And Mermaid Diagrams
 
 **Scope.** This document describes the **BBRM EO** (`L2RtPool<P>_L2PsBbrm`, queue name `L2PsBrmXxXx`). One BBRM per L2-RT pool (assigned only to scheduler-index 0, subpool 0). It is the **pool-wide baseband resource manager**: it owns cross-cell-group PRB / SubCell / SchedUE / Power / Throughput pooling, handles L1-pool address exchange during cell setup, drives the Sherpa milestone cycle, and answers `ResourceReq` from DL / UL Schedulers with `ResourceResp` carrying allocated PRB / SchedUE / SubCell budgets.

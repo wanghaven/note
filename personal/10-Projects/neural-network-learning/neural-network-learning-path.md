@@ -8,6 +8,10 @@ tags:
   - CNN
   - PyTorch
 vault_path: personal/technology/aiml/study
+date: 2026-06-11
+status: draft
+aliases:
+  - 🗺️ AI 学习与实验进阶知识库总纲
 ---
 
 # 🗺️ AI 学习与实验进阶知识库总纲

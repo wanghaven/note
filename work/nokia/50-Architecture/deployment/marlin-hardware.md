@@ -1,3 +1,13 @@
+---
+title: Marlin (akaTX3 or L2+), ReefShark3302 SoC
+date: 2026-06-11
+tags:
+  - work/nokia/architecture
+status: draft
+aliases:
+  - Marlin (akaTX3 or L2+), ReefShark3302 SoC
+---
+
 ![[Marlin.png]]
 # Marlin (akaTX3 or L2+), ReefShark3302 SoC
 ```

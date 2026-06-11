@@ -1,3 +1,14 @@
+---
+title: 符号
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+status: draft
+aliases:
+  - 符号
+---
+
 # 符号
 ### 集合关系
 

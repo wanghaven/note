@@ -1,3 +1,15 @@
+---
+title: 核心概念
+date: 2026-06-11
+tags:
+  - personal/resource
+  - obsidian
+  - obsidian-ai
+status: draft
+aliases:
+  - 核心概念
+---
+
 
 # 核心概念
 | 模式 | 核心理念 | 特点 |

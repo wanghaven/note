@@ -1,3 +1,14 @@
+---
+title: L2PS DL EirpControl
+date: 2026-06-11
+tags:
+  - work/nokia/project
+  - feature-development
+status: draft
+aliases:
+  - L2PS DL EirpControl
+---
+
 # L2PS DL EirpControl
 
 ## Current EIRP Design
