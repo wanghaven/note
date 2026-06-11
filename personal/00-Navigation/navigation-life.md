@@ -16,7 +16,7 @@ aliases:
 
 ## Personal Information
 
-- [[personal-profile]]
+- [[account|账号与凭证]]
 
 ## Family
 
