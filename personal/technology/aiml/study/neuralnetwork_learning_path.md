@@ -1,3 +1,15 @@
+---
+title: AI 学习与实验进阶知识库总纲
+updated: 2026-06-12
+tags:
+  - AI
+  - 学习路径
+  - MNIST
+  - CNN
+  - PyTorch
+vault_path: personal/technology/aiml/study
+---
+
 # 🗺️ AI 学习与实验进阶知识库总纲
 
 > [!abstract] 核心学习理念
@@ -8,23 +20,31 @@
 
 ## 📊 总体进度看板
 
-- [ ] **阶段一：纯 NumPy 实现 CNN** (预计: 2-3周) · `进度: 97%（双块 CNN + 默认 10ep≈98.74%，鲁棒性表待重跑 augment 填数）`
-- [ ] **阶段二：PyTorch 与 ResNet 工业实战** (预计: 2-3周) · `进度: 0%`
-- [ ] **阶段三：Transformer 架构破壁** (预计: 3-4周) · `进度: 0%`
-- [ ] **阶段四：LLM 微调与大模型生态** (预计: 4-6周) · `进度: 0%`
+- [x] **阶段一：手写 MLP/CNN（NumPy + 可选 CuPy）** (预计: 2–3 周) · `已完成：双块 CNN、CPU/GPU 双后端、增强与 99.21% clean 记录；详见下方快照与两篇笔记`
+- [ ] **阶段二：PyTorch 与 ResNet 工业实战** (预计: 2–3 周) · `进度: 0%（下一主战场）`
+- [ ] **阶段三：Transformer 架构破壁** (预计: 3–4 周) · `进度: 0%`
+- [ ] **阶段四：LLM 微调与大模型生态** (预计: 4–6 周) · `进度: 0%`
 
-> [!tip] 更新日志（2026-06-09）
-> 阶段一：`mlp/` 已完成；`cnn/` 已升级为 **双卷积块**（28→14→7），默认 `train_eval.py`（10 epoch / batch 512）在同一划分上约 **98.74%**（见 [[2026-06-08 CNN 手写数字识别与实验]]，vault：`personal/technology/aiml/study`）。
-> 剩余：可选加长训练冲 99%；重跑 `augment_eval.py` 更新鲁棒性数字；收尾复盘后可进阶段二。
+> [!tip] 更新日志（2026-06-12）
+> **阶段一已闭环**：`mlp/` 与 `cnn/` 在本地仓库 `c:\work\code\others\neuralnetworks`；同一划分（50k 训 / 10k 测）下 CNN 默认 **98.81%**，`sweep_epochs` **99.04%**，仿射+弹性 + 64/128 容量 **99.21%** clean。实验笔记：**[[MLP手写数字识别与优化]]** · **[[CNN手写数字识别与优化]]**（配图在 `study/images/`）。
+> **下一步**：进入阶段二，用 PyTorch 复现同结构或小 ResNet，与手写 `cnn.py` 对照精度与耗时。
+
+> [!success] 当前成果快照（阶段一）
+> - **MLP**：统一划分优化模型 **97.86%**；几何增强下暴露结构性弱点（见 MLP 笔记 §10）。
+> - **CNN**：双块 + im2col；**`CNN(device="cpu"|"cuda")`**，`CNN_DEVICE` 驱动训练脚本；`compare_blocks` / `sweep_epochs` / `augment_eval` / `elastic_eval` / `affine_elastic_push` / `aug_push_robustness` 全套可复现。
+> - **文档**：`cnn/README.md` 含损失 MAP 推导、反向传播表、§8–§9 总结表；本 vault 笔记为精简版 + 图。
+> - **变更溯源**：各篇笔记文末 **「本篇修订记录」**仅对应各自 `.md`；卷积概念见 **[[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]**。
 
 ---
 
-## 🎯 阶段一：深扎底层逻辑 —— 纯 NumPy 实现 CNN
-- **核心工具：** Python 3.10+, NumPy (拒绝任何自动求导框架)
-- **开发环境：** 本地 Ubuntu/windows + Cursor / VS Code
+## 🎯 阶段一：深扎底层逻辑 —— 手写 MLP / CNN
+
+- **核心工具：** Python 3.10+，**NumPy**（CPU），可选 **CuPy**（CUDA，与 `cnn.py` 同一套代码）
+- **开发环境：** 本地 Windows / Ubuntu + Cursor / VS Code；GPU 用于加速实验非必须
+- **Obsidian 笔记：** [[MLP手写数字识别与优化]] · [[CNN手写数字识别与优化]]
 
 ### 📅 计划安排与 Checklist
-- [x] **Step 1: MLP 跑通 MNIST (已搞定！)** —— 见 `mlp/`，测试集 ~98%
+- [x] **Step 1: MLP 跑通 MNIST (已搞定！)** —— 见 `mlp/`；统一划分优化 MLP **97.86%**（步骤优化在子集上可达 ~98.14%，见 MLP 笔记）
 	- [x] 搭建基础多层感知机架构
 	- [x] 实现 Forward & Backward 链式法则
 	- [x] 额外完成：超参实验 / 错误分析 / 优化 / 数据增强鲁棒性 / OOD 检测
@@ -37,17 +57,17 @@
 	- [x] 优化器实现 Adam，配合 L2 正则与 FC 层 Dropout
 - [x] **Step 4: 整合模型并跑通 MNIST 识别 (已搞定！)** —— 见 `cnn/train_eval.py`
 	- [x] 组装结构：**双块** `Input → Conv→ReLU→Pool → Conv→ReLU→Pool → FC → Softmax`（默认 F=32、F₂=64）
-	- [x] 绘制验证集 Accuracy 曲线；默认 **10 epoch / batch 512** 时测试集约 **98.74%（126/10000 错）**（可加训冲 99%）
-	- [x] 额外完成：错误/混淆矩阵分析脚本；**鲁棒性对比**见 `cnn/augment_eval.py`（双块权重更新后请重跑以刷新表格）
-- [ ] **Step 5: 收尾复盘（待办，预计 1-2 天）**
-	- [ ] 整理 MLP vs CNN 在 clean / rotate / shift / scale 下的鲁棒性对照结论
-	- [ ] 把"卷积带来的平移不变性""感受野""参数共享"等概念沉淀进 Obsidian
-	- [ ] 补全 `cnn/README.md`（参照 `mlp/README.md` 的结构）
+	- [x] 绘制验证集 Accuracy 曲线；默认 **10 epoch / batch 512** 时测试集约 **98.81%（119/10000 错）**；`sweep_epochs` 最佳 **99.04%**；仿射+弹性（64/128）**99.21%**
+	- [x] 额外完成：错误/混淆矩阵；**仿射** `augment_eval.py`、**弹性** `elastic_eval.py`、**仿射+弹性冲刺** `affine_elastic_push.py`、**多扰动鲁棒对比** `aug_push_robustness.py`
+- [x] **Step 5: 收尾复盘（可持续深化）**
+	- [x] 整理 MLP vs CNN 在 clean / rotate / shift / scale 下的鲁棒性对照结论（并扩展弹性、仿射+弹性，见 CNN 笔记）
+	- [x] 把「平移不变性 / 感受野 / 参数共享 / 池化」等概念单独成文或并入 CNN 笔记（可选）→ 见 [[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]
+	- [x] 补全 `cnn/README.md`（含 MAP 与反向公式表、§8 增强、§9 总览）
 
 ### 🔗 实验物资与参考
 - **项目目录：** [wanghaven/neuralnetworks](https://github.com/wanghaven/neuralnetworks) · 本地 `c:\work\code\others\neuralnetworks`
 	- MLP 子项目：`mlp/`（`mlp.py` 模型 + `experiments.py` / `analyze_errors.py` / `optimize.py` / `ood_detection.py`）
-	- CNN 子项目：`cnn/`（`cnn.py` 模型 + `train_eval.py` 训练评估 + `augment_eval.py` 增强鲁棒性）
+	- CNN 子项目：`cnn/`（`cnn.py`、`train_eval.py`、`compare_blocks.py`、`sweep_epochs.py`、`augment_eval.py`、`elastic_eval.py`、`affine_elastic_push.py`、`aug_push_robustness.py`、`draw_network_structure.py`；几何/弹性等增强由与上述脚本同目录的 **`augment` 模块**提供，见各文件中的 `from augment import …`）
 - **必看课程（强烈推荐按顺序）：**
 	- [[斯坦福 CS231n]] —— [课程主页](https://cs231n.github.io/) | [卷积网络笔记](https://cs231n.github.io/convolutional-networks/) | [反向传播笔记](https://cs231n.github.io/optimization-2/)（理解 im2col 与卷积反传的最佳材料，对应 Assignment 2）
 	- [3Blue1Brown - 神经网络系列（视频，直觉建立）](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) | [B 站搬运](https://www.bilibili.com/video/BV1bx411M7Zx)
@@ -62,13 +82,14 @@
 ---
 
 ## 🎯 阶段二：工业级工程跨越 —— PyTorch 与 ResNet
-- **核心工具：** PyTorch, torchvision, Local GPU/CPU
-- **开发环境：** 本地Linux + CUDA 环境配置
+- **核心工具：** PyTorch, torchvision, 本地 GPU/CPU
+- **开发环境：** Windows / Linux + CUDA（与阶段一 CuPy 环境可共用驱动）
+- **输入条件：** 阶段一双块 CNN 已可作为**对照真值**（精度、曲线、鲁棒性指标）
 
 ### 📅 计划安排与 Checklist
 - [ ] **Step 1: 框架重构与 Autograd 对比体验** (预计 3 天)
-	- [ ] 用 PyTorch `nn.Module` 重写上一阶段的 CNN
-	- [ ] 对比手写反向传播，体验 `loss.backward()` 和 `optimizer.step()` 的底层封装
+	- [ ] 用 PyTorch `nn.Module` 重写上一阶段 **同结构** CNN（MNIST 50k/10k 划分对齐）
+	- [ ] 对比手写反向传播，体验 `loss.backward()` 与 `optimizer.step()`；记录相对 `cnn.py`（CPU/CUDA）的墙钟与显存
 - [ ] **Step 2: 攻克残差连接 (Skip Connection)** (预计 4 天)
 	- [ ] 深入阅读李沐团队教材，理解残差克服梯度消失的数学原理
 	- [ ] 自定义实现一个 `ResidualBlock` 模块
@@ -175,6 +196,24 @@
 ### 中文社区与博客
 - [李宏毅机器学习课程（B 站）](https://www.bilibili.com/video/BV1Wv411h7kN)
 - [知乎「深度学习」话题](https://www.zhihu.com/topic/19813032)
+
+---
+
+## 附录 本篇修订记录（`neuralnetwork_learning_path.md`）
+
+> 仅记录 **本总纲文件** 自身。根据 `git log --follow` 与 **各提交的 diff 含义** 书写；不罗列无信息量的 `vault backup` 原文。
+
+- **2026-06-08**（提交 `9262d41`）  
+  - 在 `personal/aiml/study/` 下首次加入本文件（`git numstat`：**+185** 行）：四阶段总览、阶段一～四的结构化 checklist、通用资源与每日复盘模板框架。
+
+- **2026-06-09**（提交 `9ab5559`）  
+  - 文件路径迁入 `personal/technology/aiml/study/`（与 vault 目录整理一致）。
+
+- **2026-06-09**（提交 `c2932c6`）  
+  - 根据当时仓库 CNN 进度更新看板与 tip：阶段一进度文案、双块结构、默认 10 epoch 约 **98.74%**、Step 4 子项与 `augment_eval` 提示等（diff 约 **7** 行）。
+
+- **2026-06-12**（工作区，待提交）  
+  - 增加 YAML `title` / `updated` / `tags`；阶段一改为「手写 MLP/CNN + 可选 CuPy」并标为完成；成果快照与「变更溯源」改为指向各笔记 **本篇修订记录**；阶段二补充与手写 CNN 对照的实验说明；Step 5 概念项链至 **[[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]**；修复曾被误删的 `tags:` 行等。
 
 ---
 

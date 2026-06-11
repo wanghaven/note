@@ -1,7 +1,7 @@
 ---
 title: MLP 手写数字识别与优化（首份完整日报）
 date: 2026-06-08
-updated: 2026-06-10
+updated: 2026-06-12
 tags:
   - AI
   - 神经网络
@@ -67,7 +67,7 @@ $$\sigma(z)=\frac{1}{1+e^{-z}}, \qquad \mathrm{ReLU}(z)=\max(0,z)$$
 $$A_{2,j}^{(i)} = \frac{e^{Z_{2,j}^{(i)}}}{\sum_{k=1}^{10}e^{Z_{2,k}^{(i)}}}$$
 
 > [!tip] 数值稳定
-> softmax 实现时先减去整列最大值 $e^{z-\max(z)}$，避免指数溢出。
+> softmax 实现时先减去整列最大值 $e^{z - \max(z)}$，避免指数溢出。
 
 ---
 
@@ -76,7 +76,7 @@ $$A_{2,j}^{(i)} = \frac{e^{Z_{2,j}^{(i)}}}{\sum_{k=1}^{10}e^{Z_{2,k}^{(i)}}}$$
 平均交叉熵：
 $$L = -\frac{1}{m}\sum_{i=1}^{m}\sum_{k=1}^{10} Y_k^{(i)}\log A_{2,k}^{(i)}$$
 
-由于标签是 one-hot，每个样本退化为「正确类别概率的负对数」：$L^{(i)} = -\log A_{2,y^{(i)}}^{(i)}$。
+由于标签是 one-hot，每个样本退化为「正确类别概率的负对数」：$L^{(i)} = -\log A^{(i)}_{2,\,y^{(i)}}$。
 
 ---
 
@@ -101,7 +101,7 @@ $$dW_2 = \frac{1}{m} dZ_2 A_1^T, \qquad db_2 = \frac{1}{m}\sum_{i} dZ_2^{(i)}$$
 ### 4.3 隐藏层误差
 $$dZ_1 = (W_2^T dZ_2)\odot \sigma'(Z_1), \qquad \sigma'(z)=\sigma(z)(1-\sigma(z))$$
 ReLU 版本：
-$$dZ_1 = (W_2^T dZ_2)\odot \mathbb{1}[Z_1>0]$$
+$$dZ_1 = (W_2^T dZ_2)\odot \mathbb{1}\bigl[ Z_1>0 \bigr]$$
 
 ### 4.4 隐藏层梯度
 $$dW_1 = \frac{1}{m} dZ_1 X^T, \qquad db_1 = \frac{1}{m}\sum_i dZ_1^{(i)}$$
@@ -114,9 +114,9 @@ $$W \leftarrow W - \eta\, dW, \qquad b \leftarrow b - \eta\, db$$
 | 代码 | 公式 |
 |---|---|
 | `dZ2 = output - Y` | $dZ_2 = A_2 - Y$ |
-| `dW2 = (1/m)*np.dot(dZ2, A1.T)` | $dW_2 = \frac1m dZ_2 A_1^T$ |
+| `dW2 = (1/m)*np.dot(dZ2, A1.T)` | $dW_2 = \frac{1}{m} dZ_2 A_1^T$ |
 | `dZ1 = np.dot(W2.T, dZ2) * (A1*(1-A1))` | $dZ_1 = W_2^T dZ_2 \odot A_1(1-A_1)$ |
-| `dW1 = (1/m)*np.dot(dZ1, X.T)` | $dW_1 = \frac1m dZ_1 X^T$ |
+| `dW1 = (1/m)*np.dot(dZ1, X.T)` | $dW_1 = \frac{1}{m} dZ_1 X^T$ |
 
 ---
 
@@ -131,7 +131,7 @@ $$W \leftarrow W - \eta\, dW, \qquad b \leftarrow b - \eta\, db$$
 
 ### 5.2 优化版 MLP（`optimize.py` 的 `MLPOptimized`）
 - `input=784, hidden=128, output=10`
-- 初始化：He init $W\sim\mathcal N(0,1)\times\sqrt{2/fan\_in}$
+- 初始化：He init $W\sim\mathcal{N}(0,1)\times\sqrt{2/\text{fan-in}}$（与代码中 `fan_in` 变量同义，即上一层输入维数）
 - 激活：ReLU；输出：Softmax
 - 优化器：**Adam** `lr=1e-3, β1=0.9, β2=0.999, eps=1e-8`
 - 正则化：**L2** `λ=1e-4`、**Dropout** `p=0.2`（inverted dropout）
@@ -277,9 +277,27 @@ $$\hat m=\frac{m}{1-\beta_1^t},\quad \hat v=\frac{v}{1-\beta_2^t},\quad \theta\l
 ## 13. 下一步 / TODO
 
 - [x] 在 `cnn/` 用纯 NumPy 实现 CNN（单块结构），见实验记录：[[CNN手写数字识别与优化]]
-- [ ] 更深结构冲 **99%+**
-- [ ] 参数量 / 推理耗时对比表
-- [ ] 与姊妹篇保持双链维护
+- [x] 更深结构冲 **99%+**（已由姊妹篇双块 + 增强达成 **99.21%** clean，见 [[CNN手写数字识别与优化]]）
+- [ ] 参数量 / 推理耗时对比表（CNN 侧见仓库 `out/block_comparison_report.txt`）
+- [x] 与姊妹篇保持双链维护
+
+## 附录 本篇修订记录
+
+> 仅记录 **本文件** `MLP手写数字识别与优化.md`。根据 **`git log --follow` 的改名/行数变化与 diff 含义** 归纳；不粘贴无信息量的 `vault backup` 原文。
+
+- **2026-06-08**（提交 `9262d41`）  
+  - 首版写入 vault（`git numstat`：**+288** 行）：MLP 首份完整日报体例——结构、前向/反向、损失、超参实验、错误分析、优化步骤、统一划分对比、增强鲁棒性（§10）等。
+
+- **2026-06-09**（提交 `9ab5559`）  
+  - 文件随目录从 `personal/aiml/study/` 迁至 `personal/technology/aiml/study/`（路径调整）；正文小改（约 ±11 行）。
+
+- **2026-06-10**（提交 `936eb07`）  
+  - 重命名为 **`MLP手写数字识别与优化.md`**，并更新与 CNN 姊妹篇的双链等（`git numstat`：约 +14 / −13）。
+
+- **2026-06-12**（工作区，待提交）  
+  - `updated` 刷新；配图统一为 **`images/mlp_*.png`**；**TODO** 与 CNN 姊妹篇对齐；**本附录** 改为仅本篇修订记录（移除原先附带的 `mlp/README`、学习路径等「他文件」git 表）。
+
+> **卷积侧概念**（平移、感受野、参数共享、池化）见姊妹篇 **[[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]**。
 
 ## 参考
 
