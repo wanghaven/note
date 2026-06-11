@@ -336,6 +336,7 @@ test = calc(12)
 
 Mermaid代码：
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TD
     A[开始] --> B(处理);
     B --> C{条件?};
@@ -2166,6 +2167,7 @@ $$
 
 ````txt
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TB
 	%% s=start  e=end  f=fork  n=normal
 	
@@ -2184,6 +2186,7 @@ graph TB
 **<big>渲染1：</big>**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TB
 	%% s=start  e=end  f=fork  n=normal
 	
@@ -2204,6 +2207,7 @@ graph TB
 
 ````txt
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph LR
 	%% s=start  e=end  f= fork n=normal 
 	
@@ -2227,6 +2231,7 @@ graph LR
 **<big>渲染2：</big>**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph LR
 	%% s=start  e=end  f= fork n=normal 
 	
@@ -2256,6 +2261,7 @@ graph LR
 
 ````md
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 pie
     title 为什么总是宅在家里？
     "喜欢宅" : 45
@@ -2268,6 +2274,7 @@ pie
 **<big>渲染：</big>**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 pie
     title 为什么总是宅在家里？
     "喜欢宅" : 45
@@ -2286,6 +2293,7 @@ pie
 
 ````txt
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
 	%% 自动编号
 	autonumber
@@ -2385,6 +2393,7 @@ sequenceDiagram
 **<big>渲染：</big>**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
 	%% 自动编号
 	autonumber
@@ -2444,6 +2453,7 @@ sequenceDiagram
 
 ````txt
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD
@@ -2459,6 +2469,7 @@ gantt
 **<big>渲染：</big>**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD
@@ -2482,6 +2493,7 @@ gantt
 
 ````md
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 classDiagram
     Animal <|-- Duck
     Animal <|-- Fish
@@ -2510,6 +2522,7 @@ classDiagram
 **<big>渲染：</big>**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 classDiagram
     Animal <|-- Duck
     Animal <|-- Fish

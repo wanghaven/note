@@ -103,6 +103,7 @@ aliases:
 > 每个子层都包裹「残差连接 + 层归一化」，即 $\mathrm{LayerNorm}(x + \mathrm{Sublayer}(x))$。
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 flowchart TB
     %% ================= 编码器侧 =================
     subgraph ENC_SIDE["编码器侧 (Inputs)"]

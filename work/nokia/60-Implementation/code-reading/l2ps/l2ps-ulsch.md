@@ -204,6 +204,7 @@ Like DL, the UL Scheduler EO has a **two-tier dispatcher**:
 2. **Per-cell FSM** — Boost.SML `QueueFsm` with three states (Startup / Default / Delete), one per cell, managed by `CellsFsmSet<QueueFsm, MainComponent>`. The `StateDefaultRouter` then dispatches ~85 message IDs to handlers within the Default state.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 stateDiagram-v2
 direction TB
 
@@ -335,6 +336,7 @@ Frequency-Domain scheduling: PRB allocation, MCS/TBS calculation, DCI filling, P
 ### 5.4 PRE Stage — Sequence
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant SH as SlotSynchroIndHandler
@@ -369,6 +371,7 @@ sequenceDiagram
 ### 5.5 TD Stage — Sequence (per carrier)
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant BFG as bfgroup::Scheduler
@@ -406,6 +409,7 @@ sequenceDiagram
 ### 5.6 FD Stage — Sequence (per carrier)
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant CAR as td::CarrierScheduler
@@ -451,6 +455,7 @@ sequenceDiagram
 ### 5.7 Post Stage — Sequence
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant SH as SlotSynchroIndHandler
@@ -558,6 +563,7 @@ CellDb --> RtCellDbUl : pre-allocated slot data
 ## 7. Cell Bring-Up And Delete Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant CPRT as CP-RT
     participant SGNL as SGNL EO
@@ -598,6 +604,7 @@ sequenceDiagram
 ## 8. UE Configuration Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant CPRT as CP-RT
     participant SGNL as SGNL EO
@@ -682,6 +689,7 @@ flowchart TB
 The UL Scheduler receives asynchronous L1 responses carrying HARQ feedback, CSI, SRS measurements, and decoded UL MAC PDU indications.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant L1 as L1-UL
     participant UL as UL Scheduler

@@ -24,6 +24,7 @@ aliases: []
 
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TD
     A["初步了解GPT-5"] --> B["网页版与API Key详解"];
     B --> C["在Obsidian中集成GPT-5"];

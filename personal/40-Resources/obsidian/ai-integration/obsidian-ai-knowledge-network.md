@@ -27,6 +27,7 @@ aliases:
 ## **第一阶段：生成学习报告**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TD
     subgraph " "
         Title1["<b>第一阶段：生成学习报告</b>"]
@@ -69,6 +70,7 @@ graph TD
 ## **第二阶段：将报告转换为Markdown大纲**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TD
     subgraph " "
         Title2["<b>第二阶段：将报告转换为Markdown大纲</b>"]
@@ -99,6 +101,7 @@ graph TD
 ## **第三阶段：自动化创建知识库框架**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TD
     subgraph " "
         Title3["<b>第三阶段：自动化创建知识库框架</b>"]
@@ -136,6 +139,7 @@ graph TD
 ## **第四阶段：填充笔记与内化知识**
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TD
     subgraph " "
         Title4["<b>第四阶段：填充笔记与内化知识</b>"]

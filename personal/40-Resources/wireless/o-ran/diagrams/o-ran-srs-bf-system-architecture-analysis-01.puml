@@ -1,0 +1,86 @@
+@startuml
+top to bottom direction
+skinparam linetype ortho
+
+package "O-DU" as DU_P {
+  rectangle "RRC/SRS Configurations" as RRC
+  rectangle "L2 Scheduler\n(MU/rank/layer/PRB)" as SCH
+
+  package "L1 DU" as L1 {
+    package "CP" as CP_DU {
+      rectangle "ST12/ST5/ST14 generation" as C_TX
+      rectangle "ST6/ST13 ingest" as C_RX
+    }
+    
+    package "UP" as UP_DU {
+      rectangle "PDSCH Layer Data" as PDSCH
+      rectangle "PUSCH Layer Data" as PUSCH
+    }
+  }
+
+  RRC -d-> SCH
+  C_RX -u- SCH
+  SCH -d- C_TX
+}
+
+package "Fronthaul" as FH_P {
+  together {
+    rectangle "C-Plane DU->RU\n(ST12/ST5/ST14)" as FH_C_DL
+    rectangle "U-Plane IQ" as FH_U
+    rectangle "C-Plane RU->DU\n(ST6/ST13)" as FH_C_UL
+  }
+  FH_C_DL -[hidden]r-> FH_U
+  FH_U -[hidden]r-> FH_C_UL
+}
+
+package "O-RU" as RU_P {
+  package "SRS" as RU_SRS {
+    rectangle "SRS extraction (Ysrs)" as SRSX
+    rectangle "SRS-CE" as CE
+    rectangle "CI retain/discard/reset" as MEM
+    SRSX -[hidden]r-> CE
+    CE -[hidden]r-> MEM
+    SRSX -r-> CE
+    CE -r-> MEM
+  }
+
+  package "DL" as RU_DL {
+    rectangle "DL BF weight generation" as DLW
+    rectangle "DL BF apply" as DLB
+    DLW -[hidden]r-> DLB
+    DLW -r-> DLB
+  }
+
+  package "UL" as RU_UL {
+    rectangle "UL BF weight generation" as ULW
+    rectangle "UL BF apply" as ULB
+    ULW -[hidden]r-> ULB
+    ULW -r-> ULB
+  }
+
+  RU_SRS -[hidden]r-> RU_DL
+  RU_DL -[hidden]r-> RU_UL
+  MEM -r-> DLW
+  MEM -r-> ULW
+}
+
+rectangle "UE" as UE
+
+DU_P -[hidden]d-> FH_P
+FH_P -[hidden]d-> RU_P
+RU_P -[hidden]d-> UE
+
+C_TX -d-> FH_C_DL
+FH_C_DL -d-> SRSX
+CE ..> FH_C_UL : ST6/ST13
+FH_C_UL -u-> C_RX
+
+FH_U -d-> DLB : DL IQ
+ULB -u-> FH_U : UL IQ
+
+PDSCH -d-> FH_U : DL IQ
+PUSCH <-d- FH_U : UL IQ
+
+DLB -d-> UE : DL air
+UE -u-> ULB : UL air
+@enduml

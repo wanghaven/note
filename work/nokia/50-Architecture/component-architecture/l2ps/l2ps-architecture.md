@@ -433,6 +433,7 @@ This chapter describes the runtime flows that need context for feature developme
 Two-phase bring-up — address distribution via CNFG (cross-pool, once per process), then cell setup through SGNL-psCell → schedulers → BBRM → L1 (per cell).
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant CPRT as CP-RT
     participant CNFG
@@ -482,6 +483,7 @@ psCell steps: `fillResponseInfo()` → `performRadParamAssertionCheck()` → `is
 `UserSetupReq` goes from CP-RT to SGNL (psUser), which fans out to DL + UL with a one-way notification to SRS-BM (if present). Only DL and UL contribute aggregated responses. BBRM is **not** on the user path.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant CPRT as CP-RT
     participant PSUSER as psUser EO
@@ -515,6 +517,7 @@ Key files: `sgnl/psUser/handler/HandleUserSetupReq.hpp`, `PsUserProcedure.hpp` (
 Same shape as user setup but with extra pre-validation (PUCCH, 32-port CSI-RS) and a different SRS-BM rule. See `sgnl/psUser/handler/HandleUserModifyReq.hpp` and the `UserModifyReq`-specialised `PsUserProcedure::handle()` in `PsUserProcedure.hpp`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant CPRT as CP-RT
     participant PSUSER as psUser EO
@@ -722,6 +725,7 @@ Per-slot information is exchanged through dedicated update messages.
 ## 6. Database Architecture
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 graph TB
     GLOBALDB[GlobalDb — per-pool instances]
     subgraph "Cell DBs"

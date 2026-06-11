@@ -189,6 +189,7 @@ FdSubScheduler ..> EoDb : shared eoDb
 Unlike DL SCH / UL SCH, the FD EO has **no state machine** — it processes events via a single `switch` on `event.getEventId()` in `EventHandler::processEvent()`. Lifecycle is implicit: each subcell becomes "active" when its `FdInitInd` is processed and "inactive" when its `FdDeleteInd` arrives.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 stateDiagram-v2
 direction LR
 
@@ -228,6 +229,7 @@ end note
 **Scheduler-index handoff.** Before processing any event the handler captures the **current** `SchedulerIndexDb` value, overrides it with the FD EO's own index (`schedulerIndex` from `FdInitInd`), and restores the previous value on exit. This lets shared per-scheduler data (e.g. rad-params) follow whichever cell-group the FD EO is currently servicing.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant L1 as DL Scheduler
     participant EH as fd::em::EventHandler
@@ -452,6 +454,7 @@ flowchart TB
 End-to-end view of one `FdScheduleReq` from DL SCH all the way to L1-DL and back to DL SCH as `FdScheduleResp`. This shows the **collaborators of `dl::sch::fd::Scheduler` for one subcell** inside `MainComponent::fillFdScheduleRespMessage`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant DLS as DL Scheduler EO
@@ -554,6 +557,7 @@ sequenceDiagram
 The FD EO is a one-way producer to L1-DL; **L1 responses go back to the DL Scheduler EO**, not the FD EO. The FD EO has no incoming L1 traffic at all.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant DL as DL Scheduler EO
     participant FD as FD EO
@@ -653,6 +657,7 @@ This is a **lock-free zero-copy data hand-off** but requires the DL SCH to keep 
 Triggered by DL SCH on cell setup / delete; the FD EO simply maintains its per-subcell scheduler array.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL psCell
     participant DL as DL Scheduler
@@ -699,6 +704,7 @@ The FD EO does NOT have a per-UE setup/delete message path. UEs become visible t
 The `EoDb` (per-slot scratch DB) tracks the UEs currently being scheduled within the FD EO. It is **cleared at slot end** via `eoDb.init()` / `resetFd()`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant DL as DL Scheduler
     participant FD as FD EO

@@ -209,6 +209,7 @@ The DL Scheduler EO has a **two-tier event dispatch** structure:
 2. **Per-cell FSM** — Boost.SML state machine (`QueueFsm`) with three states: **Startup**, **Default**, **Delete**. One FSM per cell, managed by `CellsFsmSet<QueueFsm, MainComponent>`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 stateDiagram-v2
 direction TB
 
@@ -246,6 +247,7 @@ end note
 The `DlDispatcherStateDefault` and `DlDispatcherWaitFdSchedRespState` form a two-state dispatcher that gates event processing while the DL EO is waiting for one or more `FdScheduleResp` from the FD EO. The dispatcher state lives in `l2ps::pscommon::dispatcherFsm::QueueDispatcherFsmImpl` and is the **outer** FSM (above the per-cell `QueueFsm` that owns Startup / Default / Delete).
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 stateDiagram-v2
 direction LR
 
@@ -356,6 +358,7 @@ DlDispatcherWaitFdSchedRespState --> DlMainComponent : routes FdScheduleResp / r
 Every incoming EM event is steered through three phases inside `EmFsmRouterWithDelay`: (a) **passthrough** to the FSM if currently allowed, (b) **delay** into a per-priority `queuesDelayedEvents`, and (c) **bulk flush** via `processDelayedEvents` when the state machine exits the wait condition. The diagram below shows one event's full life cycle, including the delayed-event flush loop.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     actor Sender as sender (CP-RT / L1 / peer EO)
@@ -577,6 +580,7 @@ flowchart TB
 ### 4.7 PRE Stage — Sequence
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant SH as SlotSynchroIndHandler
@@ -614,6 +618,7 @@ sequenceDiagram
 ### 4.8 TD Stage — Sequence (per carrier / per slot)
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant BFG as bfgroup::Scheduler
@@ -652,6 +657,7 @@ sequenceDiagram
 ### 4.9 FDM Stage — Sequence (per carrier)
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant CAR as CarrierScheduler
@@ -691,6 +697,7 @@ sequenceDiagram
 ### 4.10 Post Stage — Sequence
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant FD as FD EO
@@ -749,6 +756,7 @@ sequenceDiagram
 A single bird's-eye view spanning the **whole** DL slot — `SlotSynchroInd` arrival, all four scheduling stages, the FD EO round-trip, the FdScheduleResp handling and `postSchedule`. The dispatcher boundary (`DispatcherDefault` ↔ `WaitFdSchedResp`) is shown explicitly.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     autonumber
     participant PLAT as Platform Timer
@@ -860,6 +868,7 @@ Key classes (`dl/sch/la/`):
 - `DeltaCqiStepUpCalculator` — outer-loop step-up/down logic
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant L1 as L1-UL
     participant DL as DL Scheduler
@@ -962,6 +971,7 @@ Scheduler --> BfGroupSchedulerDB
 ## 7. Cell Bring-Up And Delete Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL-psCell
     participant DL as DL Scheduler (MainComponent)
@@ -997,6 +1007,7 @@ sequenceDiagram
 ## 8. UE Configuration Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL-psUser
     participant DL as DL Scheduler (MainComponent)
@@ -1072,6 +1083,7 @@ Adaptive budgeting via `OverloadController` clamps FD-scheduled UEs when time is
 ## 10. DL MU-MIMO And Beamforming Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SRSBM as SRS-BM EO
     participant DL as DL Scheduler

@@ -307,6 +307,7 @@ DataModelFacade *-- ViewsContainer
 The BBRM EO uses a **trivial single-state Boost.SML FSM** (`startingState`). All EM events are routed unconditionally to `fsm::EventRouter::processEvent` which dispatches by message ID. Termination is the only state transition.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 stateDiagram-v2
 direction TB
 
@@ -575,6 +576,7 @@ ArtificialLoadConfProcessor ..> DataBaseContainer : writes
 ## 6. Cell Bring-Up Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL-psCell
     participant BBRM as BBRM EventRouter
@@ -635,6 +637,7 @@ If any of UL / DL fails, the response is sent as NOK and the context removed.
 ## 7. Cell Delete Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL-psCell
     participant BBRM as BBRM EventRouter
@@ -691,6 +694,7 @@ sequenceDiagram
 DL and UL Schedulers periodically (per pool-eval period or on demand) send `ResourceReq` to ask for the current PRB / SchedUE / SubCell budget. BBRM has the per-slot **hottest path** in this flow.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant Sched as DL/UL Scheduler
     participant BBRM as BBRM EventRouter
@@ -762,6 +766,7 @@ The `ResourceRespPostponeController` keeps the worst-case bounded: when the resp
 ## 9. Pool Deployment Flow (Startup)
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant CNFG
     participant BBRM as BBRM EventRouter

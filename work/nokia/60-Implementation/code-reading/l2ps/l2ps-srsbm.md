@@ -150,6 +150,7 @@ SlotSynchroIndContHandler --> SrsBmCell
 SRS-BM 使用 `boost::sml` 经 `emBase::EmFsm<QueueFsmImpl>` 包装。三个状态分别对应 cell bring-up、normal operation 和 delete phase。状态动作返回 `true` 时才触发到下一个状态：startup 处理 `CellSetupReq` 后进 default；default 处理 `CellStopSchedulingReq` 后进 delete；delete 处理 `CellDeleteReq` 后回 startup。
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 stateDiagram-v2
 direction TB
 
@@ -511,6 +512,7 @@ SrsBmUeDbUl *-- SrsBmUeDataUl
 ## 8. Cell Bring-Up And Delete Flow
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL psCell
     participant FSM as SRS-BM QueueFsm
@@ -551,6 +553,7 @@ sequenceDiagram
 User setup/modify/delete is one-way from psUser to SRS-BM; SRS-BM does not contribute to the aggregated psUser response. `MainComponentSrsBm::processDlUlManagers` dispatches to both managers. The common CRTP layer filters inactive direction, invalid add causes, SCell-addition corner cases, and absent BWP configs; direction-specific managers extract usable SRS resources and update their UE DBs.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant SGNL as SGNL psUser
     participant Main as MainComponentSrsBm
@@ -632,6 +635,7 @@ flowchart TB
 When SRS-BM runs on the same core as the UL scheduler and DL FD is enabled on UL cores, `UlToSrsSlotTypeSync` provides a `SlotTypeSelectorBase*` and a flag. `MainComponentSrsBm` uses this pointer to detect DL-only slots and coordinates `SlotSynchroIndCont` through `SlotSynchroIndContHandler`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant UL as UL Scheduler
     participant Main as MainComponentSrsBm
@@ -900,6 +904,7 @@ ICoMaUpdater ..> CoMaUpdateResult
 Slot Scheduler 是唯一知道执行顺序的模块。它不包含业务逻辑，只负责 timing + budget + 调用顺序。
 
 ```mermaid
+%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
 sequenceDiagram
     participant Timer as SlotSynchroInd
     participant Sched as Slot Scheduler
