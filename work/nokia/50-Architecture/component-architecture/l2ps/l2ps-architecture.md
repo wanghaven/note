@@ -879,3 +879,9 @@ This document intentionally does not duplicate the build commands; treat the ski
 | **CS1 / CS2** | Candidate Set 1 (eligibility) / Candidate Set 2 (PF-sorted scheduling list) |
 | **PF** | Proportional Fair (TD scheduling metric) |
 | **CSM** | Cell Slot Model (capacity model — L2-PS does not own it) |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-gnb]]

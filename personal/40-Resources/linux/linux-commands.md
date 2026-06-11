@@ -19,3 +19,8 @@ aliases: []
 	查找删除 .svn文件：  find ./ -name "*.svn" -print -exec rm -fr {} \;
 	查找.sh文件:  find.-iname "*.sh"-execls-l {}+
 	查找并打包: find . -name "*Srs*.o" -exec tar -rvf srs.tar {} \;
+
+## Related
+
+- [[navigation-tools]]
+- [[Linux]]

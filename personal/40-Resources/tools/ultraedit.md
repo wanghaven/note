@@ -105,3 +105,7 @@ If ^(h\*o^) ^(f\*s^) matches "hello folks",
 ^2 ^1 would replace it with "folks hello".
 （hello folks 将被替换成 folks hello。）
 注： ^ 是实际字符 ^不是Ctl + 键值。
+
+## Related
+
+- [[navigation-tools]]

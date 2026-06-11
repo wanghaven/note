@@ -98,3 +98,8 @@ curl -H "Authorization: Bearer <API_KEY>" http://localhost:27123/vault
     
 
 这使得 Obsidian 既保留了“本地自由”，又能在需要时享受到“受控自动化”的优势。
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

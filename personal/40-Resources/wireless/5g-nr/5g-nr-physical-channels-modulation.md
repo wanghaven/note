@@ -284,3 +284,9 @@ $$
 
   
 [5G-NR物理信道与调制-下行链路v1.1.0](http://marshallcomm.cn/2017/10/24/nr-v110-l1-channel-modulation-dl/)
+
+## Related
+
+- [[navigation-wireless]]
+- [[Wireless Communication]]
+- [[5G NR]]

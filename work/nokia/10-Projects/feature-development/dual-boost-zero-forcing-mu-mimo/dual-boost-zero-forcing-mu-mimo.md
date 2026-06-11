@@ -263,3 +263,9 @@ uint8_t PairingGroupUeSelector::selectNormalBoostPGUe(
     return realBoostUeNum;
 }
 ```
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-implementation]]

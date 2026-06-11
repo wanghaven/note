@@ -116,3 +116,8 @@ Port 23 # 端口改为23，22端口已被占用ListenAddress 0.0.0.0 # 取消注
 	
 	wget [https://xxxx](https://xxxx)  -e use_proxy=yes -e https_proxy=127.0.0.1:10809
 	wget [https://xxxx](https://xxxx) -e use_proxy=yes -e http_proxy=http://defraprx-fihelprx.glb.nsn-net.net:8080 -e https_proxy=http://defraprx-fihelprx.glb.nsn-net.net:8080
+
+## Related
+
+- [[navigation-tools]]
+- [[Linux]]

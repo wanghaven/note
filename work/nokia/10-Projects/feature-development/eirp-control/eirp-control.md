@@ -304,3 +304,9 @@ package l2ps {
 ```
 ## Sequence chart
 TODO
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-implementation]]

@@ -209,3 +209,10 @@ $$\beta^{[\ell+1]} = \left[ \beta^{[\ell]} + r^{[\ell]} \left(\text{Trace}(\math
 - **主要参考文献：**
     - [10] P. Angeletti et al., "A Pragmatic Approach to Massive MIMO..." (IEEE Access, 2020) - 奠定了卫星 Massive MIMO 的工程实用化基准。
     - [13] S. S. Christensen et al. (ICC 2009) - WMMSE 算法的理论基石。
+
+## Related
+
+- [[navigation-wireless]]
+- [[Wireless Communication]]
+- [[NTN]]
+- [[Massive MIMO]]

@@ -751,3 +751,9 @@ Not covered: Loki, Thor, Odin (see L1 documentation).
 | ------------------------- | ------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | 1-core DL+UL              | Low complexity, single cell per core. Supports odd number of cores. | Loses pooling benefit. Loses DL+UL parallelization. | Use in all new BB cell sets instead of 2 cells on 2 cores. Don't force change to existing deployments due to KPI changes. |
 | Single direction per core | Keeps pooling. Keeps DL+UL parallelization. Better cache.           | Complexity, still 2 cells per core.                 | Don't proceed. Not solving 2-cells-on-1-core complexity. Functionality and KPI issues.                                    |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-gnb]]

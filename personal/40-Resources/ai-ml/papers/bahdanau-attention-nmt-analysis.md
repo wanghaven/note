@@ -249,3 +249,9 @@ $$h_j = \left[\overrightarrow{h}_j^\top ; \overleftarrow{h}_j^\top\right]^\top$$
 > - 前置：[Seq2Seq (Sutskever 2014)](https://arxiv.org/abs/1409.3215)、[GRU / RNN Encoder-Decoder (Cho 2014)](https://arxiv.org/abs/1406.1078)
 > - 后继巅峰：[Attention Is All You Need / Transformer (2017)](https://arxiv.org/abs/1706.03762)
 > - 图解：[The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/)
+
+## Related
+
+- [[navigation-ai-ml]]
+- [[AI]]
+- [[Machine Learning]]

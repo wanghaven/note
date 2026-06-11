@@ -480,3 +480,9 @@ UE应假定SS/PBCH块的DM-RS复值符号序列$ { {r} *{l}}(0),...,{ {r}* {l}}(
 
   
 UE应对可能的时域位置上的SS/PBCH块进行监测，在TS38.213中描述。
+
+## Related
+
+- [[navigation-wireless]]
+- [[Wireless Communication]]
+- [[5G NR]]

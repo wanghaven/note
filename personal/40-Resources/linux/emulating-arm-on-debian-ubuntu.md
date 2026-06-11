@@ -257,3 +257,8 @@ sudo kpartx -d -v armdisk.img
 [4] http://www.makestuff.eu/wordpress/running-debian-for-arm-powerpc-on-qemu/
 [5] http://www.darrinhodges.com/chroot-voodoo/
 [6] https://en.wikipedia.org/wiki/Binfmt_misc
+
+## Related
+
+- [[navigation-tools]]
+- [[Linux]]

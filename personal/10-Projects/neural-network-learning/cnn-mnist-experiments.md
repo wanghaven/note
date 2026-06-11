@@ -248,3 +248,10 @@ $$
 - 权威长文：`C:/work/code/others/neuralnetworks/cnn/README.md`、`cnn/cnn.py`
 - 技能：`.cursor/skills/nn-project-builder/SKILL.md`
 - CuPy：[安装说明](https://docs.cupy.dev/en/stable/install.html)
+
+## Related
+
+- [[navigation-ai-ml]]
+- [[neural-network-learning-path]]
+- [[CNN]]
+- [[MLP]]

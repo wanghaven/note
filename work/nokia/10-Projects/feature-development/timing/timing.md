@@ -42,3 +42,9 @@ aliases:
 | constexpr uint32_t puschReceiveRespHarqULatestTddFR172e                        | 1867774    | 1520      |
 | constexpr uint16_t puschReceiveRespHarqDEarliestTddFR172e                      | 0          | 0         |
 | constexpr uint32_t puschReceiveRespHarqDLatestTddFR172e                        | 994098     | 809       |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-implementation]]

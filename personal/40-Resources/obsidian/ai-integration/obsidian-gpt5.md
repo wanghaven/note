@@ -154,3 +154,8 @@ graph TD
 | **批量修改元数据**（20 条笔记 × 每条 200 字）     | 1. 插件读取 20 条笔记内容<br>2. 调用模型生成 tags/summary<br>3. 写回 frontmatter<br>4. 保存修改      | gpt-5-mini<br>$0.25/百万tokens 输入<br>$2/百万tokens 输出 |     输入：4000 tokens |       输出：2000 tokens |         输入费 = $0.25 × 0.004 = $0.00100；输出费 = $2 × 0.002 = $0.00400 |  **<span style="color:red">￥0.03590</span>** |      557 |
 | **知识库智能问答**（带上下文检索）                | 1. 用户提问<br>2. 插件用 embeddings 检索 chunk<br>3. 拼成 prompt 调用模型<br>4. 返回答案并附引用       | gpt-5-mini<br>$0.25/百万tokens 输入<br>$2/百万tokens 输出 |     输入：1000 tokens |        输出：500 tokens |        输入费 = $0.25 × 0.001 = $0.00025；输出费 = $2 × 0.0005 = $0.00100 | **<span style="color:red">￥0.008975</span>** |     2228 |
 | **图片/白板 → 结构化笔记**（白板 + 生成 400 字笔记） | 1. 插入白板图片到 Obsidian<br>2. 调用 Image→Note 命令<br>3. 模型解析图片并生成笔记<br>4. 保存要点与标签      | gpt-5<br>$1.25/百万tokens 输入<br>$10/百万tokens 输出     |      输入：300 tokens |        输出：500 tokens |     输入费 = $1.25 × 0.0003 = $0.000375；输出费 = $10 × 0.0005 = $0.00500 | **<span style="color:red">￥0.038593</span>** |      518 |
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

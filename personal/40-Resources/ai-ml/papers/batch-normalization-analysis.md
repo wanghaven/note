@@ -247,3 +247,9 @@ $$\frac{\partial \mathrm{BN}((aW)u)}{\partial u} = \frac{\partial \mathrm{BN}(Wu
 > - 同期/相关：[ResNet (He 2015)](https://arxiv.org/abs/1512.03385)（残差 + BN 是训练超深网络的黄金组合）、[GoogLeNet/Inception (2014)](https://arxiv.org/abs/1409.4842)
 > - 后继归一化技术：Layer Normalization（Transformer 采用）、Group Normalization（小 batch 友好）
 > - 再思考 BN 为何有效：How Does Batch Normalization Help Optimization? (Santurkar et al. 2018, [arXiv:1805.11604](https://arxiv.org/abs/1805.11604))
+
+## Related
+
+- [[navigation-ai-ml]]
+- [[AI]]
+- [[Machine Learning]]

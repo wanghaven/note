@@ -110,3 +110,8 @@ aliases:
 > 1. **耐心等待**：在第一次运行 Docker 命令后，请耐心等待 3-5 分钟。
 > 2. **强制刷新**：在浏览器中按下 `Ctrl+F5` (或 `Cmd+Shift+R`) 来清除缓存并强制重新加载页面。
 > 3. **重启容器**：如果等待后仍无效，请在 Docker Desktop 中找到 `open-webui` 容器，点击 `Stop` 按钮，然后再点击 `Start` 按钮。
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

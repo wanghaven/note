@@ -59,3 +59,8 @@ aliases: []
 | **第一步** | **Ollama官网** | 前往Ollama官网，根据你的操作系统（Windows/macOS/Linux）下载并安装它。 |
 | **第二步** | **终端/命令行** | 打开终端，输入命令 `ollama run llama3` 来下载并运行一个模型。这会自动在本地启动一个服务。 |
 | **第三步** | **Obsidian插件设置** | 在AI插件的设置中，找到服务器地址（Base URL），填入本地地址 `http://localhost:11434` 并保存。 |
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

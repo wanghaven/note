@@ -474,3 +474,9 @@ System insight:
 - Cross-clause references included: `4.4.8`, `7.4.14`, `7.7.33`, `7.7.34`, `9.2`, `12.6`, `12.7.1.7`.
 - Output file path: `C:\work\note\personal\technology\o-ran\R005_12.7_SRS-BF_System_Architecture_Analysis.md`
 
+
+## Related
+
+- [[navigation-wireless]]
+- [[Wireless Communication]]
+- [[O-RAN]]

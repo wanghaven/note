@@ -222,3 +222,9 @@ $$p(y_1, \dots, y_{T'} \mid x_1, \dots, x_T) = \prod_{t=1}^{T'} p(y_t \mid v,\, 
 > - 同期姊妹篇：[GRU / RNN Encoder-Decoder (Cho et al. 2014)](https://arxiv.org/abs/1406.1078)
 > - 直接后继（解决定长向量瓶颈）：[Bahdanau Attention (2014)](https://arxiv.org/abs/1409.0473)
 > - 范式终点：[Attention Is All You Need / Transformer (2017)](https://arxiv.org/abs/1706.03762)
+
+## Related
+
+- [[navigation-ai-ml]]
+- [[AI]]
+- [[Machine Learning]]

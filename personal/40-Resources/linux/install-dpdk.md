@@ -36,3 +36,8 @@ aliases: []
 	# build example  
 	mkdir -p /tmp/l2fwd  
 	make -C /usr/share/dpdk/examples/l2fwd "O=/tmp/l2fwd"
+
+## Related
+
+- [[navigation-tools]]
+- [[Linux]]

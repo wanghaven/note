@@ -2713,3 +2713,8 @@ $z$ = 物体表面以上的距离。
 
 > [!warning]- 警示引用块
 > 这是一个警示引用块...
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

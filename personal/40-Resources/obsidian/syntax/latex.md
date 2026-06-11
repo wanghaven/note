@@ -108,3 +108,8 @@ aliases:
 | 横向省略 | `\ldots` | ……     |
 | 居中省略 | `\cdots` | ⋯⋯     |
 | 乘号点  | `\cdot`  | a⋅ba⋅b |
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

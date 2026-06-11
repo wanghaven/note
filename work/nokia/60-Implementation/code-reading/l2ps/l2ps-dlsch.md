@@ -1346,3 +1346,9 @@ Each EO owns its DB stores; identical-sounding names in different docs refer to 
 | `dl/db/cell/CellDynamicData.hpp`                  | Per-cell mutable slot state                                |
 | `dl/db/ue/UeDbDl.hpp`                             | DL UE database                                             |
 | `dl/db/ue/BufferStatus.hpp`                       | UE DL buffer tracking                                      |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-implementation]]
+- [[L2PS]]

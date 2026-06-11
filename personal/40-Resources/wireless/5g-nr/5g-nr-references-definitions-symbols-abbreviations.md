@@ -197,3 +197,9 @@ UE可以在上行链路中被配置多达四个BWP，并且在给定时间内只
 - SS/PBCH块传输使用以4000为起始的天线端口
 
 > 本文参考3GPP TS38.211 V2.0.0 (2017-12)
+
+## Related
+
+- [[navigation-wireless]]
+- [[Wireless Communication]]
+- [[5G NR]]

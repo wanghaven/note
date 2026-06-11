@@ -48,3 +48,9 @@ pairing_power_loss_{A,i} &= 10*log10(numSuLayers/numMuLayers) \\
 zf_power_loss_{A,i} &= 10*log10(1-\sum_{j}{corr(i,j)^{2}})
 \end{align*}
 $$
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-implementation]]

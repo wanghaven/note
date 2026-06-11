@@ -31,3 +31,7 @@ aliases:
 "editor.tabSize": 4
 /空白符号显示/
 "editor.renderWhitespace": "all"
+
+## Related
+
+- [[navigation-tools]]

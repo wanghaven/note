@@ -99,3 +99,9 @@ Reliability, Availability, and Serciceability (RAS)
 Platform Cache QOS
 	–Preventing noisy neighbors to disturb over utilize shared resources
 ```
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-gnb]]

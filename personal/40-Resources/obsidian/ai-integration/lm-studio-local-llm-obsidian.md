@@ -72,3 +72,8 @@ aliases: []
 -   您的电脑性能是否足够支持运行该模型？
 
 至此，您已成功搭建起一套完全私有的个人知识库 AI 助理。
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

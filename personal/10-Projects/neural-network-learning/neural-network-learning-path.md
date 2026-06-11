@@ -226,3 +226,10 @@ aliases:
 ### 📆 学习日期：2026-0X-0X
 - [ ] **今日核心实验项：** - [ ] **核心代码片段 (Tensor 维度控制)：**
 - [ ] **踩坑记录与 Debug 灵感：** - [ ] **沉淀到 Obsidian 知识库的概念：** ```
+
+## Related
+
+- [[navigation-ai-ml]]
+- [[neural-network-learning-path]]
+- [[CNN]]
+- [[MLP]]

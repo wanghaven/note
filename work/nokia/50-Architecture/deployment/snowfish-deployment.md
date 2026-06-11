@@ -137,3 +137,9 @@ aliases:
 |           |     | Sum                        |          |                   |                                                                                            |          |            |              |           |             |              |            | 0     | 0     | 0        | 0     | 1       | 1     | 1     | 1     | 0     | 0     | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      |                | 1385                   | 1144                     | 0                    | 960            |
 
 ![[ABIO_deployment_Detail.png]]
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-gnb]]

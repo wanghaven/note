@@ -13,3 +13,7 @@ aliases: []
 - [如何利用TotalCmd将A-B.C文件批量重命名为B-A.C-百度经验](https://jingyan.baidu.com/article/72ee561a46c348e16138df94.html)
 - [Matrix Inversion using LU Decomposition](https://www.gamedev.net/articles/programming/math-and-physics/matrix-inversion-using-lu-decomposition-r3637/)
 - [Adjoint and Inverse of a Matrix - GeeksforGeeks](https://www.geeksforgeeks.org/dsa/adjoint-inverse-matrix/)
+
+## Related
+
+- [[navigation-tools]]

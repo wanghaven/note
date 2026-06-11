@@ -92,3 +92,9 @@ SKU variants: 16 core 40W to 24 core 90W @2.5GHz. Main SKU option <60W.
 Silicon junction temperature from -40C to 110C
 Based on Marvell Octeon TX3 (ASSP, standard product)
 ```
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-architecture]]
+- [[navigation-gnb]]

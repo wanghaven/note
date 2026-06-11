@@ -27,3 +27,8 @@ aliases: []
 	2
 	3
 	可以看到该运行程序有一个TCP连接，客户端端口是60272，服务端ip是10.80.23.122，端口是26575
+
+## Related
+
+- [[navigation-tools]]
+- [[Linux]]

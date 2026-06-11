@@ -1081,3 +1081,9 @@ Each EO owns its DB stores; identically-named stores in different docs are disti
 | `bbrm/l1ProcessingMode/L1ProcessingModeSelector.hpp`            | L1 processing-mode selection                                                    |
 | `bbrm/InterPoolingSwitchingFacade.hpp`                          | Inter-pooling switching trigger                                                 |
 | `bbrm/BbrmContext.hpp`                                          | Cross-cutting BBRM context (alCellId, EMF validation flag)                      |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-implementation]]
+- [[L2PS]]

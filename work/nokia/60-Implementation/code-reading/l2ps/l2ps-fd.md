@@ -986,3 +986,9 @@ Each EO owns its DB stores; identically-named stores in different docs are disti
 | `dl/db/cell/FdCellDependencies.hpp`                             | Aggregated per-subcell deps for FD scheduling                                  |
 | `dl/sch/fd/FdCellDb.hpp` / `FdCellGroupDb.hpp` / `FdUeDb.hpp`   | FD-side database pointer wrappers                                              |
 | `dl/sch/bfgroup/SchedulerFdHandle.hpp` + `.cpp`                 | **DL-side** counterpart: builds & sends FdInitInd to FD EO                     |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-implementation]]
+- [[L2PS]]

@@ -199,3 +199,8 @@ DeepSeek：DeepSeek-V4、DeepSeek-Coder；
 通过Claude Code 开发者模式 + CC Switch 网关，5 分钟即可低成本接入第三方大模型，既保留原生操作体验，又实现模型自由、成本可控。无需复杂代码，全程图形化配置，无论是个人使用还是团队协作，都能轻松落地。
 
 现在升级到 Claude Code 最新版的小伙伴也不用怕了，按本文步骤配置，告别官方订阅限制，解锁更多大模型玩法吧
+
+## Related
+
+- [[navigation-tools]]
+- [[Obsidian]]

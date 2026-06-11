@@ -306,3 +306,10 @@ $$\hat m=\frac{m}{1-\beta_1^t},\quad \hat v=\frac{v}{1-\beta_2^t},\quad \theta\l
 - 代码仓库：`c:/work/code/others/neuralnetworks/mlp`
 - 技术文档：`mlp/README.md`（含完整推导与全部实验）
 - 方法论技能：`.cursor/skills/nn-project-builder`
+
+## Related
+
+- [[navigation-ai-ml]]
+- [[neural-network-learning-path]]
+- [[CNN]]
+- [[MLP]]

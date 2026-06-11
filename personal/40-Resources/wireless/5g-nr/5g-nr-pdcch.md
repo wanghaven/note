@@ -215,3 +215,9 @@ UE从表13-1至表13-8中描述的 *RMSI-PDCCH-Config* 的前4个比特中确定
 ![mark](https://picture-1257868707.cos.ap-beijing.myqcloud.com/marshallcomm/20171231/141044288.png)
 
 ![mark](https://picture-1257868707.cos.ap-beijing.myqcloud.com/marshallcomm/20171231/141110766.png)
+
+## Related
+
+- [[navigation-wireless]]
+- [[Wireless Communication]]
+- [[5G NR]]

@@ -1259,3 +1259,9 @@ Each EO owns its DB stores; identically-named stores in different docs are disti
 | Shared CRTP manager                   | `/workspace/uplane/L2-PS/src/srsBm/common/SrsBmManager.hpp`                                                                                                                             |
 | SRS response hot path                 | `/workspace/uplane/L2-PS/src/srsBm/common/SrsReceiveRespBmPsHandler.hpp`, `/workspace/uplane/L2-PS/src/srsBm/common/SrsReceiveRespBmPsHandler.tpl.hpp`                                  |
 | Cell and UE DB                        | `/workspace/uplane/L2-PS/src/srsBm/db/cell/SrsBmCell.hpp`, `/workspace/uplane/L2-PS/src/srsBm/db/ue/SrsBmUeDbDl.hpp`, `/workspace/uplane/L2-PS/src/srsBm/db/ue/SrsBmUeDbUl.hpp`         |
+
+## Related
+
+- [[navigation-nokia-home]]
+- [[navigation-implementation]]
+- [[L2PS]]

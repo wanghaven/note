@@ -89,3 +89,8 @@ A few installation mechanisms require the URL of the TensorFlow Python package. 
 |Python 3, Pi0 or Pi1|[https://storage.googleapis.com/tensorflow/raspberrypi/tensorflow-1.14.0-cp34-none-linux_armv6l.whl](https://storage.googleapis.com/tensorflow/raspberrypi/tensorflow-1.14.0-cp34-none-linux_armv6l.whl)|
 |Python 3, Pi2 or Pi3|[https://storage.googleapis.com/tensorflow/raspberrypi/tensorflow-1.14.0-cp34-none-linux_armv7l.whl](https://storage.googleapis.com/tensorflow/raspberrypi/tensorflow-1.14.0-cp34-none-linux_armv7l.whl)|
 From <[https://www.tensorflow.org/install/pip](https://www.tensorflow.org/install/pip)>
+
+## Related
+
+- [[navigation-tools]]
+- [[Linux]]
