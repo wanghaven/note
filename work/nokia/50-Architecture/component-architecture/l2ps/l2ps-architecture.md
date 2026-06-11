@@ -72,49 +72,7 @@ Scope: only the **main components** L2-PS exchanges messages with at run-time. P
 
 > **Code-anchored peer mapping.** Although every `Ps*` protocol is *declared* under `itf/l2/ps/...`, the actual peer is determined by who sends/receives the message in code. We checked each protocol's senders and handlers under `cplane/CP-RT/`, `cplane/CP-NRT/`, `uplane/L2-PS/`, `uplane/L2-LO/`, `uplane/L2-HI/`. Result: **all `Ps*` protocols are CP-RT ↔ L2-PS except `PsCtrl` which is L2-PS → L2-HI** (L2-HI receives `UlRadioLinkStatusInd` in `L2-HI/src/rlc/tx/flowcontrol/PsCtrlUlRadioLinkStatusIndReceiver.cpp`; L2-PS sends it in `L2-PS/src/ul/sch/bfgroup/SplitModeDetectionAlgorithm.cpp` to `l2hiSicad`).
 
-```mermaid
-%%{init: {'flowchart': {'curve': 'step'}}}%%
-flowchart TB
-    direction TB
-
-    subgraph L3["L3"]
-        direction LR
-        CPRT[5G-CP-RT]
-    end
-
-    subgraph L2["L2"]
-        direction TB
-        L2HI[5G-L2-HI]
-        L2PS[5G-L2-PS]
-        L2LO[5G-L2-LO]
-    end
-
-    subgraph L1["L1"]
-        direction LR
-        L1DL[5G-L1-DL]
-        L1UL[5G-L1-UL]
-    end
-
-    %% Invisible ordering links — force L3 → L2 → L1 stacking
-    CPRT ~~~ L2PS
-    L2PS ~~~ L1DL
-
-    %% CP-RT → L2-PS  (L2-PS is SERVER for these)
-    CPRT -->|"PsCnfg · PsCell · PsUser · PsSgnl · PsPos · PsMl · PsTest · PsTmCell"| L2PS
-
-    %% L2-PS → L2-HI  (L2-PS is CLIENT — only PsCtrl)
-    L2PS -->|"PsCtrl"| L2HI
-
-    %% L2-PS → L2-LO  (L2-PS is CLIENT)
-    L2PS -->|"LoCtrl"| L2LO
-
-    %% L2-PS → L1  (L2-PS is CLIENT)
-    L2PS -->|"DlData · DlPool"| L1DL
-    L2PS -->|"UlData · UlPool"| L1UL
-
-    style L2PS fill:#ff6b6b,stroke:#333,stroke-width:3px,color:#fff
-    linkStyle default stroke:#444,stroke-width:1px
-```
+![[diagrams/l2ps-external-peers]]
 
 ---
 
@@ -432,49 +390,7 @@ This chapter describes the runtime flows that need context for feature developme
 
 Two-phase bring-up — address distribution via CNFG (cross-pool, once per process), then cell setup through SGNL-psCell → schedulers → BBRM → L1 (per cell).
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant CPRT as CP-RT
-    participant CNFG
-    participant SGNL as SGNL-psCell
-    participant DL as DL Scheduler
-    participant UL as UL Scheduler
-    participant BBRM
-    participant L1 as L1-PHY
-
-    Note over CPRT,L1: Phase 1 — Address Distribution (per process)
-    CPRT->>CNFG: AddressDistributionReq
-    CNFG->>L1: L1 Address Exchange
-    L1->>CNFG: L1 Addresses
-    CNFG->>CPRT: AddressDistributionResp
-
-    Note over CPRT,L1: Phase 2 — Cell Setup (per cell)
-    CPRT->>SGNL: CellSetupReq
-    SGNL->>SGNL: SetupReqValidation
-    alt NOK
-        SGNL->>CPRT: CellSetupResp (NOK)
-    else OK
-        SGNL->>L1: L1AddressExchangeReq (per-cell)
-        L1->>SGNL: L1AddressExchangeResp
-        par Fan-out
-            SGNL->>DL: Internal CellSetupReq
-            SGNL->>UL: Internal CellSetupReq
-            SGNL->>BBRM: CellSetupReq
-        end
-        BBRM->>BBRM: PRB allocation
-        BBRM-->>DL: ResourceResp
-        BBRM-->>UL: ResourceResp
-        DL->>L1: Configure DL PHY
-        UL->>L1: Configure UL PHY
-        L1-->>DL: Configuration ACK
-        L1-->>UL: Configuration ACK
-        DL-->>SGNL: CellSetupResp (OK)
-        UL-->>SGNL: CellSetupResp (OK)
-        BBRM-->>SGNL: CellSetupResp (OK)
-        SGNL->>CPRT: CellSetupResp (OK)
-    end
-```
+![[diagrams/l2ps-cell-setup-sequence]]
 
 psCell steps: `fillResponseInfo()` → `performRadParamAssertionCheck()` → `isRequestPayloadValid()` (delegates to `SetupReqValidation` and the ~120 checkers under `reqValidation/`) → on OK `allocatePowerMeasurementCellIndex()` → `startL1AddressExchange()` / `L1AddressExchangeResp` → `storeAddresses()` → `sendSetupReqToInternalEos()` → `isResponseReceivedFromAllExecObjs()` → `CellSetupResp`.
 
@@ -482,33 +398,7 @@ psCell steps: `fillResponseInfo()` → `performRadParamAssertionCheck()` → `is
 
 `UserSetupReq` goes from CP-RT to SGNL (psUser), which fans out to DL + UL with a one-way notification to SRS-BM (if present). Only DL and UL contribute aggregated responses. BBRM is **not** on the user path.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant CPRT as CP-RT
-    participant PSUSER as psUser EO
-    participant DL as DL Scheduler
-    participant UL as UL Scheduler
-    participant SRSBM as SRS-BM (TDD FR1)
-
-    CPRT->>PSUSER: UserSetupReq
-    Note over PSUSER: allocate ProcedureContext<br/>expectedResponses = SDL ? DL only : DL+UL
-    par sendIndicationToInternalEos
-        PSUSER->>DL: InternalUserSetupReq
-        PSUSER->>UL: InternalUserSetupReq
-        PSUSER-->>SRSBM: InternalUserSetupReq (one-way)
-    end
-    par Response collection (DL + UL only)
-        DL-->>PSUSER: InternalUserSetupResp
-        UL-->>PSUSER: InternalUserSetupResp
-    end
-    Note over PSUSER: MergeResp::merge — first NOK wins
-    alt All OK
-        PSUSER->>CPRT: UserSetupResp (OK)
-    else Any NOK / Timeout
-        PSUSER->>CPRT: UserSetupResp (NOK) — trigger rollback
-    end
-```
+![[diagrams/l2ps-user-setup-sequence]]
 
 Key files: `sgnl/psUser/handler/HandleUserSetupReq.hpp`, `PsUserProcedure.hpp` (template), `ExpectedResponses.hpp`, `ProcedureContext*.hpp`.
 
@@ -516,42 +406,7 @@ Key files: `sgnl/psUser/handler/HandleUserSetupReq.hpp`, `PsUserProcedure.hpp` (
 
 Same shape as user setup but with extra pre-validation (PUCCH, 32-port CSI-RS) and a different SRS-BM rule. See `sgnl/psUser/handler/HandleUserModifyReq.hpp` and the `UserModifyReq`-specialised `PsUserProcedure::handle()` in `PsUserProcedure.hpp`.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant CPRT as CP-RT
-    participant PSUSER as psUser EO
-    participant DL as DL Scheduler
-    participant UL as UL Scheduler
-    participant SRSBM as SRS-BM (TDD FR1)
-    participant NRT as L2-NRT (PCMD)
-
-    CPRT->>PSUSER: UserModifyReq
-    Note over PSUSER: isNokScenariosForUserModify()<br/>(PUCCH sanity for addition / modification)
-    alt validation NOK
-        PSUSER->>CPRT: UserModifyResp (NOK, InvalidParameter)
-    else
-        Note over PSUSER: handleUserModify()<br/>allocate ProcedureContext +<br/>checkIfValidOfPerCsiReportQuantity()
-        PSUSER->>NRT: sendModifyCallIndToNrt() (PCMD)
-        alt checkBeamGroupChangeAck == true
-            par forwardToDlUlUser
-                PSUSER->>DL: InternalUserModifyReq
-                PSUSER->>UL: InternalUserModifyReq
-            end
-        else
-            par forwardToSrsBmDlUlUser
-                PSUSER->>DL: InternalUserModifyReq
-                PSUSER->>UL: InternalUserModifyReq
-                PSUSER-->>SRSBM: InternalUserModifyReq (one-way)
-            end
-        end
-        par Responses
-            DL-->>PSUSER: InternalUserModifyResp
-            UL-->>PSUSER: InternalUserModifyResp
-        end
-        PSUSER->>CPRT: UserModifyResp (OK or NOK)
-    end
-```
+![[diagrams/l2ps-user-modify-sequence]]
 
 The user-stop, user-delete and bearer-setup procedures use the same `PsUserProcedure` template with their own per-class specialisations of `handle()`.
 
@@ -561,60 +416,7 @@ Triggered by `SlotSynchroInd` produced by the **platform `SlotSynchroService`** 
 
 The DL pipeline spans two EOs — `L2PsDlYySch` (PRE / TD / FDM) and `L2PsFdYySch` (FD / L1 messages). When they share a core (`dlFdParallelSchedulerEnabled = false`), they communicate via `FdSchMsgBufferingService::send(FdScheduleReq)`.
 
-```mermaid
-%%{init: {'flowchart': {'curve': 'linear'}}}%%
-flowchart TB
-    A([SlotSynchroInd<br/>platform timer])
-    A --> P1
-    subgraph P1["<b>Slot synchronization</b>"]
-        direction LR
-        P1a[Validate sync<br/>against 5G timer]
-        P1b[Start slot in overload controller<br/>+ measure slot delay]
-        P1c[Adjust scheduling capacity<br/>to remaining slot time]
-        P1d[Update pre-CS UE list<br/>+ per-slot scheduler state]
-        P1e[Swap PRB / scheUE<br/>pooling DB snapshots]
-        P1f[Refresh ZAB cells<br/>+ send HARQ status update]
-    end
-    P1 --> P2
-    subgraph P2["<b>PRE scheduling — CS1</b>"]
-        direction LR
-        P2a[Refresh CS1 from<br/>BWP / DRX / events]
-        P2b[Per-UE CS1 eligibility<br/>+ candidate set build]
-    end
-    P2 --> P3
-    subgraph P3["<b>TD scheduling — CS2 / PF</b>"]
-        direction LR
-        P3a[Compute per-UE<br/>PF metric]
-        P3b[Prepare paging<br/>resources]
-        P3c[Select beam<br/>for SIB / CSI]
-        P3d[Build CS2 list<br/>per carrier]
-        P3e[Build long-PUCCH<br/>HARQ feedback request]
-    end
-    P3 --> P4
-    subgraph P4["<b>FDM scheduling</b>"]
-        direction LR
-        P4a[Select to-be-scheduled<br/>UEs from CS2]
-        P4b[DL MU-MIMO pairing<br/>Virtual UEs + DMRS ports]
-        P4c[PRB / sub-area<br/>distribution]
-        P4d[Build FdScheduleReq<br/>send to FD EO]
-    end
-    P4 --> P5
-    subgraph P5["<b>FD scheduling — FD EO</b>"]
-        direction LR
-        P5a[SIB / Paging / MSG2<br/>scheduling]
-        P5b[UE scheduling loop<br/>NewTx / ReTx + MCS / TBS]
-        P5c[Build PDSCH and PDCCH<br/>send to L1-DL]
-        P5d[Return scheduling response<br/>to bfgroup core]
-    end
-    P5 --> P6
-    subgraph P6["<b>Post-scheduling</b>"]
-        direction LR
-        P6a[Update PF avg-rate<br/>per scheduled UE]
-        P6b[Send DL→UL<br/>intra-slot update]
-        P6c[Schedule deferred CSI / SR<br/>+ PCMD records]
-    end
-    style A fill:#3498db,stroke:#333,stroke-width:2px,color:#fff
-```
+![[diagrams/l2ps-dl-slot-scheduling-flow]]
 
 | Phase | Code entry |
 |-------|-----------|
@@ -631,69 +433,7 @@ flowchart TB
 
 Same dispatch model, **no separate FD-EO** — PRE / TD / FDM / FD all run inline on the UL EO (`L2PsUlYySch`). PUSCH decoding results come back from L1 asynchronously (rx-resp messages) and feed link adaptation / HARQ. RACH / Msg3 is a slot-type-conditional branch (taken when the slot type is `SLOT_TYPE_PRACH` / `SLOT_TYPE_RACH_FORMAT_1`); for FDD, regular data scheduling also runs in the same slot.
 
-```mermaid
-%%{init: {'flowchart': {'curve': 'linear'}}}%%
-flowchart TB
-    A([SlotSynchroInd<br/>platform timer])
-    A --> Q1
-    subgraph Q1["<b>Slot synchronization</b>"]
-        direction LR
-        Q1a[Validate sync<br/>against 5G timer]
-        Q1b[Start slot in overload controller<br/>+ measure slot delay]
-        Q1c[Adjust scheduling capacity<br/>to remaining slot time]
-        Q1d[Snapshot slot measurements<br/>for overload control]
-    end
-    Q1 --> Q2
-    subgraph Q2["<b>Slot setup</b>"]
-        direction LR
-        Q2a[Update pre-CS UE list<br/>+ trigger SCell UE checks]
-        Q2b[Swap PRB / scheUE<br/>pooling DB snapshots]
-        Q2c[Schedule periodic SRS<br/>per cell]
-        Q2d[RIM pre-schedule<br/>TDD FR1 only]
-        Q2e[Refresh CS1 from<br/>BWP / DRX / events]
-    end
-    Q2 --> Q3
-    subgraph Q3["<b>PRE / TD scheduling — CS1 / CS2 / PF</b>"]
-        direction LR
-        Q3a[CS1 eligibility<br/>BSR / DRX / token-bucket]
-        Q3b[Analog beam selection<br/>for first DC symbol]
-        Q3c[Compute per-UE<br/>PF metric]
-        Q3d[Build CS2 list<br/>per carrier]
-    end
-    Q3 --> Q4
-    subgraph Q4["<b>FDM scheduling + UL MU-MIMO</b>"]
-        direction LR
-        Q4a[Select to-be-scheduled<br/>UEs from CS2]
-        Q4b[Create Virtual UEs<br/>WRR / Exhaustive]
-        Q4c[Manage MU UE lists<br/>+ pairing eligibility]
-        Q4d[Distribute PRBs and layers<br/>per UE group]
-        Q4e[Allocate DMRS ports<br/>per Virtual UE]
-    end
-    Q4 --> Q5
-    subgraph Q5["<b>Resource allocation + Grant generation</b>"]
-        direction LR
-        Q5a[Frequency allocation<br/>+ MCS / TBS]
-        Q5b[Power control<br/>+ HARQ process assignment]
-        Q5c[Build PUSCH grant<br/>+ UL DCI 0_1 / 0_2]
-        Q5d[Send to L1-UL / L1-DL<br/>PUSCH receive + PDCCH send]
-    end
-    Q5 --> Q6
-    subgraph Q6["<b>RACH / Msg3 — alternative path for PRACH slot</b>"]
-        direction LR
-        Q6a[Schedule PRACH slot<br/>preamble + RACH window]
-        Q6b[Handle preamble<br/>build RAR / MSG2]
-        Q6c[Build Msg3 grant<br/>for contention resolution]
-    end
-    Q6 --> Q7
-    subgraph Q7["<b>Post-scheduling</b>"]
-        direction LR
-        Q7a[Update PF avg-rate<br/>+ link adaptation]
-        Q7b[Send UL→DL<br/>intra-slot update]
-        Q7c[Send slot type to subcells<br/>+ beam selection result]
-        Q7d[Sync UL slot type to SRS-BM<br/>TDD FR1 only]
-    end
-    style A fill:#3498db,stroke:#333,stroke-width:2px,color:#fff
-```
+![[diagrams/l2ps-ul-slot-scheduling-flow]]
 
 | Phase | Code entry |
 |-------|-----------|
@@ -724,35 +464,7 @@ Per-slot information is exchanged through dedicated update messages.
 
 ## 6. Database Architecture
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-graph TB
-    GLOBALDB[GlobalDb — per-pool instances]
-    subgraph "Cell DBs"
-        CELLDB[CellDb]
-        CELLGRPDB[CellGroupDb]
-        POSCELLDB[PosCellDb]
-    end
-    subgraph "User DBs"
-        UEDB[UeDb]
-        BEARERDB[BearerDb]
-    end
-    subgraph "Resource DBs"
-        PRBDB[PrbDb]
-        POOLDB[PoolDb]
-    end
-    EMQDB[EmQueueDb]
-
-    GLOBALDB --> CELLDB
-    GLOBALDB --> UEDB
-    GLOBALDB --> POOLDB
-    GLOBALDB --> EMQDB
-    CELLDB --> CELLGRPDB
-    CELLDB --> POSCELLDB
-    UEDB --> BEARERDB
-    POOLDB --> PRBDB
-    style GLOBALDB fill:#e74c3c,stroke:#333,stroke-width:3px
-```
+![[diagrams/l2ps-database-architecture]]
 
 Typical access (shared-memory style across cores; writes localised to owner EOs):
 
