@@ -17,20 +17,23 @@ aliases:
 
 ## 5G NR
 
-- [[5G-NR PRACH and Random Access]]
-- [[5G-NR SSB and cell search]]
-- [[5G-NR PDCCH]]
-- [[5G-NR Sounding Reference Signal]]
-- [[5G-NR Physical Channel - DL]]
-- [[5G-NR Physical Channel - UL]]
+- [[5g-nr-prach-random-access]]
+- [[5g-nr-ssb-cell-search]]
+- [[5g-nr-pdcch]]
+- [[5g-nr-sounding-reference-signal]]
+- [[5g-nr-physical-channel-dl]]
+- [[5g-nr-physical-channel-ul]]
+- [[5g-nr-physical-channels-modulation]]
+- [[5g-nr-precoding-resource-block-group]]
+- [[5g-nr-references-definitions-symbols-abbreviations]]
 
 ## O-RAN
 
-- [[R005_12.7_SRS-BF_System_Architecture_Analysis]]
+- [[o-ran-srs-bf-system-architecture-analysis]]
 
 ## NTN
 
-- [[大规模MIMO卫星通信联合线性预编码与DFT波束赋形设计]]
+- [[massive-mimo-satellite-precoding-dft-beamforming]]
 
 ## ISAC
 
@@ -38,7 +41,7 @@ aliases:
 
 ## Algorithms
 
-- [[MMSE Detection algorithm]]
+- [[mmse-detection-algorithm]]
 
 ## Related
 

@@ -90,7 +90,7 @@ Port 23 # 端口改为23，22端口已被占用ListenAddress 0.0.0.0 # 取消注
 	export PATH="$PATH:$HOME/bin"
 		You can also add this command to your ~/.bashrc file.
 
-## 7 [[Install TensorFlow with pip]]
+## 7 [[install-tensorflow-with-pip]]
 
 ## 8 Install pytorch
 	pip3installtorch==1.3.0+cputorchvision==0.4.1+cpu-fhttps://download.pytorch.org/whl/torch_stable.html

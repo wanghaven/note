@@ -16,29 +16,35 @@ aliases:
 
 ## Obsidian and AI
 
-- [[Obsidian+AI构建知识网络]]
-- [[Obsidian主流AI插件以及与AI的链接方式]]
-- [[Obsidian Copilot插件]]
-- [[Obsidian local rest api + MCP]]
-- [[Open WebUI vs Obsidian Copilot]]
+- [[obsidian-ai-knowledge-network]]
+- [[obsidian-ai-plugin-integration-methods]]
+- [[obsidian-copilot-plugin]]
+- [[obsidian-local-rest-api-mcp]]
+- [[open-webui-vs-obsidian-copilot]]
+- [[obsidian-ai-plugins]]
+- [[obsidian-gpt5]]
+- [[lm-studio-local-llm-obsidian]]
 
 ## Obsidian Syntax
 
-- [[Markdown for Obsidian]]
-- [[Latex]]
+- [[markdown-for-obsidian]]
+- [[latex]]
 
 ## Linux
 
-- [[Linux commands]]
-- [[Install ubuntu server]]
-- [[Install dpdk]]
-- [[Emulating ARM on Debian Ubuntu]]
+- [[linux-commands]]
+- [[install-ubuntu-server]]
+- [[install-dpdk]]
+- [[install-tensorflow-with-pip]]
+- [[emulating-arm-on-debian-ubuntu]]
+- [[linux-show-occupied-port]]
 
 ## Editors and Utilities
 
-- [[Operation]]
-- [[UltraEdit]]
-- [[Regular Expressions]]
+- [[operation]]
+- [[ultraedit]]
+- [[regular-expressions]]
+- [[webpage]]
 
 ## Related
 

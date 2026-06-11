@@ -23,10 +23,10 @@ aliases:
 
 ## Paper Notes
 
-- [[Attention_Is_All_You_Need_中文翻译与解析]]
-- [[Seq2Seq_Sequence_to_Sequence_Learning_中文翻译与解析]]
-- [[Bahdanau_Attention_NMT_中文翻译与解析]]
-- [[BatchNormalization_中文翻译与解析]]
+- [[attention-is-all-you-need-analysis]]
+- [[seq2seq-sequence-to-sequence-learning-analysis]]
+- [[bahdanau-attention-nmt-analysis]]
+- [[batch-normalization-analysis]]
 
 ## Core Concepts
 
