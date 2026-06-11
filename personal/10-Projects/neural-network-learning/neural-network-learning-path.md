@@ -26,14 +26,14 @@ vault_path: personal/technology/aiml/study
 - [ ] **阶段四：LLM 微调与大模型生态** (预计: 4–6 周) · `进度: 0%`
 
 > [!tip] 更新日志（2026-06-12）
-> **阶段一已闭环**：`mlp/` 与 `cnn/` 在本地仓库 `c:\work\code\others\neuralnetworks`；同一划分（50k 训 / 10k 测）下 CNN 默认 **98.81%**，`sweep_epochs` **99.04%**，仿射+弹性 + 64/128 容量 **99.21%** clean。实验笔记：**[[MLP手写数字识别与优化]]** · **[[CNN手写数字识别与优化]]**（配图在 `study/images/`）。
+> **阶段一已闭环**：`mlp/` 与 `cnn/` 在本地仓库 `c:\work\code\others\neuralnetworks`；同一划分（50k 训 / 10k 测）下 CNN 默认 **98.81%**，`sweep_epochs` **99.04%**，仿射+弹性 + 64/128 容量 **99.21%** clean。实验笔记：**[[mlp-mnist-experiments]]** · **[[cnn-mnist-experiments]]**（配图在 `study/images/`）。
 > **下一步**：进入阶段二，用 PyTorch 复现同结构或小 ResNet，与手写 `cnn.py` 对照精度与耗时。
 
 > [!success] 当前成果快照（阶段一）
 > - **MLP**：统一划分优化模型 **97.86%**；几何增强下暴露结构性弱点（见 MLP 笔记 §10）。
 > - **CNN**：双块 + im2col；**`CNN(device="cpu"|"cuda")`**，`CNN_DEVICE` 驱动训练脚本；`compare_blocks` / `sweep_epochs` / `augment_eval` / `elastic_eval` / `affine_elastic_push` / `aug_push_robustness` 全套可复现。
 > - **文档**：`cnn/README.md` 含损失 MAP 推导、反向传播表、§8–§9 总结表；本 vault 笔记为精简版 + 图。
-> - **变更溯源**：各篇笔记文末 **「本篇修订记录」**仅对应各自 `.md`；卷积概念见 **[[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]**。
+> - **变更溯源**：各篇笔记文末 **「本篇修订记录」**仅对应各自 `.md`；卷积概念见 **[[cnn-mnist-experiments#附录 A 卷积核心概念归纳]]**。
 
 ---
 
@@ -41,7 +41,7 @@ vault_path: personal/technology/aiml/study
 
 - **核心工具：** Python 3.10+，**NumPy**（CPU），可选 **CuPy**（CUDA，与 `cnn.py` 同一套代码）
 - **开发环境：** 本地 Windows / Ubuntu + Cursor / VS Code；GPU 用于加速实验非必须
-- **Obsidian 笔记：** [[MLP手写数字识别与优化]] · [[CNN手写数字识别与优化]]
+- **Obsidian 笔记：** [[mlp-mnist-experiments]] · [[cnn-mnist-experiments]]
 
 ### 📅 计划安排与 Checklist
 - [x] **Step 1: MLP 跑通 MNIST (已搞定！)** —— 见 `mlp/`；统一划分优化 MLP **97.86%**（步骤优化在子集上可达 ~98.14%，见 MLP 笔记）
@@ -61,7 +61,7 @@ vault_path: personal/technology/aiml/study
 	- [x] 额外完成：错误/混淆矩阵；**仿射** `augment_eval.py`、**弹性** `elastic_eval.py`、**仿射+弹性冲刺** `affine_elastic_push.py`、**多扰动鲁棒对比** `aug_push_robustness.py`
 - [x] **Step 5: 收尾复盘（可持续深化）**
 	- [x] 整理 MLP vs CNN 在 clean / rotate / shift / scale 下的鲁棒性对照结论（并扩展弹性、仿射+弹性，见 CNN 笔记）
-	- [x] 把「平移不变性 / 感受野 / 参数共享 / 池化」等概念单独成文或并入 CNN 笔记（可选）→ 见 [[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]
+	- [x] 把「平移不变性 / 感受野 / 参数共享 / 池化」等概念单独成文或并入 CNN 笔记（可选）→ 见 [[cnn-mnist-experiments#附录 A 卷积核心概念归纳]]
 	- [x] 补全 `cnn/README.md`（含 MAP 与反向公式表、§8 增强、§9 总览）
 
 ### 🔗 实验物资与参考
@@ -213,7 +213,7 @@ vault_path: personal/technology/aiml/study
   - 根据当时仓库 CNN 进度更新看板与 tip：阶段一进度文案、双块结构、默认 10 epoch 约 **98.74%**、Step 4 子项与 `augment_eval` 提示等（diff 约 **7** 行）。
 
 - **2026-06-12**（工作区，待提交）  
-  - 增加 YAML `title` / `updated` / `tags`；阶段一改为「手写 MLP/CNN + 可选 CuPy」并标为完成；成果快照与「变更溯源」改为指向各笔记 **本篇修订记录**；阶段二补充与手写 CNN 对照的实验说明；Step 5 概念项链至 **[[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]**；修复曾被误删的 `tags:` 行等。
+  - 增加 YAML `title` / `updated` / `tags`；阶段一改为「手写 MLP/CNN + 可选 CuPy」并标为完成；成果快照与「变更溯源」改为指向各笔记 **本篇修订记录**；阶段二补充与手写 CNN 对照的实验说明；Step 5 概念项链至 **[[cnn-mnist-experiments#附录 A 卷积核心概念归纳]]**；修复曾被误删的 `tags:` 行等。
 
 ---
 

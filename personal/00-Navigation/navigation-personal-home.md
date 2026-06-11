@@ -28,9 +28,9 @@ aliases:
 
 ## Current Focus
 
-- [[neuralnetwork_learning_path]]
-- [[CNN手写数字识别与优化]]
-- [[MLP手写数字识别与优化]]
+- [[neural-network-learning-path]]
+- [[cnn-mnist-experiments]]
+- [[mlp-mnist-experiments]]
 
 ## Related
 

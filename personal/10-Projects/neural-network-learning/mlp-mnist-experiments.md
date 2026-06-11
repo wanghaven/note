@@ -276,8 +276,8 @@ $$\hat m=\frac{m}{1-\beta_1^t},\quad \hat v=\frac{v}{1-\beta_2^t},\quad \theta\l
 
 ## 13. 下一步 / TODO
 
-- [x] 在 `cnn/` 用纯 NumPy 实现 CNN（单块结构），见实验记录：[[CNN手写数字识别与优化]]
-- [x] 更深结构冲 **99%+**（已由姊妹篇双块 + 增强达成 **99.21%** clean，见 [[CNN手写数字识别与优化]]）
+- [x] 在 `cnn/` 用纯 NumPy 实现 CNN（单块结构），见实验记录：[[cnn-mnist-experiments]]
+- [x] 更深结构冲 **99%+**（已由姊妹篇双块 + 增强达成 **99.21%** clean，见 [[cnn-mnist-experiments]]）
 - [ ] 参数量 / 推理耗时对比表（CNN 侧见仓库 `out/block_comparison_report.txt`）
 - [x] 与姊妹篇保持双链维护
 
@@ -297,11 +297,11 @@ $$\hat m=\frac{m}{1-\beta_1^t},\quad \hat v=\frac{v}{1-\beta_2^t},\quad \theta\l
 - **2026-06-12**（工作区，待提交）  
   - `updated` 刷新；配图统一为 **`images/mlp_*.png`**；**TODO** 与 CNN 姊妹篇对齐；**本附录** 改为仅本篇修订记录（移除原先附带的 `mlp/README`、学习路径等「他文件」git 表）。
 
-> **卷积侧概念**（平移、感受野、参数共享、池化）见姊妹篇 **[[CNN手写数字识别与优化#附录 A 卷积核心概念归纳]]**。
+> **卷积侧概念**（平移、感受野、参数共享、池化）见姊妹篇 **[[cnn-mnist-experiments#附录 A 卷积核心概念归纳]]**。
 
 ## 参考
 
-- 姊妹篇（**CNN 专用笔记**）：[[CNN手写数字识别与优化]]
+- 姊妹篇（**CNN 专用笔记**）：[[cnn-mnist-experiments]]
 - 代码仓库：`c:/work/code/others/neuralnetworks/mlp`
 - 技术文档：`mlp/README.md`（含完整推导与全部实验）
 - 方法论技能：`.cursor/skills/nn-project-builder`

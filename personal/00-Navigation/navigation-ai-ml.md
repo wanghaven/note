@@ -17,9 +17,9 @@ aliases:
 
 ## Learning Path
 
-- [[neuralnetwork_learning_path]]
-- [[MLP手写数字识别与优化]]
-- [[CNN手写数字识别与优化]]
+- [[neural-network-learning-path]]
+- [[mlp-mnist-experiments]]
+- [[cnn-mnist-experiments]]
 
 ## Paper Notes
 

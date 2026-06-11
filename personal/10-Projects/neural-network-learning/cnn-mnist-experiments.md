@@ -16,14 +16,14 @@ aliases:
   - MNIST CNN 学习笔记
   - 神经网络学习笔记 MLP与CNN
 source: C:/work/code/others/neuralnetworks/cnn
-related: "[[MLP手写数字识别与优化]]"
+related: "[[mlp-mnist-experiments]]"
 vault_path: personal/technology/aiml/study
 ---
 
 # CNN 手写数字识别与实验 · 2026-06-08（同步更新 2026-06-12）
 
 > [!info] 与 MLP 笔记的分工
-> **MLP** 的推导、超参实验、错误分析与增强鲁棒性（全连接视角）已写在：[[MLP手写数字识别与优化]]。  
+> **MLP** 的推导、超参实验、错误分析与增强鲁棒性（全连接视角）已写在：[[mlp-mnist-experiments]]。  
 > **本文记录 CNN**：双块结构、**CPU（NumPy）/ GPU（CuPy）**、默认与加长训练结果、单双块对照、**仿射 / 弹性 / 仿射+弹性** 增强与鲁棒性；数字与图表与仓库 **`cnn/README.md`**（2026-06-12 同步）一致。文末含 **附录 A**（卷积概念归纳）与 **附录 B**（本篇修订记录）。
 
 > [!summary] 一页总览
@@ -193,7 +193,7 @@ $$
 
 ## 附录 A 卷积核心概念归纳
 
-> 对应学习路径里「平移不变性 / 感受野 / 参数共享 / 池化」等条目；与 **[[MLP手写数字识别与优化]]** 中「MLP 拉平丢结构」对照阅读。
+> 对应学习路径里「平移不变性 / 感受野 / 参数共享 / 池化」等条目；与 **[[mlp-mnist-experiments]]** 中「MLP 拉平丢结构」对照阅读。
 
 ### 参数共享（Parameter sharing）
 
@@ -243,7 +243,7 @@ $$
 
 ## 参考
 
-- 姊妹篇：[[MLP手写数字识别与优化]]
+- 姊妹篇：[[mlp-mnist-experiments]]
 - 权威长文：`C:/work/code/others/neuralnetworks/cnn/README.md`、`cnn/cnn.py`
 - 技能：`.cursor/skills/nn-project-builder/SKILL.md`
 - CuPy：[安装说明](https://docs.cupy.dev/en/stable/install.html)
