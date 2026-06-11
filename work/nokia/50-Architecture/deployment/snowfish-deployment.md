@@ -9,7 +9,7 @@ aliases:
 ---
 
 # ABIO
-![[ABIO_deployment_Detail.png]]
+![[images/ABIO_deployment_Detail.png]]
 
 ## 506 - 5G full FDD 
 | Classical | 506 | 5G Full FDD - Classical |          |                   |                                                                                                              |          |            |              |           |             |              |            |       |       |          |       |         |       |       |       |       |       |        |        |        |        |        |        |        |        |        |        |        |        |        |        |               |                        |                          |                      |                |              | Creation for CB007696 (Laurent Jeannier - 0.3)<br/>Add RPSW (Laurent Jeannier - 0.11)<br/>PR610116: change Huge page (Laurent Jeannier 0.37)<br/>Update HugePage as per HugePages_22R2.xlsx (Laurent Jeannier 0.61) |     |
@@ -136,7 +136,7 @@ aliases:
 |           |     | Check purposes             |          |                   |                                                                                            |          |            |              |           |             |              |            |       |       |          |       |         |       |       |       |       |       |        |        |        |        |        |        |        |        |        |        |        |        |        |        |                |                        |                          |                      |                |              |                                                                                                                                                        |  |
 |           |     | Sum                        |          |                   |                                                                                            |          |            |              |           |             |              |            | 0     | 0     | 0        | 0     | 1       | 1     | 1     | 1     | 0     | 0     | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      | 0      |                | 1385                   | 1144                     | 0                    | 960            |
 
-![[ABIO_deployment_Detail.png]]
+![[images/ABIO_deployment_Detail.png]]
 
 ## Related
 

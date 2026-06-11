@@ -8,7 +8,7 @@ aliases:
   - SnowFish 20cx and 24cx key features
 ---
 
-![[snowfish.png]]
+![[images/snowfish.png]]
 # SnowFish 20cx and 24cx key features
 ```
 20pcs (ABIN) and 24pcs (ABIO) x Atom Tremont 64-bit cores @2.2GHz

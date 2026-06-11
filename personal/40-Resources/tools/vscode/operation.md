@@ -11,7 +11,7 @@ aliases:
 
 # 快捷键
 
-![[VsCode_Shortcuts.png]]
+![[images/VsCode_Shortcuts.png]]
 
 # 自定义设置
 /粘贴时格式化/

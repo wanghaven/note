@@ -8,7 +8,7 @@ aliases:
   - 506 - 5G Full FDD - Classical
 ---
 
-![[ABIP_deployment_Detail.png]]
+![[images/ABIP_deployment_Detail.png]]
 # 506 - 5G Full FDD - Classical
 
 | 506 | 5G Full FDD - Classical |            |                   |          |                                                                                                              |            |              |           |             |              |            |       |       |          |       |         |       |       |       |       |       |        |        |        |        |        |        |        |        |        |        |        |        |        |        |               |                        |                          |                           |                      |                |              |

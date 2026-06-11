@@ -8,7 +8,7 @@ aliases:
   - Marlin (akaTX3 or L2+), ReefShark3302 SoC
 ---
 
-![[Marlin.png]]
+![[images/Marlin.png]]
 # Marlin (akaTX3 or L2+), ReefShark3302 SoC
 ```
 Cores
