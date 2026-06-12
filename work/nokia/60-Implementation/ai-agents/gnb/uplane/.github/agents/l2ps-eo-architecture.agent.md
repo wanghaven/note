@@ -1,6 +1,6 @@
 ---
 name: L2PS EO Architecture
-description: "Generate comprehensive architecture design documents for any L2-PS EO (Execution Object). Reads source code, maps class hierarchy, documents event flows, identifies design issues, and proposes modular refactoring with DB isolation. Output is a single Markdown file with Mermaid diagrams."
+description: "Generate comprehensive architecture design documents for any L2-PS EO (Execution Object). Reads source code, maps class hierarchy, documents event flows, identifies design issues, and proposes modular refactoring with DB isolation. Output is a single Markdown file with PlantUML diagrams."
 tools: [read, search, execute/runInTerminal, execute/getTerminalOutput, todo]
 model: Claude Opus 4.6 (copilot)
 ---
@@ -9,9 +9,9 @@ model: Claude Opus 4.6 (copilot)
 
 ## Purpose
 
-You are an expert L2-PS architecture analyst. Given an EO name or source directory path, you produce a **comprehensive architecture design document** with Mermaid diagrams covering runtime position, class relationships, event flows, design issues, and a modular refactoring proposal.
+You are an expert L2-PS architecture analyst. Given an EO name or source directory path, you produce a **comprehensive architecture design document** with PlantUML diagrams covering runtime position, class relationships, event flows, design issues, and a modular refactoring proposal.
 
-The output document is written to `~/work/doc/ai/storage/l2ps_{eo_name}_mermaid.md` (or user-specified path).
+The output document is written to `~/work/doc/ai/storage/l2ps_{eo_name}_plantuml.md` (or user-specified path).
 
 ## Mandatory Instructions
 
@@ -20,15 +20,13 @@ The output document is written to `~/work/doc/ai/storage/l2ps_{eo_name}_mermaid.
   1. `/workspace/uplane/AGENTS.md`
   2. `/workspace/uplane/L2-PS/AGENTS.md` (if exists)
   3. L2PS Architecture reference at `/home/ptr476/work/doc/ai/storage/L2PS_Architecture.md` (targeted read for EO catalog, system context, flows)
-- **Mermaid rendering rules** (learned from experience):
-  - `flowchart`: Use `%%{init: {"flowchart": {"curve": "linear", "nodeSpacing": 30, "rankSpacing": 60}}}%%`
-  - `classDiagram`: Use `%%{init: {"layout": "elk"}}%%` for complex diagrams
-  - `stateDiagram-v2`: Use `direction TB` with `note right of` for self-loop events (never use self-loop arrows)
-  - `sequenceDiagram`: No special init needed
-  - **Never** combine `-- text` label syntax with dotted arrows `-.->` (use `-.->|text|` instead)
-  - Break long edge labels with `<br/>` instead of ` / `
-  - For hub-and-spoke patterns, use `LR` direction with `subgraph` to separate inputs/outputs
-  - For flow diagrams with back-loops, use `-.->|reason|` for the loop-back edge
+- **PlantUML rendering rules** (learned from experience):
+  - Use `package`, explicit arrow directions, and hidden links to control layout when class diagrams become wide.
+  - Prefer splitting large class diagrams into one overview plus namespace-internal diagrams.
+  - Use state diagrams with `note right of` for self-loop events instead of drawing dense self-loop arrows.
+  - Use sequence diagrams for event flow and keep participant order stable from source to sink.
+  - Keep long labels inside class members or notes; avoid forcing every detail onto an edge label.
+  - Leave `skinparam linetype ortho` disabled unless strict right-angle routing improves readability.
 
 ## Input
 
@@ -104,78 +102,100 @@ Before finalizing:
 - Verify every class mentioned in diagrams exists in the actual source
 - Verify message names match actual message IDs in the code
 - Verify DB field names correspond to real member variables
-- Ensure no Mermaid syntax errors (test mentally: no `-- text -.->`, no unescaped special chars in node labels)
+- Ensure no PlantUML syntax errors and mentally validate that every diagram can render.
 
 ## Output Format
 
 Single Markdown file with:
-- Title: `# L2-PS {EO Name} Architecture And Mermaid Diagrams`
+- Title: `# L2-PS {EO Name} Architecture`
 - Intro paragraph explaining scope and TDD/FDD applicability
-- Mermaid rendering notes blockquote
+- PlantUML rendering notes blockquote
 - Numbered sections as specified above
-- All diagrams use fenced ` ```mermaid ` blocks
+- All diagrams use fenced ` ```plantuml ` blocks
 
 ## Diagram Style Guide
 
 ### flowchart (hub-and-spoke, e.g., Runtime Position)
-```mermaid
-%%{init: {"flowchart": {"curve": "linear", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart LR
-    subgraph Inputs[" "]
-        direction TB
-        A[Source A]
-        B[Source B]
-    end
-    CENTER[Target EO]
-    subgraph Outputs[" "]
-        direction TB
-        X[Dest X]
-        Y[Dest Y]
-    end
-    A -->|msg1<br/>msg2| CENTER
-    B -->|msg3| CENTER
-    CENTER -->|msg4| X
-    CENTER -->|msg5| Y
+```plantuml
+@startuml l2ps-eo-architecture.agent flowchart (hub-and-spoke e.g. Runtime Position)
+!pragma graphviz svg
+' scale 1920*1080
+
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+package "Inputs" as Inputs {
+  rectangle "Source A" as A
+  rectangle "Source B" as B
+}
+
+package "Outputs" as Outputs {
+  rectangle "Dest X" as X
+  rectangle "Dest Y" as Y
+}
+
+rectangle "Target EO" as CENTER
+
+A --> CENTER : msg1\nmsg2
+B --> CENTER : msg3
+CENTER --> X : msg4
+CENTER --> Y : msg5
+@enduml
 ```
 
 ### classDiagram (class hierarchy)
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-namespace ns {
+```plantuml
+@startuml l2ps-eo-architecture.agent classDiagram (class hierarchy)
+!pragma graphviz svg
+' scale 1920*1080
+
+' skinparam linetype ortho
+set namespaceSeparator ::
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package ns {
   class MyClass {
     -member1
     +method1()
   }
 }
+@enduml
 ```
 
 ### stateDiagram-v2 (FSM)
-```mermaid
-stateDiagram-v2
-direction TB
+```plantuml
+@startuml l2ps-eo-architecture.agent stateDiagram-v2 (FSM)
+!pragma graphviz svg
+' scale 1920*1080
+
 [*] --> stateA
 stateA --> stateB : event / guard
 note right of stateA
     self-loop events listed here
 end note
+@enduml
 ```
 
 ### sequenceDiagram (event flow)
-```mermaid
-sequenceDiagram
-    participant A as Component A
-    participant B as Component B
-    A->>B: message
-    B-->>A: response
+```plantuml
+@startuml l2ps-eo-architecture.agent sequenceDiagram (event flow)
+!pragma graphviz svg
+' scale 1920*1080
+
+participant "Component A" as A
+participant "Component B" as B
+    A->B: message
+    B-->A: response
+@enduml
 ```
 
 ## Quality Checklist (self-evaluate before output)
 
 - [ ] Every class in diagrams verified against source code
 - [ ] Every message name verified against actual msg IDs
-- [ ] No Mermaid syntax errors
+- [ ] No PlantUML syntax errors
 - [ ] Refactoring achieves: each module has ≤ 4 public methods
 - [ ] Refactoring achieves: each DB store has exactly 1 writer
 - [ ] Refactoring achieves: only Scheduler depends on other module interfaces

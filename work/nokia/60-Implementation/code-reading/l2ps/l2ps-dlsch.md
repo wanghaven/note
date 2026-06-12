@@ -1,25 +1,30 @@
 ---
-title: L2-PS DL Scheduler (dlSch) Architecture And Mermaid Diagrams
+title: L2-PS DL Scheduler (dlSch) Architecture And PlantUML Diagrams
 date: 2026-06-11
 tags:
   - work/nokia/implementation
   - l2ps
 status: draft
+last_verified_src_date: '2026-06-11'
+last_verified_gnb_git: '45617cfb9a73'
 aliases:
-  - L2-PS DL Scheduler (dlSch) Architecture And Mermaid Diagrams
+  - L2-PS DL Scheduler (dlSch) Architecture And PlantUML Diagrams
 ---
 
-# L2-PS DL Scheduler (dlSch) Architecture And Mermaid Diagrams
+# L2-PS DL Scheduler (dlSch) Architecture And PlantUML Diagrams
 
 **Scope.** This document covers the DL Scheduler EO (`L2RtPool<P>_L2PsDlYySch`) and its companion FD Scheduler EO (`L2RtPool<P>_L2PsFdYySch`). Together they implement per-slot downlink scheduling for FR1 cells (TDD and FDD). The DL Scheduler is the most complex per-cell-group EO in L2-PS.
 
 **Applicability.** TDD FR1 and FDD FR1. FR2 paths are excluded.
 
-> **Mermaid rendering notes.**
-> - `flowchart` diagrams use `%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%`
-> - `classDiagram` uses `%%{init: {"layout": "elk"}}%%` for complex hierarchies
-> - `stateDiagram-v2` uses `direction TB` with `note right of` for self-loop events
-> - `sequenceDiagram` has no special init
+**Reference baseline.** EO architecture layout follows `/home/ptr476/work/doc/ai/.cursor/agents/l2ps-eo-architecture.agent.md` (editor mirror: `/home/ptr476/work/doc/ai/.github/agents/l2ps-eo-architecture.agent.md`). **§2** uses a *Package / subsystem connection overview* plus *Detailed class views*, per that agent (canonical split example: [`l2ps-bbrm.md`](./l2ps-bbrm.md) in this folder). Optional cross-check: Nokia-internal `l2ps-architecture.md` where maintained. Source-backed statements assume `/workspace/uplane/L2-PS/src/` and `/home/ptr476/work/doc/ai/storage/L2PS_Architecture.md` when those paths are available in the environment.
+
+> **PlantUML rendering notes.**
+> - Diagrams use fenced ` ```plantuml ` blocks with `@startuml` / `@enduml`; large figures live in sibling `diagrams/*.md` notes and are embedded from this vault folder. Each diagram note carries **`last_verified_src_date`** / **`last_verified_gnb_git`** when reconciled with `/workspace`.
+> - Component and class diagrams use `package`, explicit arrow directions, and hidden links to guide layout.
+> - Large class diagrams are split into overview and focused diagram notes under `diagrams/` where useful.
+> - Sequence diagrams keep the original lifeline order and use PlantUML `alt` / `opt` blocks.
+> - `skinparam linetype ortho` is intentionally left disabled unless strict right-angle routing improves readability.
 
 ---
 
@@ -27,177 +32,25 @@ aliases:
 
 The DL Scheduler sits in the per-cell-group tier of L2-PS. It receives slot triggers from the platform timer, configuration from CP-RT (SGNL psCell/psUser), L1-UL feedback (HARQ ACK/NACK, CSI via PUCCH/PUSCH rx-resp, SRS resp), beam selection from SRS-BM, resource grants from BBRM, buffer status from L2-LO, and intra-scheduler updates from UL Scheduler. It produces PDSCH/PDCCH/CsiRs/SSB requests to L1-DL (via FD Scheduler), and intra-scheduler updates to UL Scheduler.
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 50}}}%%
-flowchart LR
-    %% --- External sources (top) ---
-    CPRT["L3 · CP-RT"]
-    LOCTRL["L2-LO"]
-
-    %% --- L2-PS subgraph ---
-    subgraph L2PS["L2 · PS"]
-        direction LR
-        SGNL["Signaling"]
-        SYNC[SlotSynchro]
-        ULSCH[UL SCH]
-        SRSBM[SRS-BM]
-        BBRM[BBRM]
-        DLSCH[DL SCH]
-        FDSCH[FD SCH]
-    end
-
-    %% --- L1 (bottom) ---
-    subgraph L1["L1"]
-        direction LR
-        L1TX[L1 DL]
-        L1RX[L1 UL]
-    end
-
-    %% L3 → SGNL → DL Sch
-    CPRT -->|CellSetupReq / UserSetupReq| SGNL
-    SGNL -->|InternalCellSetupReq / InternalUserSetupReq| DLSCH
-
-    %% L2-LO → DL Sch
-    LOCTRL -->|BufferStatus / Resume| DLSCH
-
-    %% L2-PS internal
-    SYNC -->|SlotSynchroInd| DLSCH
-    ULSCH ---|IntraSchedUpdate| DLSCH
-    SRSBM -->|BeamSelectionInd| DLSCH
-    BBRM -->|ResourceResp| DLSCH
-    DLSCH -->|FdSchedReq| FDSCH
-    FDSCH -.->|FdSchedResp| DLSCH
-
-    %% L2-PS → L1 output
-    FDSCH -->|Pdsch / Pdcch / CsiRs / SsBlock| L1TX
-
-    %% L1 feedback (back-edge)
-    L1RX -->|HarqD / CSI / SRS / PRACH| DLSCH
-
-    %% DL Sch → SGNL response
-    DLSCH -.->|InternalSetupResp| SGNL
-    SGNL -.->|CellSetupResp / UserSetupResp| CPRT
-```
+![[diagrams/l2ps-dlsch-runtime-position]]
 
 ---
 
 ## 2. Top-Level Class Overview
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
+### Package / subsystem connection overview
 
-namespace dl_em {
-  class Eo {
-    -schedulerMainComponent : shared_ptr~MainComponent~
-    -fdSchedFence : FdScheduleFence
-    -dlCellsFsmSet : CellsFsmSet
-    -router : EmFsmRouterWithDelay
-    +init() bool
-  }
-  class QueueFsm {
-    +StateStartup
-    +StateDefault
-    +StateDelete
-  }
-  class DlDispatcherStateDefault {
-    -dlCellsFsmSet
-    -schedulerMainComponent
-  }
-}
+Coarse map of the DL Scheduler EO shell, message ingress, **EO-level router** vs **per-cell queue FSM**, main scheduling pillars, and coupling to the FD EO / peers (BBRM, SRS-BM, UL SCH, L1).
 
-namespace dl_sch {
-  class MainComponent {
-    -scheduler : bfgroup::Scheduler
-    -slotHandler : SlotHandler
-    -overloadController : OverloadController
-    -filterWrapper : FilterWrapper
-    -fdTimeController : FdTimeController
-    -pagingHandler : PagingHandler
-    -dssManagerDl : DssManagerDl
-    -intraUpdateSender : IntraSchedUpdateSender
-    +handle(SlotSynchroInd)
-    +handle(UserDeleteInd)
-    +handle(CellStopSchedulingReq)
-    +performCellSetup()
-    +performCellDelete()
-  }
-  class SlotHandler {
-    -slotTypeSelectorSet
-    -overloadController
-    +overloadControllerStartSlot()
-    +run() SlotType
-    +postRun()
-  }
-}
+![[diagrams/l2ps-dlsch-top-level-class-overview]]
 
-namespace dl_sch_bfgroup {
-  class Scheduler {
-    -preScheduler : pre::Scheduler
-    -tdScheduler : td::Scheduler
-    -csiSrScheduler : CsiSrScheduler
-    -pdcchPatternScheduler : PdcchPatternScheduler
-    -pucch : Pucch
-    -rimRsScheduler : RimRsScheduler
-    +updateCs1ListWithEvents()
-    +schedule()
-    +postSchedule()
-  }
-}
+### Detailed class views
 
-namespace dl_sch_pre {
-  class PreScheduler["pre::Scheduler"] {
-    -cs1ListProcessingController
-    -linkAdaptor
-    +schedule()
-    +postSchedule()
-  }
-}
+**Dispatcher / FD-response gating** (outer FSM above the per-cell `QueueFsm`; pairs with §3.1 narrative):
 
-namespace dl_sch_td {
-  class TdScheduler["td::Scheduler"] {
-    -pfMetric : PfMetricDl
-    -carrierScheduler : CarrierScheduler
-    -commonChannelScheduler
-    -beamSelector : BeamSelector
-    -pdcchSchedulerTd : PdcchSchedulerTd
-    +schedule()
-    +postSchedule()
-    +buildNKList()
-  }
-}
+![[diagrams/l2ps-dlsch-dispatcher-class-hierarchy]]
 
-namespace dl_sch_fdm {
-  class FdmScheduler["fdm::Scheduler"] {
-    -ueSelector : UeSelector
-    -resourceAllocator : ResourceAllocator
-    -pxschResourcesManager : PxschResourcesManager
-    -muMimoScheduler : muMimoEnhance::Scheduler
-    +schedule()
-  }
-}
-
-namespace fd_sch {
-  class FdMainComponent["fd::sch::MainComponent"] {
-    -fdSchedulerArray : SchedulerArray
-    -metricsDetermination
-    +handleEventFdScheduleReq()
-    +processFdScheduleReq()
-  }
-}
-
-Eo *-- MainComponent
-Eo *-- QueueFsm
-Eo *-- DlDispatcherStateDefault
-MainComponent *-- Scheduler
-MainComponent *-- SlotHandler
-MainComponent o-- FdMainComponent : via FdScheduleReq msg
-Scheduler *-- PreScheduler
-Scheduler *-- TdScheduler
-TdScheduler o-- FdmScheduler : calls scheduleFdm
-FdmScheduler ..> FdMainComponent : FdScheduleReq
-```
+**DB model (classes):** see **§6** — `diagrams/l2ps-dlsch-db-model` (embedded there).
 
 ---
 
@@ -208,10 +61,10 @@ The DL Scheduler EO has a **two-tier event dispatch** structure:
 1. **EO-level router** — `EmFsmRouterWithDelay<Direction::DOWNLINK, ...>` instance in `dl/em/Eo.hpp`. Handles **cell-group-level** events directly (no per-cell FSM gate): `CellGroupSetupReq`, `CellGroupReconfigReq`, `CellGroupDeleteReq`, `GetResourceUsageReq`, `SlotSynchroInd`, `StartSlotSynchroInd`, `StopSlotSynchroInd`, `TdMetricOrderResp`. All other messages fall through to the per-cell `QueueFsm`.
 2. **Per-cell FSM** — Boost.SML state machine (`QueueFsm`) with three states: **Startup**, **Default**, **Delete**. One FSM per cell, managed by `CellsFsmSet<QueueFsm, MainComponent>`.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-stateDiagram-v2
-direction TB
+```plantuml
+@startuml l2ps-dlsch 3. EO FSM And Event Dispatch
+!pragma graphviz svg
+' scale 1920*1080
 
 [*] --> StateStartup
 StateStartup --> StateDefault : CellSetupReq [isSetupRequest] / setupL2PS
@@ -220,12 +73,10 @@ StateDelete --> StateStartup : CellDeleteReq [deleteGuard]
 StateStartup --> [*] : StopEvent
 StateDefault --> [*] : StopEvent
 StateDelete --> [*] : StopEvent
-
 note right of StateStartup
     Waits for CellSetupReq from SGNL.
     Only setup messages accepted.
 end note
-
 note right of StateDefault
     All slot-level scheduling + user messages.
     Events routed via StateDefaultRouter.
@@ -235,51 +86,50 @@ note right of StateDefault
     PuschReceiveRespHarqD, ResourceResp,
     SrsBeamSelectionInd, XpMessage, etc.
 end note
-
 note right of StateDelete
     Handles CellDeleteReq and cleanup.
     Transitions back to Startup when complete.
 end note
+@enduml
 ```
+
+In the per-cell **Default** state, `StateDefaultRouter` (`dl/em/StateDefaultRouter.hpp`) instantiates `pscommon::em::MessageRouter<…, StateDefaultRoutes>`. **`dl/em/StateDefaultRoutes.hpp`** defines the routed message set; against `/workspace` at the git revision recorded under **Document sync (source)** below, that file contains **111** distinct `msgId()` entries.
 
 ### 3.1 Dispatcher FSM (above the cell FSM)
 
 The `DlDispatcherStateDefault` and `DlDispatcherWaitFdSchedRespState` form a two-state dispatcher that gates event processing while the DL EO is waiting for one or more `FdScheduleResp` from the FD EO. The dispatcher state lives in `l2ps::pscommon::dispatcherFsm::QueueDispatcherFsmImpl` and is the **outer** FSM (above the per-cell `QueueFsm` that owns Startup / Default / Delete).
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-stateDiagram-v2
-direction LR
+```plantuml
+@startuml l2ps-dlsch 3.1 Dispatcher FSM (above the cell FSM)
+!pragma graphviz svg
+' scale 1920*1080
 
 [*] --> DispatcherDefault
 DispatcherDefault --> WaitFdSchedResp : SlotSynchroInd / processSlotSynchroInd / FdScheduleReq sent to FD EO
 WaitFdSchedResp --> DispatcherDefault : FdScheduleResp / processAllFdSchedResp (when all responses arrived)
 WaitFdSchedResp --> DispatcherDefault : SlotSynchroInd / abortWaitFdSchedResp (when skippedSlotsCount over max)
-
 note right of DispatcherDefault
     eventToPassthrough = true (default)
     eventFlushForbidden = false
     Events go straight to MessageRoutes.
 end note
-
 note right of WaitFdSchedResp
     on_entry / eventToPassthrough = true,
               eventFlushForbidden = true
     on_exit  / eventToPassthrough = false,
               eventFlushForbidden = false
-
     Self-loop on any other event:
       handleDelayedEvent ->
       eventToBeDelayed = true,
       eventToBeFreed = false ->
       event pushed into queuesDelayedEvents.
-
     Exit condition:
       ResponseQueue.numberOfFdSchedResp
       equals fdSchedFence.getNumberOfFdSchedReq,
       or skippedSlotsCount exceeds
       RadParam.rdMaxSkippedSlotsWaitingForFdResponse.
 end note
+@enduml
 ```
 
 **Per-event flags carried by `EmFsmRouterWithDelay`** (in `pscommon/em/EmFsmRouterWithDelay.hpp`):
@@ -298,169 +148,52 @@ end note
 
 The FSM is built from a chain of generic templates (`EmFsmBase` → `EmFsm<FsmImpl>` → `EmFsmRouterWithMsgChecker<...>` → `EmFsmRouter<...>`), then bound to the DL-specific `QueueFsmImpl` and `MainComponent` via two type-aliases (`dl::em::QueueFsm`, `dl::em::DlDispatcherStateDefault`). The per-cell `QueueFsmImpl` itself aggregates the four state handlers (`Startup`, `Default`, `DefaultRouter`, `Delete`).
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-class StateStartupHandler
-class StateDefaultHandler
-class StateDefaultRouter
-class StateDeleteHandler
-
-class QueueFsmImpl {
-    +StateStartupHandler startupHandler
-    +StateDefaultHandler defaultHandler
-    +StateDefaultRouter defaultRouter
-    +StateDeleteHandler deleteHandler
-}
-
-QueueFsmImpl *-- StateStartupHandler
-QueueFsmImpl *-- StateDefaultHandler
-QueueFsmImpl *-- StateDefaultRouter
-QueueFsmImpl *-- StateDeleteHandler
-
-class EmFsmBase
-class EmFsm["EmFsm~FsmImpl~"]
-class EmFsmRouterWithMsgChecker["EmFsmRouterWithMsgChecker~FsmImpl, MsgChecker, EoType, Msgs...~"] {
-    +Fsm~FsmImpl~ fsm
-    +EventRouter router
-}
-class EmFsmRouter["pscommon::em::EmFsmRouter~FsmImpl, RoutedMessages~"]
-class DispatcherStateDefault["DispatcherStateDefault~QueueFsm, MainComponent~"]
-class QueueFsm["dl::em::QueueFsm"]
-class DlDispatcherStateDefault
-class DlMainComponent["dl::sch::MainComponent"]
-class DlDispatcherWaitFdSchedRespState {
-    -ResponseQueue responseQueue
-    -uint32 skippedSlotsCount
-    -uint32 maxSkippedSlotsCount
-    -bool toBeFreed
-    +handleEventFromFifoDuringWaitState(evt) bool
-    +handleAllFdSchedResp()
-    +handleAbortWaitFdSchedResp()
-    +handleFdScheduleResp(evt) bool
-    +canSkipOneMoreSlot() bool
-}
-
-EmFsm --|> EmFsmBase
-EmFsmRouterWithMsgChecker --|> EmFsm
-EmFsmRouter ..|> EmFsmRouterWithMsgChecker : bind\nQueueFsmImpl, TrivialTrueMessageChecker, CellStopSchedulingReq
-QueueFsm ..|> EmFsmRouter : bind\nQueueFsmImpl, CellStopSchedulingReq
-DlDispatcherStateDefault ..|> DispatcherStateDefault : bind\ndl::em::QueueFsm, dl::sch::MainComponent
-
-DlDispatcherStateDefault --> DlMainComponent : routes to
-DlDispatcherWaitFdSchedRespState --> DlMainComponent : routes FdScheduleResp / replays FIFO
-```
+*PlantUML class diagram for this layer:* **§2 — Detailed class views** (`diagrams/l2ps-dlsch-dispatcher-class-hierarchy.md`).
 
 ### 3.3 FIFO Event Dispatch — Sequence
 
 Every incoming EM event is steered through three phases inside `EmFsmRouterWithDelay`: (a) **passthrough** to the FSM if currently allowed, (b) **delay** into a per-priority `queuesDelayedEvents`, and (c) **bulk flush** via `processDelayedEvents` when the state machine exits the wait condition. The diagram below shows one event's full life cycle, including the delayed-event flush loop.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    autonumber
-    actor Sender as sender (CP-RT / L1 / peer EO)
-    participant EH as DlEoHandler
-    box "EmFsmRouterWithDelay"
-    participant FR as fsmRouter
-    participant FRDL as fsmRouterDl
-    participant ROUT as EventRouter
-    participant ROUTES as MessageRoutes
-    participant FWD as EventForwarder
-    queue QQ as queuesDelayedEvents
-    end box
-    participant FSM as Fsm~QueueDispatcherFsmImpl~
-    participant PLAT as platform::EmIf
-
-    Sender->>EH: receiveCallback(event)
-    Note over EH: q_ctx → router
-    EH->>FR: processEvent(event)
-    Note over FR: eventToBeDelayed = false<br/>eventToBeFreed = true
-    opt event == FifosFlushInd
-        Note over FR: isFifosFlushIndSent = false
-    end
-
-    alt eventToPassthrough == true
-        FR->>FRDL: processEvent()
-        FRDL->>ROUT: route()
-        ROUT->>ROUTES: route(msgId)
-        alt routable msgId<br/>(CellGroup*Req, GetResourceUsageReq,<br/>SlotSynchroInd, Start/StopSlotSynchroInd,<br/>TdMetricOrderResp)
-            ROUTES->>FWD: handle()
-            FWD->>FSM: processEvent()
-        else other msgIds
-            ROUTES->>FWD: handleNotRoutableId()
-            FWD->>FSM: processEvent()
-        end
-    else eventToPassthrough == false
-        FR->>QQ: pushBack(priority)
-    end
-
-    EH->>FR: deleteEvent
-    opt eventToBeFreed == true
-        FR->>PLAT: deleteEvent()
-    end
-
-    EH->>FR: processDelayedEvents
-    opt !eventFlushForbidden && !queuesDelayedEvents.isEmpty
-        loop priority from HighestPriorityEvent to PriorityOfIncomingEvent
-            loop each non-blacklisted priority
-                opt isEnoughTimeInSlot && continue
-                    FR->>QQ: pop(priority)
-                    FR->>FRDL: processEvent()
-                    FRDL->>ROUT: route()
-                    ROUT->>ROUTES: route(msgId)
-                    alt routable
-                        ROUTES->>FWD: handle()
-                        FWD->>FSM: processEvent()
-                    else not routable
-                        ROUTES->>FWD: handleNotRoutableId()
-                        FWD->>FSM: processEvent()
-                    end
-                    opt eventToBeDelayed
-                        FR->>QQ: pushFront(priority)
-                    end
-                    alt isSplitEvent
-                        FR->>QQ: pushFront(priority)
-                    else
-                        FR->>PLAT: deleteEvent()
-                    end
-                end
-            end
-            opt !isOverloaded && priority > PriorityOfIncomingEvent && !isFifosFlushIndSent
-                FR->>FR: FifosFlushInd
-                Note over FR: isFifosFlushIndSent = true
-            end
-        end
-    end
-```
+![[diagrams/l2ps-dlsch-fifo-event-dispatch-sequence]]
 
 ### 3.4 FIFO Dispatch Flowchart
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 50}}}%%
-flowchart TB
-    start([Event arrives]) --> pe["ProcessEvent<br/>eventToBeDelayed = false"]
-    pe --> pt{eventToPassthrough?}
-    pt -- yes --> disp[Dispatch via FSM + handle]
-    disp --> dly1{eventToBeDelayed?}
-    dly1 -- yes --> push1[Push to back of FifoQueue<br/>by priority]
-    dly1 -- no --> A((A))
-    pt -- no --> A
+```plantuml
+@startuml l2ps-dlsch 3.4 FIFO Dispatch Flowchart
+!pragma graphviz svg
+' scale 1920*1080
 
-    A --> pde["ProcessDelayedEvents"]
-    pde --> empty{queue empty<br/>OR flushForbidden?}
-    empty -- yes --> done([Done])
-    empty -- no --> pop[Pop highest-priority event]
-    pop --> time{isEnoughTimeInSlot?}
-    time -- no --> done
-    time -- yes --> rst[eventToBeDelayed = false]
-    rst --> disp2[Dispatch via FSM + handle]
-    disp2 --> dly2{eventToBeDelayed?}
-    dly2 -- yes --> push2[Push to front of FifoQueue<br/>break loop]
-    push2 --> done
-    dly2 -- no --> empty
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "Event arrives" as start
+rectangle "ProcessEvent\neventToBeDelayed = false" as pe
+rectangle "eventToPassthrough?" as pt
+rectangle "Dispatch via FSM + handle" as disp
+rectangle "eventToBeDelayed?" as dly1
+rectangle "Push to back of FifoQueue\nby priority" as push1
+rectangle "(A)" as A
+rectangle "ProcessDelayedEvents" as pde
+rectangle "queue empty\nOR flushForbidden?" as empty
+rectangle "Done" as done
+rectangle "Pop highest-priority event" as pop
+rectangle "isEnoughTimeInSlot?" as time
+rectangle "eventToBeDelayed = false" as rst
+rectangle "Dispatch via FSM + handle" as disp2
+rectangle "eventToBeDelayed?" as dly2
+rectangle "Push to front of FifoQueue\nbreak loop" as push2
+
+start --> pe
+pe --> pt
+disp --> dly1
+A --> pde
+pde --> empty
+pop --> time
+rst --> disp2
+disp2 --> dly2
+push2 --> done
+@enduml
 ```
 
 ---
@@ -557,288 +290,170 @@ Entry: `FdScheduleResp` from FD EO arrives at the **dispatcher** in `WaitFdSched
 
 Other work in `postSchedule`: updates PF average rate (`PfMetricDl::updateAverageRate`), sends `DlToUlIntraSchedUpdate` via `IntraSchedUpdateSender`, schedules deferred CSI/SR, logs PCMD records, and runs `metricsFacadeDl.endOfNewSlot`.
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    A([SlotSynchroInd])
-    A --> S1[SlotHandler.run<br/>overload + delay + PRB swap]
-    S1 --> SR[scheduleRs<br/>CSI-RS / TRS]
-    SR --> CS1U[updateCs1ListWithEvents<br/>refresh CS1 by events]
-    CS1U --> MODE{slot-type mode?}
-    MODE -- SSB slot --> SSB[scheduleSsBurst<br/>SS / PBCH only]
-    MODE -- DL slot --> S2[PRE - CS1<br/>buildCs1List]
-    MODE -- other --> SR_ONLY[scheduleAloneSrAndPerCsiReport<br/>via CsiSrScheduler]
-    S2 --> S3[TD - CS2<br/>PfMetricDl + beam + paging]
-    S3 --> S4[FDM - dl::sch::fdm<br/>UeSelector + MU-MIMO + PRB alloc]
-    S4 --> S5[FD EO<br/>MCS/TBS + PDSCH/PDCCH → L1]
-    SSB --> POST
-    SR_ONLY --> POST
-    S5 --> POST[handleAllFdSchedulerResp<br/>FdScheduleRespHandler:<br/>schedulePdcch + schedulePucch +<br/>postSchedule + postRun]
-    S5 -.->|FdScheduleResp<br/>via dispatcher WaitFdSchedResp| POST
+```plantuml
+@startuml l2ps-dlsch 4.6 Post-Scheduling
+!pragma graphviz svg
+' scale 1920*1080
+
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "SlotSynchroInd" as A
+rectangle "SlotHandler.run\noverload + delay + PRB swap" as S1
+rectangle "scheduleRs\nCSI-RS / TRS" as SR
+rectangle "updateCs1ListWithEvents\nrefresh CS1 by events" as CS1U
+rectangle "slot-type mode?" as MODE
+rectangle "scheduleSsBurst\nSS / PBCH only" as SSB
+rectangle "PRE - CS1\nbuildCs1List" as S2
+rectangle "scheduleAloneSrAndPerCsiReport\nvia CsiSrScheduler" as SR_ONLY
+rectangle "TD - CS2\nPfMetricDl + beam + paging" as S3
+rectangle "FDM - dl::sch::fdm\nUeSelector + MU-MIMO + PRB alloc" as S4
+rectangle "FD EO\nMCS/TBS + PDSCH/PDCCH → L1" as S5
+rectangle "handleAllFdSchedulerResp\nFdScheduleRespHandler:\nschedulePdcch + schedulePucch +\npostSchedule + postRun" as POST
+
+A --> S1
+S1 --> SR
+SR --> CS1U
+CS1U --> MODE
+S2 --> S3
+S3 --> S4
+S4 --> S5
+SSB --> POST
+SR_ONLY --> POST
+S5 --> POST
+S5 ..> POST : FdScheduleResp\nvia dispatcher WaitFdSchedResp
+@enduml
 ```
 
 ### 4.7 PRE Stage — Sequence
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
+```plantuml
+@startuml l2ps-dlsch 4.7 PRE Stage  Sequence
+!pragma graphviz svg
+' scale 1920*1080
+
     autonumber
-    participant SH as SlotSynchroIndHandler
-    participant BFG as bfgroup::Scheduler
-    participant PRE as pre::Scheduler
-    participant CS1 as Cs1ListDecision
-    participant ELIG as Cs1ListCandidateConstraint
-    participant LA as LinkAdaptor
-    participant DRX as DrxManager
-    participant UeDB as UeDbDl
-
-    SH->>BFG: updateCs1ListWithEvents(onAirXhfn, cellDyn)
-    BFG->>PRE: updateCs1ListWithEvents(xsfn, cellDyn, resetBwpSwitch)
-    Note over PRE: Reads votedCell + isMixedCaMode<br/>from CellDb
-    PRE->>CS1: updateCs1ListWithEvents(sfn, slot, caFunc, nonCaFunc, ...)
-
+participant "SlotSynchroIndHandler" as SH
+participant "bfgroup::Scheduler" as BFG
+participant "pre::Scheduler" as PRE
+participant "Cs1ListDecision" as CS1
+participant "Cs1ListCandidateConstraint" as ELIG
+participant "LinkAdaptor" as LA
+participant "DrxManager" as DRX
+participant "UeDbDl" as UeDB
+    SH->BFG: updateCs1ListWithEvents(onAirXhfn, cellDyn)
+    BFG->PRE: updateCs1ListWithEvents(xsfn, cellDyn, resetBwpSwitch)
+    note over PRE
+      Reads votedCell + isMixedCaMode
+      from CellDb
+    end note
+    PRE->CS1: updateCs1ListWithEvents(sfn, slot, caFunc, nonCaFunc, ...)
     loop for each UE in UeDb
-        CS1->>UeDB: read drx/bwp/buffer/beam state
-        CS1->>ELIG: checkCandidate(ue)
-        ELIG-->>CS1: eligible? + priority
+        CS1->UeDB: read drx/bwp/buffer/beam state
+        CS1->ELIG: checkCandidate(ue)
+        ELIG-->CS1: eligible? + priority
         alt eligible
-            CS1->>CS1: insertIntoCs1List(ue, prio)
+            CS1->CS1: insertIntoCs1List(ue, prio)
         else not eligible
-            CS1->>CS1: removeFromCs1List(ue)
+            CS1->CS1: removeFromCs1List(ue)
         end
     end
-
-    PRE->>LA: handleCqiExpiry(currentXsfn)
-    PRE->>DRX: tickActiveTimer(xsfn)
-    PRE->>PRE: updateCaUesNumberInPreCandidateListToPucchResourceDb
-    PRE->>PRE: setUeNumberWithDrbPriority
-    PRE-->>BFG: return (CS1 ready)
+    PRE->LA: handleCqiExpiry(currentXsfn)
+    PRE->DRX: tickActiveTimer(xsfn)
+    PRE->PRE: updateCaUesNumberInPreCandidateListToPucchResourceDb
+    PRE->PRE: setUeNumberWithDrbPriority
+    PRE-->BFG: return (CS1 ready)
+@enduml
 ```
 
 ### 4.8 TD Stage — Sequence (per carrier / per slot)
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
+```plantuml
+@startuml l2ps-dlsch 4.8 TD Stage  Sequence (per carrier / per slot)
+!pragma graphviz svg
+' scale 1920*1080
+
     autonumber
-    participant BFG as bfgroup::Scheduler
-    participant TD as td::Scheduler
-    participant CAR as CarrierScheduler
-    participant PF as PfMetricDl
-    participant BEAM as BeamSelector
-    participant CC as CommonChannelScheduler
-    participant PG as PagingHandler
-    participant PUC as PucchForHarqAllocator
-    participant PDCT as PdcchSchedulerTd
-    participant CS2 as Cs2List
-
-    BFG->>TD: schedule(onAirXhfn)
-    TD->>CC: scheduleSibSsbPaging(slot)
-    CC->>PG: preparePagingResources()
-    CC-->>TD: common channel slots reserved
-
+participant "bfgroup::Scheduler" as BFG
+participant "td::Scheduler" as TD
+participant "CarrierScheduler" as CAR
+participant "PfMetricDl" as PF
+participant "BeamSelector" as BEAM
+participant "CommonChannelScheduler" as CC
+participant "PagingHandler" as PG
+participant "PucchForHarqAllocator" as PUC
+participant "PdcchSchedulerTd" as PDCT
+participant "Cs2List" as CS2
+    BFG->TD: schedule(onAirXhfn)
+    TD->CC: scheduleSibSsbPaging(slot)
+    CC->PG: preparePagingResources()
+    CC-->TD: common channel slots reserved
     loop for each scheduled carrier (cell)
-        TD->>CAR: schedule(cellDbIdx, xhfn)
-        CAR->>BEAM: selectBeams(cs1List)
-        BEAM-->>CAR: beam assignments
-        CAR->>PUC: reserveLongPucchHarq(slot)
+        TD->CAR: schedule(cellDbIdx, xhfn)
+        CAR->BEAM: selectBeams(cs1List)
+        BEAM-->CAR: beam assignments
+        CAR->PUC: reserveLongPucchHarq(slot)
         loop for each UE in CS1
-            CAR->>PF: computeMetric(ue, history)
-            PF-->>CAR: pfWeight
+            CAR->PF: computeMetric(ue, history)
+            PF-->CAR: pfWeight
         end
-        CAR->>CS2: buildSortedCs2(weights)
-        CAR->>PDCT: reserveCce(cs2List)
-        PDCT-->>CAR: pdcchCapacityRemaining
+        CAR->CS2: buildSortedCs2(weights)
+        CAR->PDCT: reserveCce(cs2List)
+        PDCT-->CAR: pdcchCapacityRemaining
     end
-
-    TD-->>BFG: CS2 ready, common ch reserved
+    TD-->BFG: CS2 ready, common ch reserved
+@enduml
 ```
 
 ### 4.9 FDM Stage — Sequence (per carrier)
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
+```plantuml
+@startuml l2ps-dlsch 4.9 FDM Stage  Sequence (per carrier)
+!pragma graphviz svg
+' scale 1920*1080
+
     autonumber
-    participant CAR as CarrierScheduler
-    participant FDM as fdm::Scheduler
-    participant SEL as UeSelector
-    participant POL as AllocationPolicy
-    participant SA as DlSubAreaManager
-    participant MU as muMimoEnhance::Scheduler
-    participant RA as ResourceAllocator
-    participant PXR as PxschResourcesManager
-    participant REQ as FdScheduleReq builder
-
-    CAR->>FDM: scheduleFdm(cs2List, cellDyn)
-    FDM->>POL: pickType(cell)
-    POL-->>FDM: Type0 or Type1
-
+participant "CarrierScheduler" as CAR
+participant "fdm::Scheduler" as FDM
+participant "UeSelector" as SEL
+participant "AllocationPolicy" as POL
+participant "DlSubAreaManager" as SA
+participant "muMimoEnhance::Scheduler" as MU
+participant "ResourceAllocator" as RA
+participant "PxschResourcesManager" as PXR
+participant "FdScheduleReq builder" as REQ
+    CAR->FDM: scheduleFdm(cs2List, cellDyn)
+    FDM->POL: pickType(cell)
+    POL-->FDM: Type0 or Type1
     loop for each candidate UE in CS2
-        FDM->>SEL: select(ue, remainingPrb)
-        SEL-->>FDM: takeUe? + bytesGoal
+        FDM->SEL: select(ue, remainingPrb)
+        SEL-->FDM: takeUe? + bytesGoal
         alt take
-            FDM->>SA: allocateSubArea(ue, prbCount)
-            SA-->>FDM: subAreaId + prb range
-            FDM->>RA: allocatePrb(subArea, prbCount, type)
-            RA-->>FDM: prb allocation mask
-            FDM->>PXR: reservePdsch(ue, mask)
+            FDM->SA: allocateSubArea(ue, prbCount)
+            SA-->FDM: subAreaId + prb range
+            FDM->RA: allocatePrb(subArea, prbCount, type)
+            RA-->FDM: prb allocation mask
+            FDM->PXR: reservePdsch(ue, mask)
         end
     end
-
-    FDM->>MU: pairUesForMuMimo(scheduledList)
-    MU-->>FDM: muMimoGroups + dmrsPorts
-
-    FDM->>REQ: appendUe(ue, prbMask, mcsHint, dmrsPort)
-    REQ-->>FDM: complete FdScheduleReq
-    FDM-->>CAR: FdScheduleReq ready (to be sent to FD EO)
+    FDM->MU: pairUesForMuMimo(scheduledList)
+    MU-->FDM: muMimoGroups + dmrsPorts
+    FDM->REQ: appendUe(ue, prbMask, mcsHint, dmrsPort)
+    REQ-->FDM: complete FdScheduleReq
+    FDM-->CAR: FdScheduleReq ready (to be sent to FD EO)
+@enduml
 ```
 
 ### 4.10 Post Stage — Sequence
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    autonumber
-    participant FD as FD EO
-    participant DLDISP as DL Dispatcher<br/>(WaitFdSchedResp)
-    participant RQ as ResponseQueue
-    participant MC as dl::sch::MainComponent
-    participant BFG as bfgroup::Scheduler
-    participant TD as td::Scheduler
-    participant FRH as td::FdScheduleRespHandler
-    participant PDCT as PdcchSchedulerTd
-    participant CC as CommonChannelScheduler
-    participant SH as SlotHandler
-    participant CAR as CarrierScheduler
-    participant PF as PfMetricDl
-    participant ISCH as IntraSchedUpdateSender
-    participant CSI as CsiSrReportDrop
-    participant PCMD as PcmdLogger
-    participant METR as metricsFacadeDl
-    participant UL as UL Scheduler
-
-    FD->>DLDISP: FdScheduleResp (per-cell-group)
-    DLDISP->>RQ: push(evt) -- accumulate FdScheduleResp
-    alt numberOfFdSchedResp == fdSchedFence.getNumberOfFdSchedReq
-        Note over DLDISP: handleAllFdSchedResp →<br/>exit WaitFdSchedResp →<br/>DispatcherDefault
-        DLDISP->>MC: handleAllFdSchedulerResp(fdScheduleRespArray)
-        MC->>BFG: handle(fdScheduleRespArray)
-        BFG->>TD: handle(fdScheduleRespArray)
-        TD->>FRH: handleFdScheduleResp(fdScheduleRespArray)
-        FRH->>PDCT: schedulePdcch(fdScheduleRespArray)
-        FRH->>FRH: postProcessFdScheduleResp(fdFb)
-        FRH->>CC: schedulePucch(fdScheduleRespArray)
-
-        MC->>SH: postRun(xsfn, cellDyn)
-        SH->>BFG: postSchedule(xsfn, cellDyn)
-        BFG->>TD: postSchedule(xsfn)
-        loop for each cell
-            TD->>CAR: postSchedule(xsfn)
-            CAR->>PF: updateAverageRate(ue, scheduledBytes)
-            CAR->>CSI: bookKeepCsiSrDrops(slot)
-        end
-
-        BFG->>ISCH: sendDlToUlIntraSchedUpdate(scheduledUes)
-        ISCH->>UL: DlToUlIntraSchedUpdate
-
-        BFG->>PCMD: logPerSlotRecord(scheduledUes)
-        BFG->>METR: endOfNewSlot(slot)
-    else not all responses yet
-        Note over DLDISP: stay in WaitFdSchedResp
-    else skippedSlotsCount > maxSkippedSlotsCount<br/>(next SlotSynchroInd)
-        Note over DLDISP: handleAbortWaitFdSchedResp →<br/>cleanup + exit WaitFdSchedResp →<br/>DispatcherDefault
-    end
-```
+![[diagrams/l2ps-dlsch-post-stage-sequence]]
 
 ### 4.11 End-to-End Per-Slot Sequence
 
 A single bird's-eye view spanning the **whole** DL slot — `SlotSynchroInd` arrival, all four scheduling stages, the FD EO round-trip, the FdScheduleResp handling and `postSchedule`. The dispatcher boundary (`DispatcherDefault` ↔ `WaitFdSchedResp`) is shown explicitly.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    autonumber
-    participant PLAT as Platform Timer
-    participant DLDISP as DL Dispatcher
-    participant MC as dl::sch::MainComponent
-    participant SH as SlotHandler
-    participant BFG as bfgroup::Scheduler
-    participant PRE as pre::Scheduler
-    participant TD as td::Scheduler
-    participant CAR as td::CarrierScheduler
-    participant PF as td::PfMetricDl
-    participant FDMC as pscommon::sch::fdm::Scheduler
-    participant SEL as dl::sch::fdm::UeSelector
-    participant FDM as dl::sch::fdm::Scheduler
-    participant MU as muMimoEnhance::MuEnhScheduler
-    participant FPRX as td::FdSchedulerProxy
-    participant FD as FD EO MainComponent
-    participant FDSCH as dl::sch::fd::Scheduler
-    participant FRH as td::FdScheduleRespHandler
-    participant CSISR as bfgroup::CsiSrScheduler
-    participant UL as UL Scheduler
-
-    PLAT->>DLDISP: SlotSynchroInd
-    Note over DLDISP: DispatcherDefault
-    DLDISP->>MC: handle(SlotSynchroInd)
-    MC->>SH: run(onAirTime)
-    SH->>BFG: scheduleRs(xhfn, cellCfg, cellDyn)
-    SH->>BFG: updateCs1ListWithEvents(xsfn, cellDyn)
-    BFG->>PRE: updateCs1ListWithEvents(...)
-
-    alt SSB slot
-        SH->>BFG: scheduleSsBurst(sfn, slot)
-    else DL slot
-        Note over SH,FDM: PRE → TD → FDM → FdScheduleReq
-        SH->>BFG: schedule(xhfnOnAir, hasTriggered)
-        BFG->>PRE: schedule()
-        PRE->>PRE: buildCs1List()
-
-        BFG->>TD: schedule(xhfnOnAir)
-        TD->>PF: computePfMetric()
-        TD->>CAR: initBeforeScheduling()
-        CAR->>CAR: buildCs2Lists()
-
-        TD->>CAR: scheduleCarriers()
-        CAR->>FDMC: schedule()
-        FDMC->>FDMC: scheduleUesInCs2()
-        loop each UE in CS2
-            FDMC->>SEL: selectUe(ue)
-        end
-        FDMC->>FDM: distributeResources()
-        FDMC->>FDM: doMuMimoEnhanceSchedule()
-        FDM->>MU: schedule()
-        FDM->>MU: calculateMuCorrCqi()
-
-        CAR->>FPRX: schedule()
-        FPRX->>FPRX: scheduleFdEo()
-        FPRX-->>FD: FdScheduleReq.send
-        Note over DLDISP: SlotSynchroInd handling done →<br/>DispatcherDefault → WaitFdSchedResp<br/>(eventFlushForbidden = true)
-    else other slot
-        SH->>BFG: scheduleAloneSrAndPerCsiReport(xsfn)
-        BFG->>CSISR: schedule(xsfn)
-    end
-
-    Note over FD,FDSCH: FD EO processes on its own EQ (see fd.md §5)
-    FD->>FDSCH: schedule(...) per subcell
-    FDSCH-->>FD: PdschSendReq + PdcchSendReq (to L1-DL)
-    FD-->>DLDISP: FdScheduleResp
-
-    Note over DLDISP: ResponseQueue collects responses<br/>until numberOfFdSchedResp == numberOfFdSchedReq
-    DLDISP->>MC: handleAllFdSchedulerResp(array)
-    Note over DLDISP: WaitFdSchedResp → DispatcherDefault
-    MC->>BFG: handle(fdScheduleRespArray)
-    BFG->>TD: handle(array)
-    TD->>FRH: handleFdScheduleResp(array)
-    FRH->>FRH: schedulePdcch + postProcessFdScheduleResp + schedulePucch
-
-    MC->>SH: postRun(xsfn)
-    SH->>BFG: postSchedule(xsfn, cellDyn)
-    BFG->>PRE: postSchedule(xsfn, cellDyn)
-    BFG->>TD: postSchedule(xsfn)
-    BFG->>UL: DlToUlIntraSchedUpdate
-```
+![[diagrams/l2ps-dlsch-end-to-end-per-slot-sequence]]
 
 ---
 
@@ -867,24 +482,28 @@ Key classes (`dl/sch/la/`):
 - `DlHrBrLaStateManager` — high-rate/base-rate LA state management
 - `DeltaCqiStepUpCalculator` — outer-loop step-up/down logic
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant L1 as L1-UL
-    participant DL as DL Scheduler
-    participant LA as Link Adaptation
-    participant HARQ as HARQ Manager
+```plantuml
+@startuml l2ps-dlsch 5.2 Link Adaptation
+!pragma graphviz svg
+' scale 1920*1080
 
-    L1->>DL: PucchReceiveRespHarqD (ACK/NACK + CSI)
-    DL->>HARQ: updateHarqProcess(processId, ackNack)
+participant "L1-UL" as L1
+participant "DL Scheduler" as DL
+participant "Link Adaptation" as LA
+participant "HARQ Manager" as HARQ
+    L1->DL: PucchReceiveRespHarqD (ACK/NACK + CSI)
+    DL->HARQ: updateHarqProcess(processId, ackNack)
     alt ACK
-        HARQ->>HARQ: freeProcess(processId)
+        HARQ->HARQ: freeProcess(processId)
     else NACK
-        HARQ->>HARQ: markForRetx(processId)
+        HARQ->HARQ: markForRetx(processId)
     end
-    DL->>LA: updateBler(ackNack, mcsUsed)
-    LA->>LA: outerLoopAdjust(deltaCqi)
-    Note over LA: Next slot: CQI + deltaAdj → proposedMCS
+    DL->LA: updateBler(ackNack, mcsUsed)
+    LA->LA: outerLoopAdjust(deltaCqi)
+    note over LA
+      Next slot: CQI + deltaAdj → proposedMCS
+    end note
+@enduml
 ```
 
 ---
@@ -893,71 +512,7 @@ sequenceDiagram
 
 The DL Scheduler operates on two main database layers: Cell DB and UE DB.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-class CellGroupConfigData {
-    +cellGroupParams() : CellGroup
-    +dlFdSchOnPairCoreInCurrSlot() : bool
-}
-
-class CellConfigData {
-    +cell : Cell
-    +pdcch : PdcchConfigData
-    +slotTiming : SlotTimingConfigData
-    +beamforming : Beamforming
-    +subcells : SubcellsConfiguration
-}
-
-class CellDynamicData {
-    +rtCellDlDynamicSpecific
-    +cellDlDynamicSpecific
-    +slotEirpControl
-    +cellDynCtx
-}
-
-class CellDbDl {
-    +getCell(nrCellId) : Cell
-}
-
-class CellGroupDynamicData {
-    +perSlotState
-    +prbPoolingSnapshot
-}
-
-class UeDbDl {
-    +getUe(ueId) : Ue
-    +forEach(callback)
-}
-
-class UeData["db::Ue"] {
-    +bufferStatus : BufferStatus
-    +prioClass : PrioClass
-    +harqProcesses
-    +linkAdaptation
-    +drxState
-    +beamInfo
-    +bearers
-}
-
-class BfGroupSchedulerDB {
-    +cs1List
-    +cs2Lists
-    +scheduledUes
-}
-
-CellGroupConfigData *-- CellConfigData
-CellConfigData *-- CellDynamicData
-CellDbDl o-- CellConfigData
-CellGroupConfigData *-- CellGroupDynamicData
-UeDbDl o-- UeData
-MainComponent --> CellGroupConfigData
-MainComponent --> CellGroupDynamicData
-MainComponent --> UeDbDl
-Scheduler --> BfGroupSchedulerDB
-```
+![[diagrams/l2ps-dlsch-db-model]]
 
 ### Key DB characteristics:
 - **CellConfigData**: Static cell configuration from CellSetupReq. Written once at setup, read every slot.
@@ -970,69 +525,82 @@ Scheduler --> BfGroupSchedulerDB
 
 ## 7. Cell Bring-Up And Delete Flow
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL-psCell
-    participant DL as DL Scheduler (MainComponent)
-    participant SLOT as SlotHandler
-    participant BFGRP as bfgroup::Scheduler
-    participant TD as td::Scheduler
-    participant FD as FD EO
+```plantuml
+@startuml l2ps-dlsch 7. Cell Bring-Up And Delete Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    SGNL->>DL: Internal CellSetupReq
-    Note over DL: QueueFsm: StateStartup → StateDefault
-    DL->>DL: performCellSetup(cellConfigData, cellDynData, cellParamsInMsg)
-    DL->>SLOT: initialize slotTypeSelectorSet
-    DL->>BFGRP: create pre/td/fdm sub-schedulers
-    DL->>TD: handleCellSetup(cell, cellDynData)
-    DL->>FD: FdInitInd (via EQ to FD EO)
-    FD->>FD: createFdScheduler(subcellIdx)
-    DL-->>SGNL: CellSetupResp (OK)
-
-    Note over SGNL,FD: Cell Delete
-    SGNL->>DL: CellStopSchedulingReq
-    Note over DL: QueueFsm: StateDefault → StateDelete
-    DL->>TD: handleCellStopScheduling(nrCellIdentity)
-    DL->>FD: FdDeleteInd
-    SGNL->>DL: CellDeleteReq
-    DL->>DL: performCellDelete()
-    DL->>TD: handleCellDelete(nrCellIdentity)
-    Note over DL: QueueFsm: StateDelete → StateStartup
-    DL-->>SGNL: CellDeleteResp (OK)
+participant "SGNL-psCell" as SGNL
+participant "DL Scheduler (MainComponent)" as DL
+participant "SlotHandler" as SLOT
+participant "bfgroup::Scheduler" as BFGRP
+participant "td::Scheduler" as TD
+participant "FD EO" as FD
+    SGNL->DL: Internal CellSetupReq
+    note over DL
+      QueueFsm: StateStartup → StateDefault
+    end note
+    DL->DL: performCellSetup(cellConfigData, cellDynData, cellParamsInMsg)
+    DL->SLOT: initialize slotTypeSelectorSet
+    DL->BFGRP: create pre/td/fdm sub-schedulers
+    DL->TD: handleCellSetup(cell, cellDynData)
+    DL->FD: FdInitInd (via EQ to FD EO)
+    FD->FD: createFdScheduler(subcellIdx)
+    DL-->SGNL: CellSetupResp (OK)
+    note over SGNL,FD
+      Cell Delete
+    end note
+    SGNL->DL: CellStopSchedulingReq
+    note over DL
+      QueueFsm: StateDefault → StateDelete
+    end note
+    DL->TD: handleCellStopScheduling(nrCellIdentity)
+    DL->FD: FdDeleteInd
+    SGNL->DL: CellDeleteReq
+    DL->DL: performCellDelete()
+    DL->TD: handleCellDelete(nrCellIdentity)
+    note over DL
+      QueueFsm: StateDelete → StateStartup
+    end note
+    DL-->SGNL: CellDeleteResp (OK)
+@enduml
 ```
 
 ---
 
 ## 8. UE Configuration Flow
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL-psUser
-    participant DL as DL Scheduler (MainComponent)
-    participant BFGRP as bfgroup::Scheduler
-    participant PRE as pre::Scheduler
-    participant DB as UeDbDl
+```plantuml
+@startuml l2ps-dlsch 8. UE Configuration Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    SGNL->>DL: InternalUserSetupReq
-    DL->>DB: allocateUe(ueId, config)
-    DL->>BFGRP: handle(UserSetupReq)
-    BFGRP->>PRE: initializeUeForCs1(ue)
-    DL-->>SGNL: InternalUserSetupResp (OK)
-
-    Note over SGNL,DB: User Modify
-    SGNL->>DL: InternalUserModifyReq
-    DL->>DB: updateUeConfig(ueId, newConfig)
-    DL->>BFGRP: handle(UserModifyReq)
-    BFGRP->>PRE: updateCs1Eligibility(ue)
-    DL-->>SGNL: InternalUserModifyResp (OK)
-
-    Note over SGNL,DB: User Delete
-    SGNL->>DL: UserDeleteInd
-    DL->>DL: userDeleteIndHandler.handle()
-    DL->>BFGRP: handle(UserDeleteInd)
-    DL->>DB: deallocateUe(ueId)
+participant "SGNL-psUser" as SGNL
+participant "DL Scheduler (MainComponent)" as DL
+participant "bfgroup::Scheduler" as BFGRP
+participant "pre::Scheduler" as PRE
+participant "UeDbDl" as DB
+    SGNL->DL: InternalUserSetupReq
+    DL->DB: allocateUe(ueId, config)
+    DL->BFGRP: handle(UserSetupReq)
+    BFGRP->PRE: initializeUeForCs1(ue)
+    DL-->SGNL: InternalUserSetupResp (OK)
+    note over SGNL,DB
+      User Modify
+    end note
+    SGNL->DL: InternalUserModifyReq
+    DL->DB: updateUeConfig(ueId, newConfig)
+    DL->BFGRP: handle(UserModifyReq)
+    BFGRP->PRE: updateCs1Eligibility(ue)
+    DL-->SGNL: InternalUserModifyResp (OK)
+    note over SGNL,DB
+      User Delete
+    end note
+    SGNL->DL: UserDeleteInd
+    DL->DL: userDeleteIndHandler.handle()
+    DL->BFGRP: handle(UserDeleteInd)
+    DL->DB: deallocateUe(ueId)
+@enduml
 ```
 
 ---
@@ -1041,26 +609,50 @@ sequenceDiagram
 
 This is the most performance-critical path — executed every 0.5 ms (TDD FR1 30 kHz).
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    SYNC([SlotSynchroInd from platform timer])
-    SYNC --> V1[Validate sync against 5G timer]
-    V1 --> OC[OverloadController::startSlot<br/>measure delay, set budget]
-    OC --> ADJ[adjustSchedulingToRemainingSlot<br/>capacity = remaining time × ratio]
-    ADJ --> SWAP[Swap PRB pooling DB<br/>+ ScheUE pooling DB snapshots]
-    SWAP --> ZAB[ZabCellUpdater::update<br/>refresh pooled cell PRBs]
-    ZAB --> HARQUPD[HarqStatusUpdateReqSender::send]
-    HARQUPD --> CS1[pre::Scheduler::schedule<br/>build CS1 per-UE eligibility]
-    CS1 --> PF[td::Scheduler::schedule<br/>PF metric + CS2 build]
-    PF --> BEAM[BeamSelector + CommonChannelScheduler<br/>SIB/paging beam + resources]
-    BEAM --> CARRIER[CarrierScheduler::scheduleCarriers<br/>per-carrier CS2 selection]
-    CARRIER --> FDM[fdm::Scheduler::schedule<br/>UE selection + MU-MIMO + PRB alloc]
-    FDM --> FDREQ[Build FdScheduleReq<br/>send to FD EO]
-    FDREQ --> FDEO[FD EO: processFdScheduleReq<br/>MCS/TBS + PDSCH/PDCCH → L1]
-    FDEO --> FDRESP[FdScheduleResp back to DL]
-    FDRESP --> POST[Post-scheduling<br/>PF avg update + DL→UL update]
-    POST --> CSISCHED[CsiSrScheduler::scheduleInAdvance<br/>+ PCMD records]
+```plantuml
+@startuml l2ps-dlsch 9. Slot-Level Processing Flow (Main Hot Path)
+!pragma graphviz svg
+' scale 1920*1080
+
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "SlotSynchroInd from platform timer" as SYNC
+rectangle "Validate sync against 5G timer" as V1
+rectangle "OverloadController::startSlot\nmeasure delay, set budget" as OC
+rectangle "adjustSchedulingToRemainingSlot\ncapacity = remaining time × ratio" as ADJ
+rectangle "Swap PRB pooling DB\n+ ScheUE pooling DB snapshots" as SWAP
+rectangle "ZabCellUpdater::update\nrefresh pooled cell PRBs" as ZAB
+rectangle "HarqStatusUpdateReqSender::send" as HARQUPD
+rectangle "pre::Scheduler::schedule\nbuild CS1 per-UE eligibility" as CS1
+rectangle "td::Scheduler::schedule\nPF metric + CS2 build" as PF
+rectangle "BeamSelector + CommonChannelScheduler\nSIB/paging beam + resources" as BEAM
+rectangle "CarrierScheduler::scheduleCarriers\nper-carrier CS2 selection" as CARRIER
+rectangle "fdm::Scheduler::schedule\nUE selection + MU-MIMO + PRB alloc" as FDM
+rectangle "Build FdScheduleReq\nsend to FD EO" as FDREQ
+rectangle "FD EO: processFdScheduleReq\nMCS/TBS + PDSCH/PDCCH → L1" as FDEO
+rectangle "FdScheduleResp back to DL" as FDRESP
+rectangle "Post-scheduling\nPF avg update + DL→UL update" as POST
+rectangle "CsiSrScheduler::scheduleInAdvance\n+ PCMD records" as CSISCHED
+
+SYNC --> V1
+V1 --> OC
+OC --> ADJ
+ADJ --> SWAP
+SWAP --> ZAB
+ZAB --> HARQUPD
+HARQUPD --> CS1
+CS1 --> PF
+PF --> BEAM
+BEAM --> CARRIER
+CARRIER --> FDM
+FDM --> FDREQ
+FDREQ --> FDEO
+FDEO --> FDRESP
+FDRESP --> POST
+POST --> CSISCHED
+@enduml
 ```
 
 ### Timing Budget (TDD FR1 30 kHz, single slot = 500 µs)
@@ -1082,27 +674,31 @@ Adaptive budgeting via `OverloadController` clamps FD-scheduled UEs when time is
 
 ## 10. DL MU-MIMO And Beamforming Flow
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SRSBM as SRS-BM EO
-    participant DL as DL Scheduler
-    participant FDM as FDM Scheduler
-    participant MUMIMO as muMimoEnhance::Scheduler
-    participant FD as FD EO
-    participant L1 as L1-DL
+```plantuml
+@startuml l2ps-dlsch 10. DL MU-MIMO And Beamforming Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    SRSBM->>DL: SrsBeamSelectionInd (per-UE best beam, DOA)
-    Note over DL: Store beam info in UE DB
-    DL->>DL: SlotSynchroInd → PRE → TD
-    DL->>FDM: scheduleFdm (CS2 UEs + beam info)
-    FDM->>MUMIMO: performMuMimoPairing
-    MUMIMO->>MUMIMO: Build Virtual UEs + allocate DMRS ports
-    FDM->>FDM: distributePrbsPerSubArea
-    FDM->>FD: FdScheduleReq (paired UEs + layers + DMRS)
-    FD->>FD: computeRankAndPmi per UE
-    FD->>L1: PdschSendReq (with UePairingReq for MU)
-    FD->>L1: PdcchSendReq (DCI Format 1_1)
+participant "SRS-BM EO" as SRSBM
+participant "DL Scheduler" as DL
+participant "FDM Scheduler" as FDM
+participant "muMimoEnhance::Scheduler" as MUMIMO
+participant "FD EO" as FD
+participant "L1-DL" as L1
+    SRSBM->DL: SrsBeamSelectionInd (per-UE best beam, DOA)
+    note over DL
+      Store beam info in UE DB
+    end note
+    DL->DL: SlotSynchroInd → PRE → TD
+    DL->FDM: scheduleFdm (CS2 UEs + beam info)
+    FDM->MUMIMO: performMuMimoPairing
+    MUMIMO->MUMIMO: Build Virtual UEs + allocate DMRS ports
+    FDM->FDM: distributePrbsPerSubArea
+    FDM->FD: FdScheduleReq (paired UEs + layers + DMRS)
+    FD->FD: computeRankAndPmi per UE
+    FD->L1: PdschSendReq (with UePairingReq for MU)
+    FD->L1: PdcchSendReq (DCI Format 1_1)
+@enduml
 ```
 
 ---
@@ -1147,50 +743,51 @@ sequenceDiagram
 
 ### Proposed Module Structure (7 modules)
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    subgraph Orchestrator["Module 1: Slot Orchestrator"]
-        direction LR
-        ORCH[SlotOrchestrator<br/>1. startSlot<br/>2. runPipeline<br/>3. postSlot]
-    end
+```plantuml
+@startuml l2ps-dlsch Proposed Module Structure (7 modules)
+!pragma graphviz svg
+' scale 1920*1080
 
-    subgraph Eligibility["Module 2: Eligibility Engine"]
-        direction LR
-        ELIG[EligibilityEngine<br/>1. refreshCs1<br/>2. getEligibleUes<br/>3. updateOnEvent]
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
 
-    subgraph TdSelector["Module 3: TD Selector"]
-        direction LR
-        TDSEL[TdSelector<br/>1. computeMetrics<br/>2. buildCs2<br/>3. allocatePucch]
-    end
+package "Module 1: Slot Orchestrator" as Orchestrator {
+  rectangle "SlotOrchestrator\n1. startSlot\n2. runPipeline\n3. postSlot" as ORCH
+}
 
-    subgraph ResourceAllocator["Module 4: Resource Allocator"]
-        direction LR
-        RESALLOC[ResourceAllocator<br/>1. selectUes<br/>2. allocatePrbs<br/>3. buildFdRequest]
-    end
+package "Module 2: Eligibility Engine" as Eligibility {
+  rectangle "EligibilityEngine\n1. refreshCs1\n2. getEligibleUes\n3. updateOnEvent" as ELIG
+}
 
-    subgraph FdProcessor["Module 5: FD Processor"]
-        direction LR
-        FDPROC[FdProcessor<br/>1. computeMcsTbs<br/>2. buildL1Messages<br/>3. returnResponse]
-    end
+package "Module 3: TD Selector" as TdSelector {
+  rectangle "TdSelector\n1. computeMetrics\n2. buildCs2\n3. allocatePucch" as TDSEL
+}
 
-    subgraph FeedbackProcessor["Module 6: Feedback Processor"]
-        direction LR
-        FBPROC[FeedbackProcessor<br/>1. processHarq<br/>2. updateLinkAdaptation<br/>3. updateBufferStatus]
-    end
+package "Module 4: Resource Allocator" as ResourceAllocator {
+  rectangle "ResourceAllocator\n1. selectUes\n2. allocatePrbs\n3. buildFdRequest" as RESALLOC
+}
 
-    subgraph ConfigManager["Module 7: Config Manager"]
-        direction LR
-        CFGMGR[ConfigManager<br/>1. handleCellSetup<br/>2. handleUserSetup<br/>3. handleDelete]
-    end
+package "Module 5: FD Processor" as FdProcessor {
+  rectangle "FdProcessor\n1. computeMcsTbs\n2. buildL1Messages\n3. returnResponse" as FDPROC
+}
 
-    ORCH -->|getEligibleUes| ELIG
-    ORCH -->|buildCs2| TDSEL
-    ORCH -->|allocate| RESALLOC
-    ORCH -->|schedule| FDPROC
-    ORCH -->|postProcess| FBPROC
-    CFGMGR -.->|cellSetup triggers init| ORCH
+package "Module 6: Feedback Processor" as FeedbackProcessor {
+  rectangle "FeedbackProcessor\n1. processHarq\n2. updateLinkAdaptation\n3. updateBufferStatus" as FBPROC
+}
+
+package "Module 7: Config Manager" as ConfigManager {
+  rectangle "ConfigManager\n1. handleCellSetup\n2. handleUserSetup\n3. handleDelete" as CFGMGR
+}
+
+
+ORCH --> ELIG : getEligibleUes
+ORCH --> TDSEL : buildCs2
+ORCH --> RESALLOC : allocate
+ORCH --> FDPROC : schedule
+ORCH --> FBPROC : postProcess
+CFGMGR ..> ORCH : cellSetup triggers init
+@enduml
 ```
 
 ### Module Responsibilities
@@ -1244,7 +841,7 @@ flowchart TB
 
 | # | Item | Clarification |
 |---|------|---------------|
-| 1 | Module 5 "FD Processor" | **Not** a DL-internal scheduling module. It is the **boundary stub** to the external FD EO (see `l2ps_fd_mermaid.md`). It owns `FdScheduleReq` construction + `FdScheduleResp` parsing; the actual MCS/TBS/PDSCH-PDCCH building lives in FD EO's 6 modules. |
+| 1 | Module 5 "FD Processor" | **Not** a DL-internal scheduling module. It is the **boundary stub** to the external FD EO (see `l2ps-fd.md`). It owns `FdScheduleReq` construction + `FdScheduleResp` parsing; the actual MCS/TBS/PDSCH-PDCCH building lives in FD EO's 6 modules. |
 | 2 | `L1MessageStore` in this doc | Refers to the **FD-EO-owned** L1MessageStore (FD EO module 5 is its single writer). DL SCH sees its symbolic effect via `FdScheduleResp` only. |
 | 3 | BBRM `ResourceResp` consumer | Consumed by Module 1 (Slot Orchestrator) and forwarded to Module 4 (Resource Allocator) which writes `PrbAllocationStore` based on the budget. |
 | 4 | SRS-BM `SrsBeamSelectionInd` / `DlSrsComaPowerInd` consumer | Consumed by Module 2 (Eligibility Engine) and Module 4 (Resource Allocator) respectively. |
@@ -1253,7 +850,7 @@ flowchart TB
 
 ## 14. Cross-EO Refactoring Consistency
 
-This section validates that the DL SCH refactoring above is mutually consistent with the parallel proposals in `l2ps_srsbm_mermaid.md`, `l2ps_ulsch_mermaid.md`, `l2ps_fd_mermaid.md`, and `l2ps_bbrm_mermaid.md`. **You are here: DL SCH** (Module IDs in the table below refer to that EO's own refactoring numbering).
+This section validates that the DL SCH refactoring above is mutually consistent with the parallel proposals in `l2ps-srsbm.md`, `l2ps-ulsch.md`, `l2ps-fd.md`, and `l2ps-bbrm.md`. **You are here: DL SCH** (Module IDs in the table below refer to that EO's own refactoring numbering).
 
 ### 14.1 Common refactoring shape
 
@@ -1359,8 +956,27 @@ Each EO owns its DB stores; identical-sounding names in different docs refer to 
 | `dl/db/ue/UeDbDl.hpp`                             | DL UE database                                             |
 | `dl/db/ue/BufferStatus.hpp`                       | UE DL buffer tracking                                      |
 
+## Document sync (source)
+
+| Field | Value |
+|-------|--------|
+| **Sync date** | 2026-06-11 |
+| **gNB `/workspace` git** | `45617cfb9a73` |
+| **EO source** | `/workspace/uplane/L2-PS/src/dl/` (DL SCH + referenced `fd/`, `pscommon/`) |
+
+**Verified**
+
+- `dl/em/StateDefaultRoutes.hpp` — **111** `msgId()` route parameters for the Default-state router (count via `grep -c 'msgId()'`).
+- `dl/em/Eo.hpp`, `dl/em/QueueFsm.hpp`, dispatcher headers — spot-checked against §3 FSM narrative and EO-level router bullet list.
+
+**Doc corrections this pass**
+
+- Added explicit **111** route count + `StateDefaultRoutes.hpp` pointer (was previously only qualitative “etc.” in the PlantUML note).
+- **`diagrams/`** — all DL SCH diagram notes stamped with verification YAML; `l2ps-dlsch-runtime-position.md` edge labels aligned to **`FdScheduleReq` / `FdScheduleResp`** and L1 builder names.
+- **Ordered review (DL SCH)** — `l2ps-dlsch-top-level-class-overview.md` aligned to `dl/em/Eo.hpp` (dispatcher pair, `QueuesDelayedEvents`, `RtCellDlInputBuffer`, `queueSchTime`, typed `EmFsmRouterWithDelay`); FD peer link corrected to **dependency** (separate EO); `l2ps-dlsch-runtime-position.md` intra-sched messages → **`UlToDlIntraSchedUpdate` / `DlToUlIntraSchedUpdate`**, SRS path → **`SrsBeamSelectionInd`**.
+
 ## Related
 
 - [[navigation-nokia-home]]
 - [[navigation-implementation]]
-- [[L2PS]]
+

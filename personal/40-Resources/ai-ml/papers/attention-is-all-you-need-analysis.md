@@ -102,61 +102,69 @@ aliases:
 > 左侧为编码器（Encoder，堆叠 $N=6$ 层），右侧为解码器（Decoder，堆叠 $N=6$ 层）。
 > 每个子层都包裹「残差连接 + 层归一化」，即 $\mathrm{LayerNorm}(x + \mathrm{Sublayer}(x))$。
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-flowchart TB
-    %% ================= 编码器侧 =================
-    subgraph ENC_SIDE["编码器侧 (Inputs)"]
-        direction TB
-        IN["Inputs<br/>输入 token"] --> IEMB["Input Embedding<br/>输入嵌入"]
-        IPE(["Positional Encoding<br/>位置编码"]) --> IADD(("+"))
-        IEMB --> IADD
-    end
+```plantuml
+@startuml attention-is-all-you-need-analysis Diagram
+!pragma graphviz svg
+' scale 1920*1080
 
-    subgraph ENC["Encoder &nbsp;×N=6"]
-        direction TB
-        E_MHA["Multi-Head<br/>Self-Attention<br/>多头自注意力"] --> E_AN1["Add & Norm<br/>残差 + 层归一化"]
-        E_AN1 --> E_FFN["Feed Forward<br/>逐位置前馈网络"]
-        E_FFN --> E_AN2["Add & Norm"]
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
 
-    IADD --> E_MHA
+package "编码器侧 (Inputs)" as ENC_SIDE {
+  rectangle "Inputs\n输入 token" as IN
+  rectangle "Input Embedding\n输入嵌入" as IEMB
+  rectangle "Positional Encoding\n位置编码" as IPE
+  rectangle "("+")" as IADD
+}
 
-    %% ================= 解码器侧 =================
-    subgraph DEC_SIDE["解码器侧 (Outputs, shifted right)"]
-        direction TB
-        OUT["Outputs<br/>已生成 token<br/>(右移一位)"] --> OEMB["Output Embedding<br/>输出嵌入"]
-        OPE(["Positional Encoding<br/>位置编码"]) --> OADD(("+"))
-        OEMB --> OADD
-    end
+package "Encoder &nbsp;×N=6" as ENC {
+  rectangle "Multi-Head\nSelf-Attention\n多头自注意力" as E_MHA
+  rectangle "Add & Norm\n残差 + 层归一化" as E_AN1
+  rectangle "Feed Forward\n逐位置前馈网络" as E_FFN
+  rectangle "Add & Norm" as E_AN2
+}
 
-    subgraph DEC["Decoder &nbsp;×N=6"]
-        direction TB
-        D_MMHA["Masked Multi-Head<br/>Self-Attention<br/>带掩码的多头自注意力"] --> D_AN1["Add & Norm"]
-        D_AN1 --> D_CROSS["Multi-Head<br/>Cross-Attention<br/>编码器-解码器注意力"]
-        D_CROSS --> D_AN2["Add & Norm"]
-        D_AN2 --> D_FFN["Feed Forward"]
-        D_FFN --> D_AN3["Add & Norm"]
-    end
+package "解码器侧 (Outputs, shifted right)" as DEC_SIDE {
+  rectangle "Outputs\n已生成 token\n(右移一位)" as OUT
+  rectangle "Output Embedding\n输出嵌入" as OEMB
+  rectangle "Positional Encoding\n位置编码" as OPE
+  rectangle "("+")" as OADD
+}
 
-    OADD --> D_MMHA
+package "Decoder &nbsp;×N=6" as DEC {
+  rectangle "Masked Multi-Head\nSelf-Attention\n带掩码的多头自注意力" as D_MMHA
+  rectangle "Add & Norm" as D_AN1
+  rectangle "Multi-Head\nCross-Attention\n编码器-解码器注意力" as D_CROSS
+  rectangle "Add & Norm" as D_AN2
+  rectangle "Feed Forward" as D_FFN
+  rectangle "Add & Norm" as D_AN3
+}
 
-    %% ================= 编码器输出 -> 解码器交叉注意力 (K,V) =================
-    E_AN2 -- "K, V (编码器输出)" --> D_CROSS
+rectangle "Linear\n线性投影" as LIN
+rectangle "Softmax" as SM
+rectangle "Output Probabilities\n下一个 token 的概率" as PROB
 
-    %% ================= 输出头 =================
-    D_AN3 --> LIN["Linear<br/>线性投影"]
-    LIN --> SM["Softmax"]
-    SM --> PROB["Output Probabilities<br/>下一个 token 的概率"]
-
-    classDef attn fill:#ffe2cc,stroke:#e8853a,color:#000;
-    classDef norm fill:#e8f0fe,stroke:#5b8def,color:#000;
-    classDef ffn fill:#e6f4ea,stroke:#34a853,color:#000;
-    classDef io fill:#f3e8fd,stroke:#9b59b6,color:#000;
-    class E_MHA,D_MMHA,D_CROSS attn;
-    class E_AN1,E_AN2,D_AN1,D_AN2,D_AN3 norm;
-    class E_FFN,D_FFN,LIN ffn;
-    class IN,OUT,PROB,IEMB,OEMB io;
+IN --> IEMB
+IPE --> IADD
+IEMB --> IADD
+E_MHA --> E_AN1
+E_AN1 --> E_FFN
+E_FFN --> E_AN2
+IADD --> E_MHA
+OUT --> OEMB
+OPE --> OADD
+OEMB --> OADD
+D_MMHA --> D_AN1
+D_AN1 --> D_CROSS
+D_CROSS --> D_AN2
+D_AN2 --> D_FFN
+D_FFN --> D_AN3
+OADD --> D_MMHA
+D_AN3 --> LIN
+LIN --> SM
+SM --> PROB
+@enduml
 ```
 
 **读图要点**

@@ -1,27 +1,31 @@
 ---
-title: L2-PS BBRM (Baseband Resource Manager) Architecture And Mermaid Diagrams
+title: L2-PS BBRM (Baseband Resource Manager) Architecture And PlantUML Diagrams
 date: 2026-06-11
 tags:
   - work/nokia/implementation
   - l2ps
 status: draft
+last_verified_src_date: '2026-06-11'
+last_verified_gnb_git: '45617cfb9a73'
 aliases:
-  - L2-PS BBRM (Baseband Resource Manager) Architecture And Mermaid Diagrams
+  - L2-PS BBRM (Baseband Resource Manager) Architecture And PlantUML Diagrams
 ---
 
-# L2-PS BBRM (Baseband Resource Manager) Architecture And Mermaid Diagrams
+# L2-PS BBRM (Baseband Resource Manager) Architecture And PlantUML Diagrams
 
 **Scope.** This document describes the **BBRM EO** (`L2RtPool<P>_L2PsBbrm`, queue name `L2PsBrmXxXx`). One BBRM per L2-RT pool (assigned only to scheduler-index 0, subpool 0). It is the **pool-wide baseband resource manager**: it owns cross-cell-group PRB / SubCell / SchedUE / Power / Throughput pooling, handles L1-pool address exchange during cell setup, drives the Sherpa milestone cycle, and answers `ResourceReq` from DL / UL Schedulers with `ResourceResp` carrying allocated PRB / SchedUE / SubCell budgets.
 
 **Applicability.** FR1 only (TDD and FDD). BBRM is **not on the user-setup path** — it sees only cell-level lifecycle, pool deployment, and per-slot resource requests.
 
-**Deployment.** One BBRM EO per L2-RT pool: `groupConfig.bbrm != invalidCoreId` and assigned only to scheduler-index 0 in subpool 0. EQ priority `EQ_PRIO_2`. Queue type `ATOMIC_QUEUE`. The BBRM does **not** receive `SlotSynchroInd` — its time anchor is the **SFN field** in incoming `ResourceReq` / `InterSubPoolsSynchroTriggerInd` / `RimResourceReq`.
+**Deployment.** One BBRM EO per L2-RT pool: `groupConfig.bbrm != invalidCoreId` and assigned only to scheduler-index 0, subpool 0. EQ priority `EQ_PRIO_2`. Queue type `ATOMIC_QUEUE`. The BBRM does **not** receive `SlotSynchroInd` — its time anchor is the **SFN field** in incoming `ResourceReq` / `InterSubPoolsSynchroTriggerInd` / `RimResourceReq`.
 
-> **Mermaid rendering notes.**
-> - `flowchart LR` for Runtime Position uses `curve: "basis"` for smooth routing.
-> - `flowchart TB` for pipelines uses `curve: "linear"`.
-> - `classDiagram` uses `%%{init: {"layout": "elk"}}%%` for complex layouts.
-> - `sequenceDiagram` has no special init.
+**Reference baseline.** EO architecture layout follows `/home/ptr476/work/doc/ai/.cursor/agents/l2ps-eo-architecture.agent.md` (editor mirror: `/home/ptr476/work/doc/ai/.github/agents/l2ps-eo-architecture.agent.md`). **§2** uses a *Package / subsystem connection overview* plus *Detailed class views*, per that agent (this file is the canonical split example in `storage/l2ps_sw_architecture/`). Optional cross-check: Nokia-internal `l2ps-architecture.md` where maintained. Source-backed statements assume `/workspace/uplane/L2-PS/src/` and `/home/ptr476/work/doc/ai/storage/L2PS_Architecture.md` when those paths are available in the environment.
+
+> **PlantUML rendering notes.**
+> - Diagrams use fenced ` ```plantuml ` blocks with `@startuml` / `@enduml`; large figures live in sibling `diagrams/*.md` notes and are embedded from this vault folder. Each diagram note carries **`last_verified_src_date`** / **`last_verified_gnb_git`** in YAML when reconciled with `/workspace`.
+> - Component and class diagrams use `package`, explicit arrow directions, and hidden links to guide layout.
+> - Sequence diagrams keep the original lifeline order and use PlantUML `alt` / `opt` blocks.
+> - `skinparam linetype ortho` is intentionally left disabled unless a diagram benefits from strict right-angle routing.
 
 ---
 
@@ -29,57 +33,7 @@ aliases:
 
 The BBRM EO sits **between SGNL** (cell-lifecycle inputs and L1 address-exchange relay) and the DL / UL **Schedulers** (per-slot resource requests). It also talks **directly to L1** pool brokers (`BbResourceReconfReq/Resp`) and receives `PoolingDeploymentReq` from CNFG at startup.
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 50}}}%%
-flowchart LR
-    %% External sources
-    CPRT["L3 · CP-RT"]
-
-    %% L2-PS subgraph
-    subgraph L2PS["L2 · PS"]
-        direction LR
-        SGNL["Signaling"]
-        CNFG["CNFG"]
-        DLSCH["DL SCH"]
-        ULSCH["UL SCH"]
-        SRSBM["SRS-BM"]
-        BBRM["BBRM (this EO)"]
-    end
-
-    %% L1 subgraph
-    subgraph L1["L1"]
-        direction LR
-        L1DLPOOL["L1 · DL Pool"]
-        L1ULPOOL["L1 · UL Pool"]
-    end
-
-    %% CP-RT → SGNL → BBRM
-    CPRT -->|"CellSetupReq · CellReconfigurationReq · CellDeleteReq · ArtificialLoadConfigReq"| SGNL
-    SGNL -->|"InternalCellSetupReq · InternalCellReconfigurationReq · InternalCellDeleteReq · CellGroupSetupReq · CellGroupDeleteReq · ArtificialLoadConfigReq · SysInfoConfigReq · PdschSkipSpecialSlot · RimRsPoolingPeriodInd"| BBRM
-
-    %% CNFG → BBRM (pool deployment)
-    CNFG -->|"PoolingDeploymentReq · PoolConfigurationReq"| BBRM
-
-    %% DL / UL → BBRM
-    DLSCH -->|"ResourceReq · DlMetricInd"| BBRM
-    ULSCH -->|"ResourceReq · UlMetricInd · RimResourceReq · InterSubPoolsSynchroTriggerInd"| BBRM
-
-    %% BBRM → DL / UL (responses)
-    BBRM -.->|"ResourceResp"| DLSCH
-    BBRM -.->|"ResourceResp · RimResourceResp"| ULSCH
-
-    %% BBRM → SGNL (cell-setup phase)
-    BBRM -.->|"PoolConfigurationResp · CellSetupResp (indirect)"| SGNL
-
-    %% BBRM ↔ L1
-    BBRM -->|"BbResourceReconfReq · AddressReq (DL Pool)"| L1DLPOOL
-    BBRM -->|"BbResourceReconfReq · AddressReq (UL Pool)"| L1ULPOOL
-    L1DLPOOL -.->|"BbResourceReconfResp · AddressResp"| BBRM
-    L1ULPOOL -.->|"BbResourceReconfResp · AddressResp"| BBRM
-
-    %% Streaming
-    SGNL -.->|"StreamStartInd · StreamStopInd"| BBRM
-```
+![[diagrams/l2ps-bbrm-runtime-position]]
 
 **Key facts:**
 - BBRM is **per-pool**, not per-cell-group. It handles **all** cells in the pool (up to `maxNumOfCellsPerL2Rt`).
@@ -90,215 +44,21 @@ flowchart LR
 
 ## 2. Top-Level Class Overview
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
+### Package / subsystem connection overview
 
-namespace bbrm_em {
-    class Eo {
-        -bbrmQueue : EmQueue
-        -queueDbItem : EmQueueDbItem
-        -eventRouter : fsm::EventRouter
-        -fsm : QueueFsm
-        +start() EmStatus
-        +stop() EmStatus
-    }
-    class QueueFsm {
-        <<single-state Boost.SML>>
-        +startingState
-        +on EmFsmEvent → eventRouter.processEvent
-        +on StopEvent → X (terminate)
-    }
-}
+![[diagrams/l2ps-bbrm-top-level-bbrm-overview]]
 
-namespace bbrm_fsm {
-    class EventRouter {
-        -dataModelFacade : DataModelFacade
-        -dataModelViews : ViewsContainer&
-        -cellList : CellList
-        -bbPoolDeployInfo : BbPoolDeployInfo
-        -l1PoolsMaxCapacitiesUl/Dl : L1PoolsMaxCapacities
-        -subCellsAllocator : SubCellsAllocator
-        -schedUeAllocator : SchedUeAllocator
-        -poolingMapperManager : PoolingMapperManager
-        -interSubPoolsPrbManagerUl/Dl : InterSubPoolsPrbManager
-        -l1AddressExchangeManagerUl/Dl : L1AddressExchangeManager
-        -resourceReqHandler : ResourceReqHandler
-        -bbResourceReconfRespHandler : BbResourceReconfRespHandler
-        -bbrmMilestoneHandler : BbrmMilestoneHandler
-        -beginOfBbPoolingPeriodHandler : BeginOfBbPoolingPeriodHandler
-        -commonTriggerManager : CommonTriggerManager
-        -sherpaMilestoneEventHandler : SherpaMilestoneEventHandler
-        -throughputHandler : throughputPooling::ThroughputHandler
-        -throughputPoolingMapper : ThroughputPoolingMapper
-        -multiPoolZabPrivilegeCtrl : MultiPoolZabPrivilegeCtrl
-        -pwrPoolingMapper / pwrPoolingHandler
-        -rimRs : RimRs
-        -cellSetupManager : CellSetupManager
-        -eventRouterForCellGroupProcess : EventRouterForCellGroupProcess
-        -subcellDeactivationFacade : SubcellDeactivationFacade
-        -interPoolingSwitchingFacade : InterPoolingSwitchingFacade
-        -timingPattern750UsEligibilityUpdater
-        -buddyCellEventHandler
-        +processEvent(EmFsmEvent)
-        +setBbrmEqid(localEqid)
-    }
-}
+### Detailed class views
 
-namespace bbrm {
-    class CellSetupManager {
-        -cellSetupContextList : StaticVectorFixedSize~CellSetupContext~
-        +addCellSetupContext(nrId, result)
-        +notifyStartL1AddressExchange(...)
-        +notifyL1PoolAddressResponse(...)
-        +notifyAddressExchangeNotNeeded(...)
-        +notifyProcessingCellSetupReqDone(...)
-        +removeHangingCellSetupContext(...)
-    }
-    class CommonTriggerManager {
-        +setBbPoolEvalPeriod(period)
-        +updateSynchroSfn(sfn)
-        +notifyCellSetup(nrId)
-        +notifyCellDelete(nrId, cellList)
-        +notifySchedUeAllocChange()
-        +notifyPrbAllocChange(direction)
-        -nextSherpaMilestone : SFN
-        -bbPoolEvalPeriodInSfn : SFN
-    }
-    class ResourceReqHandler {
-        +handle(payload, numOfCells)
-        +handle(InterSubPoolsSynchroTriggerInd payload)
-        +notifyCellDelete(nrId)
-        -resourceReqHandlerUtils
-        -resourceRespPostponeController
-    }
-    class ResourceRespSender {
-        +send()
-        -fill(event)
-        -handleResourcePrbTDD / FDD
-        -handlePwrPoolResources(...)
-        -fillZabData(...)
-    }
-    class BeginOfBbPoolingPeriodHandler {
-        +beginOfBbPoolingPeriod(sfn)
-        +execute(sfn)
-        -state : waitingForBeginOfBbPoolingPeriod / waitingForExecute
-        -lastBbrmComputationSfn
-    }
-    class SherpaMilestoneEventHandler {
-        +sherpaMilestoneReached(sfn)
-        +processFillSherpaIeInResourceResp(nrId, direction)
-        -fsm : SherpaHandlerFsm
-    }
-    class BbrmMilestoneHandler {
-        +beginOfBbPoolingPeriod(sfn)
-        +processBbrmUsablePrbCalculationRequest(direction)
-        -fsm : BbrmMilestoneFsm
-    }
-}
+![[diagrams/l2ps-bbrm-top-level-bbrm-em]]
 
-namespace bbrm_datamodel {
-    class DataModelFacade {
-        -dataBaseContainer : DataBaseContainer
-        -dataBaseViews : ViewsContainer
-        -cellSetupProcessor / cellGroupSetupProcessor / cellDeleteProcessor / cellGroupDeleteProcessor / cellReconfProcessor / poolingDeploymentProcessor / artificialLoadConfProcessor
-        +process(CellSetupReq, isPwrPoolConfigValid)
-        +process(CellGroupSetupReq)
-        +process(CellDeleteReq)
-        +process(CellGroupDeleteReq)
-        +process(CellReconfigurationReq)
-        +process(ArtificialLoadConfigReq)
-        +handlePoolingDeployment(bbPoolInfos, freqRange, duplexMode)
-        +getDataViews() ViewsContainer
-    }
-    class ViewsContainer {
-        +getCellsContainerView()
-        +getCellGroupsContainerView()
-        +getDlSubcellsPoolingView()
-        +getDeploymentInfosView()
-        +getL1PoolSubpoolSubcellView()
-        +getL2SubPoolView()
-        +getPdcchIncreaseUplinkCapacityView()
-    }
-}
+![[diagrams/l2ps-bbrm-top-level-bbrm-fsm]]
 
-namespace bbrm_pooling {
-    class PoolingMapperManager {
-        -cellsListPerL1Pool : map~L1PoolIdKey, ListOfNrCell~
-        -calculatorManagers : map~CalculatorManagersKey, CalculatorManager~
-        +notifyAddCell(setupReq)
-        +notifyDeleteCell(nrId, primaryPoolId)
-        +notifyReconfigCell(nrId)
-        +notifyDlMetricInd(payload)
-        +notifyUlMetricInd(payload)
-        +switchToNextPoolingPeriod()
-    }
-    class SubCellsAllocator {
-        -cellsList / cellHandler / prbCapacityChecker
-        +notifyCellSetup(setupReq, result)
-        +notifyCellDelete(nrId)
-        +notifyDlMetricInd(metricInd)
-        +allocateSubCells(sfn, nrId) AvailableSubCells
-        +buildCellAvailableSubcells(...)
-    }
-    class SchedUeAllocator {
-        -schedUeResults / metricsByCell / metricBasedPolicy
-        +notifyCellSetup(setupReq)
-        +notifyCellDelete(nrId)
-        +notifyUlMetricInd / notifyDlMetricInd
-        +allocateSchedUe(sfn, nrId, direction) BbrmScheUeResult
-        +setSchedUePolicy(deploymentReq)
-    }
-    class ThroughputHandler {
-        +beginOfBbPoolingPeriod(sfn)
-        -isTddInstTputPoolingAllowed
-    }
-    class PwrPoolingHandler {
-        +execute(...)
-        -pwrPoolingMapper / poolingMapperManager
-    }
-    class InterSubPoolsPrbManager {
-        +make~Direction~(...)
-        +notifyCellDelete()
-        +handle(setupReq)
-    }
-    class L1AddressExchangeManager {
-        +make~Direction~(config, deployInfo, cellSetupManager)
-        +setAddress(eqId)
-        +startL1AddressExchange(nrId)
-        +handlePoolAddressResp(payload)
-        +resetL1AddressExchange(nrId)
-    }
-    class RimRs {
-        +notifyReq(payload, poolPeriodSfn, nextMetricSfn, synchroSfn)
-        +notifyPoolingPeriodInd(payload)
-        +notifyCellDelete(nrId)
-        +notifyRimRsPoolingConfig(config)
-    }
-}
+![[diagrams/l2ps-bbrm-top-level-bbrm-core]]
 
-Eo *-- QueueFsm
-Eo *-- EventRouter
-QueueFsm ..> EventRouter : on EmFsmEvent
-EventRouter *-- CellSetupManager
-EventRouter *-- CommonTriggerManager
-EventRouter *-- ResourceReqHandler
-EventRouter *-- DataModelFacade
-EventRouter *-- PoolingMapperManager
-EventRouter *-- SubCellsAllocator
-EventRouter *-- SchedUeAllocator
-EventRouter *-- ThroughputHandler
-EventRouter *-- PwrPoolingHandler
-EventRouter *-- InterSubPoolsPrbManager : ×2 (UL,DL)
-EventRouter *-- L1AddressExchangeManager : ×2 (UL,DL)
-EventRouter *-- RimRs
-EventRouter *-- BeginOfBbPoolingPeriodHandler
-EventRouter *-- SherpaMilestoneEventHandler
-EventRouter *-- BbrmMilestoneHandler
-ResourceReqHandler ..> ResourceRespSender : creates per request
-DataModelFacade *-- ViewsContainer
-```
+![[diagrams/l2ps-bbrm-top-level-bbrm-datamodel]]
+
+![[diagrams/l2ps-bbrm-top-level-bbrm-pooling]]
 
 ---
 
@@ -306,26 +66,28 @@ DataModelFacade *-- ViewsContainer
 
 The BBRM EO uses a **trivial single-state Boost.SML FSM** (`startingState`). All EM events are routed unconditionally to `fsm::EventRouter::processEvent` which dispatches by message ID. Termination is the only state transition.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-stateDiagram-v2
-direction TB
+```plantuml
+@startuml BBRM EO FSM
+!pragma graphviz svg
+' scale 1920*1080
 
+state "StartingState" as StartingState
 [*] --> StartingState
 StartingState --> [*] : StopEvent
+StartingState --> StartingState : EmFsmEvent / eventRouter.processEvent(event)
 
 note right of StartingState
-    Self-loop on every EmFsmEvent:
-    eventRouter.processEvent(event)
-    dispatches by msgId to one of
-    ~20 handlers.
+  Self-loop on every EmFsmEvent:
+  eventRouter.processEvent(event)
+  dispatches by msgId in EventRouter::processEvent
+  (22 explicit cases + default -> unexpected log).
 
-    Single working state.
-    No per-cell or per-cell-group FSM —
-    state lives in CellSetupManager
-    and in BeginOfBbPoolingPeriodHandler
-    sub-FSMs.
+  Single working state.
+  No per-cell or per-cell-group FSM.
+  State lives in CellSetupManager and
+  BeginOfBbPoolingPeriodHandler sub-FSMs.
 end note
+@enduml
 ```
 
 **No per-cell FSM.** Unlike DL / UL schedulers, BBRM has no `CellsFsmSet`. Cell lifecycle context is tracked by:
@@ -335,33 +97,7 @@ end note
 
 ### Top-level event-ID dispatch
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    A([EmFsmEvent → processEvent]) --> S{event.getEventId}
-    S -->|UlMetricInd| H1[processUlMetricInd<br/>subcellDeactivation, l1ProcessingMode,<br/>schedUeAllocator, poolingMapper]
-    S -->|DlMetricInd| H2[processDlMetricInd<br/>subcellDeactivation, subCellsAllocator,<br/>schedUeAllocator, poolingMapper]
-    S -->|ResourceReq| H3[processResourceReq<br/>updateSynchroSfn → resourceReqHandler.handle]
-    S -->|BbResourceReconfResp UL/DL| H4[bbResourceReconfRespHandler.handle]
-    S -->|PoolingDeploymentReq| H5[processPoolingDeploymentReq<br/>storePoolsCapacities → dataModelFacade.handlePoolingDeployment]
-    S -->|CellGroupSetupReq| H6[eventRouterForCellGroupProcess]
-    S -->|CellGroupDeleteReq| H6
-    S -->|CellSetupReq| H7[processCellSetupReq<br/>addCellSetupContext → proceedProcessingCellSetupReq]
-    S -->|CellDeleteReq| H8[processCellDeleteReq<br/>notifyCellDelete + dataModelFacade.process]
-    S -->|CellReconfigurationReq| H9[processCellReconfigReq<br/>dataModelFacade + pooling/pwrPooling notify]
-    S -->|ArtificialLoadConfigReq| H10[dataModelFacade.process]
-    S -->|UlPool::AddressResp| H11[L1AddressExchangeManagerUl.handlePoolAddressResp]
-    S -->|DlPool::AddressResp| H12[L1AddressExchangeManagerDl.handlePoolAddressResp]
-    S -->|StreamStartInd| H13[start tracer streaming DL+UL]
-    S -->|StreamStopInd| H14[stop tracer streaming DL+UL]
-    S -->|InterSubPoolsSynchroTriggerInd| H15[processInterSubPoolsSynchroTriggerInd<br/>updateSynchroSfn → resourceReqHandler.handle]
-    S -->|RimResourceReq| H16[validate UL+RIMRS<br/>rimRs.notifyReq]
-    S -->|SysInfoConfigReq| H17[timingPattern750UsEligibilityUpdater +<br/>buddyCellEventHandler]
-    S -->|PoolConfigurationReq| H18[validate l2RtPoolId<br/>rimRs.notifyRimRsPoolingConfig<br/>→ PoolConfigurationResp]
-    S -->|RimRsPoolingPeriodInd| H19[rimRs.notifyPoolingPeriodInd]
-    S -->|PdschSkipSpecialSlot| H20[buddyCellEventHandler]
-    S -->|default| HU[processUnexpectedEmFsmEvent / log error]
-```
+![[diagrams/l2ps-bbrm-event-id-dispatch]]
 
 ### Sub-FSMs inside EventRouter components
 
@@ -381,61 +117,7 @@ Owns the `beginOfBbPoolingPeriod` milestone life-cycle: the **two-step** sequenc
 
 BBRM has six independent pooling sub-systems, each owning its own state and a clear external trigger:
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-class PrbPooling {
-    PoolingMapperManager
-    InterSubPoolsPrbManager_UL/DL
-    NrCellIdentityNumberOfPrbManagerMapperUtils
-    L1SubpoolsSynchronizer
-    SubcellDeactivationFacade
-    InterPoolingSwitchingFacade
-    Trigger: ResourceReq + DlMetric/UlMetric
-}
-class SubCellPooling {
-    SubCellsAllocator
-    CellHandler / CellsList
-    PrbCapacityChecker
-    SubCellsAllocationPolicy
-    Trigger: ResourceReq + DlMetric
-}
-class SchedUePooling {
-    SchedUeAllocator
-    MetricBasedPolicy
-    CalculatorTriggerManager_UL/DL
-    Trigger: ResourceReq + DlMetric/UlMetric
-}
-class ThroughputPooling {
-    ThroughputHandler
-    ThroughputPoolingMapper
-    TputPoolingMaxCapacities
-    Trigger: BeginOfBbPoolingPeriod
-}
-class PowerPooling {
-    PwrPoolAllocator
-    PwrPoolingMapper
-    PwrPoolingHandler
-    Trigger: CellSetup + BeginOfBbPoolingPeriod
-}
-class RimRsPooling {
-    RimRs
-    PoolingPeriodTimer
-    Trigger: RimResourceReq + RimRsPoolingPeriodInd + PoolConfigurationReq
-}
-class ZabPooling["ZAB (Zero-Allocation Bypass)"] {
-    MultiPoolZabPrivilegeCtrl
-    PartialZabPrbResources
-    Trigger: PoolingDeploymentReq if rdAllowZeroAllocationBypass
-}
-
-PrbPooling --> SubCellPooling : feeds available subcells
-PrbPooling --> SchedUePooling : feeds PRB budget for sched-UE policy
-PrbPooling --> ThroughputPooling : feeds PRB capacity
-PrbPooling --> ZabPooling : feeds privilege rotation
-```
+![[diagrams/l2ps-bbrm-pooling-sub-systems]]
 
 ### Sub-system summary
 
@@ -455,114 +137,7 @@ PrbPooling --> ZabPooling : feeds privilege rotation
 
 BBRM's data model is owned by `DataModelFacade` and exposed via read-only typed `ViewsContainer`. No singleton `db()` access pattern is used (unlike DL / UL Schedulers).
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-namespace repository {
-    class DataBaseContainer {
-        <<owns all underlying maps/arrays>>
-        +cellsRepository
-        +cellGroupsRepository
-        +deploymentInfosRepository
-        +subcellsPoolingRepository
-        +l1PoolSubpoolSubcellRepository
-        +l2SubPoolRepository
-        +pdcchIncreaseUplinkCapacityRepository
-    }
-}
-
-namespace views {
-    class ViewsContainer {
-        -dataBaseContainer : DataBaseContainer&
-        +getCellsContainerView()
-        +getCellGroupsContainerView()
-        +getDlSubcellsPoolingView()
-        +getDeploymentInfosView()
-        +getL1PoolSubpoolSubcellView()
-        +getL2SubPoolView()
-        +getPdcchIncreaseUplinkCapacityView()
-    }
-    class CellsContainerView
-    class CellGroupsContainerView
-    class DlSubcellsPoolingView {
-        +getPrimarySubcellPoolData(nrId)
-    }
-    class L1PoolSubpoolSubcellView
-    class L2SubPoolView
-    class DeploymentInfosView
-}
-
-namespace actors {
-    class CellSetupProcessor {
-        +process(cellSetupReq, isPwrPoolConfigValid)
-    }
-    class CellDeleteProcessor {
-        +process(cellDeleteReq)
-    }
-    class CellReconfProcessor {
-        +process(cellReconfigReq)
-    }
-    class CellGroupSetupProcessor {
-        +process(cellGroupSetupReq)
-    }
-    class CellGroupDeleteProcessor {
-        +process(cellGroupDeleteReq)
-    }
-    class PoolingDeploymentProcessor {
-        +process / handlePoolingDeployment
-    }
-    class ArtificialLoadConfProcessor {
-        +process(alConfigReq)
-    }
-}
-
-namespace per_eo_state {
-    class CellList["bbrm::cellList::CellList"] {
-        -cellListContainer
-        +notifyCellSetupReq(cellParams, result)
-        +notifyCellDeleteReq(nrId)
-        +cellList() CellListForCommon
-        +getNumOfCells() uint8_t
-    }
-    class BbPoolDeployInfo {
-        +handleCellSetupReq(cellParams) bool
-        +handleCellSetupReqForPwrPooling(...)
-        +handleCellDelete(nrId)
-        +getL1PoolList() / getCellsList()
-    }
-    class BbrmContext {
-        +alCellId : NrCellIdentity
-        +prbForEmfValidation
-        +clearIfNeeded(nrId)
-    }
-    class L1PoolsMaxCapacities {
-        +storePoolsCapacities(bbPoolInfos)
-        +getL1PoolDefs()
-    }
-    class InterSubPoolsConfig {
-        +checkPoolingDeployment(deploymentReq)
-        +getPoolMaxCapacity(l1PoolId)
-    }
-}
-
-DataBaseContainer <|-- ViewsContainer : reads
-ViewsContainer *-- CellsContainerView
-ViewsContainer *-- CellGroupsContainerView
-ViewsContainer *-- DlSubcellsPoolingView
-ViewsContainer *-- L1PoolSubpoolSubcellView
-ViewsContainer *-- L2SubPoolView
-ViewsContainer *-- DeploymentInfosView
-
-CellSetupProcessor ..> DataBaseContainer : writes
-CellDeleteProcessor ..> DataBaseContainer : writes
-CellReconfProcessor ..> DataBaseContainer : writes
-CellGroupSetupProcessor ..> DataBaseContainer : writes
-CellGroupDeleteProcessor ..> DataBaseContainer : writes
-PoolingDeploymentProcessor ..> DataBaseContainer : writes
-ArtificialLoadConfProcessor ..> DataBaseContainer : writes
-```
+![[diagrams/l2ps-bbrm-db-model]]
 
 ### Key DB characteristics
 
@@ -575,55 +150,7 @@ ArtificialLoadConfProcessor ..> DataBaseContainer : writes
 
 ## 6. Cell Bring-Up Flow
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL-psCell
-    participant BBRM as BBRM EventRouter
-    participant DataM as DataModelFacade
-    participant CSM as CellSetupManager
-    participant Pooling as PoolingMapperManager
-    participant SubCell as SubCellsAllocator
-    participant L1AddrUl as L1AddressExchangeManager UL
-    participant L1AddrDl as L1AddressExchangeManager DL
-    participant L1 as L1 Pool
-
-    SGNL->>BBRM: CellSetupReq (InternalCellSetupReq)
-    BBRM->>CSM: addCellSetupContext(nrId, result)
-    Note over BBRM: proceedProcessingCellSetupReq()
-    BBRM->>BBRM: cellList.notifyCellSetupReq(cellParams, result)
-    BBRM->>BBRM: pwrPoolAllocator.notifyCellSetup(payload) → isPwrPoolConfigValid
-    BBRM->>DataM: process(CellSetupReq, isPwrPoolConfigValid)
-    BBRM->>SubCell: notifyCellSetup(cellParams, result)
-    BBRM->>BBRM: commonTriggerManager.notifyCellSetup(nrId)
-
-    alt PRB or UE pooling allowed
-        BBRM->>BBRM: handleCellSetupForPooling(payload, isPwrPoolConfigValid)
-        BBRM->>BBRM: bbPoolDeployInfo.handleCellSetupReq → isDeploymentOk
-        BBRM->>BBRM: bbPoolDeployInfo.handleCellSetupReqForPwrPooling → if true pwrPoolingMapper.notifyAddCell
-        opt scheUePoolingAllowed
-            BBRM->>BBRM: schedUeAllocator.notifyCellSetup(cellParams)
-        end
-        opt isAnyPrbPoolingActive
-            BBRM->>Pooling: notifyAddCell(cellParams)
-            BBRM->>L1AddrUl: startL1AddressExchange(nrId)
-            BBRM->>L1AddrDl: startL1AddressExchange(nrId)
-            L1AddrUl->>L1: UlPool::AddressReq
-            L1AddrDl->>L1: DlPool::AddressReq
-            L1-->>L1AddrUl: UlPool::AddressResp
-            L1AddrUl->>CSM: notifyL1PoolAddressResponse(UL, l1PoolId, status)
-            L1-->>L1AddrDl: DlPool::AddressResp
-            L1AddrDl->>CSM: notifyL1PoolAddressResponse(DL, l1PoolId, status)
-        end
-    else No pooling
-        BBRM->>CSM: notifyAddressExchangeNotNeeded(nrId, DOWNLINK)
-        BBRM->>CSM: notifyAddressExchangeNotNeeded(nrId, UPLINK)
-    end
-
-    BBRM->>CSM: notifyProcessingCellSetupReqDone(nrId, result)
-    Note over CSM: checkIfCellSetupResponseShallBeSent<br/>(only when both UL+DL address-exchanges done<br/>AND processingCellSetupReqDone == true)
-    CSM-->>SGNL: CellSetupResp (OK/NOK)
-```
+![[diagrams/l2ps-bbrm-cell-bring-up-flow]]
 
 **Key invariant.** `CellSetupResp` is **only** sent after **all three** conditions are met for a `CellSetupContext`:
 1. `processingCellSetupReqDone == true` (synchronous part finished),
@@ -636,56 +163,7 @@ If any of UL / DL fails, the response is sent as NOK and the context removed.
 
 ## 7. Cell Delete Flow
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL-psCell
-    participant BBRM as BBRM EventRouter
-    participant DataM as DataModelFacade
-    participant CSM as CellSetupManager
-    participant Pooling as PoolingMapperManager
-    participant SubCell as SubCellsAllocator
-    participant RimRs
-    participant SchedUe as SchedUeAllocator
-    participant PwrPool as PwrPoolingMapper
-    participant Buddy as BuddyCellEventHandler
-    participant SubDeact as SubcellDeactivationFacade
-    participant ResReq as ResourceReqHandler
-
-    SGNL->>BBRM: CellDeleteReq
-    Note over BBRM: processCellDeleteReq()
-    BBRM->>BBRM: get primaryPoolIdOfCell from dataModelViews.getDlSubcellsPoolingView
-    BBRM->>BBRM: notifyCellDelete(nrId)
-    BBRM->>SubCell: cellsList.notifyCellDelete + handler cleanups
-    BBRM->>RimRs: notifyCellDelete(nrId)
-    BBRM->>ResReq: notifyCellDelete(nrId)
-    BBRM->>BBRM: commonTriggerManager.notifyCellDelete(nrId, cellList)
-    BBRM->>CSM: removeHangingCellSetupContext(nrId)
-    BBRM->>SubDeact: handle(payload)
-    opt PRB or UE pooling allowed
-        BBRM->>BBRM: bbPoolDeployInfo.handleCellDelete(nrId) → cellDeletePoolStatusResult
-        opt isAnyPrbPoolingActive
-            BBRM->>Pooling: notifyDeleteCell(nrId, primaryPoolIdOfCell)
-            BBRM->>BBRM: interSubPoolsPrbManagerUl/Dl.notifyCellDelete()
-            opt emptyDlPool
-                BBRM->>BBRM: l1AddressExchangeManagerDl.resetL1AddressExchange(nrId)
-            end
-            opt emptyUlPool
-                BBRM->>BBRM: l1AddressExchangeManagerUl.resetL1AddressExchange(nrId)
-            end
-        end
-        opt scheUePoolingAllowed
-            BBRM->>SchedUe: notifyCellDelete(nrId)
-        end
-        opt isActPwrPoolingActive
-            BBRM->>PwrPool: notifyDeleteCell(nrId)
-        end
-    end
-    BBRM->>DataM: process(CellDeleteReq)
-    BBRM->>BBRM: bbrmContext.clearIfNeeded(nrId)
-    BBRM->>BBRM: eventRouterForCellGroupProcess.resetInterSubPoolsConfigIfNeeded()
-    BBRM->>Buddy: handleCellDeleteReq(payload)
-```
+![[diagrams/l2ps-bbrm-cell-delete-flow]]
 
 ---
 
@@ -693,60 +171,7 @@ sequenceDiagram
 
 DL and UL Schedulers periodically (per pool-eval period or on demand) send `ResourceReq` to ask for the current PRB / SchedUE / SubCell budget. BBRM has the per-slot **hottest path** in this flow.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant Sched as DL/UL Scheduler
-    participant BBRM as BBRM EventRouter
-    participant CTM as CommonTriggerManager
-    participant ReqH as ResourceReqHandler
-    participant Tput as ThroughputHandler
-    participant Sherpa as SherpaMilestone
-    participant BopP as BeginOfBbPoolingPeriodHandler
-    participant Pooling as PoolingMapperManager
-    participant SubCell as SubCellsAllocator
-    participant SchedUe as SchedUeAllocator
-    participant PostpC as ResourceRespPostponeController
-    participant RespS as ResourceRespSender
-
-    Sched->>BBRM: ResourceReq (sfn, direction, allocType, numOfCells)
-    BBRM->>CTM: updateSynchroSfn(sfn)
-    Note over CTM: detects pooling-period milestone +<br/>nextSherpaMilestone +<br/>interSubPoolsSynchroSfn
-    alt synchroSfn crosses pooling-period boundary
-        CTM->>BopP: beginOfBbPoolingPeriod(sfn)
-        BopP->>BopP: state = waitingForExecute → execute(sfn)
-        BopP->>Pooling: switchToNextPoolingPeriod
-        BopP->>BopP: bbrmMilestoneHandler.beginOfBbPoolingPeriod(sfn)
-        BopP->>Tput: beginOfBbPoolingPeriod(sfn)
-        BopP->>BopP: multiPoolZabPrivilegeCtrl.rotate
-        BopP->>BopP: pwrPoolingHandler.execute
-        BopP->>BopP: l1SubpoolsSynchronizer.execute
-        BopP->>BopP: interPoolingSwitchingFacade.execute
-    end
-    alt sfn == nextSherpaMilestone
-        CTM->>Sherpa: sherpaMilestoneReached(sfn)
-    end
-    BBRM->>ReqH: handle(payload, numOfCells)
-    Note over ReqH: intraSubPoolReconfiguration<br/>or interSubPoolReconfiguration
-    ReqH->>Pooling: getCalculatorManager(nrId, direction, l1PoolId)
-    ReqH->>Pooling: calculator.recompute()
-    ReqH->>SubCell: allocateSubCells(sfn, nrId)
-    ReqH->>SchedUe: allocateSchedUe(sfn, nrId, direction)
-    ReqH->>PostpC: shouldPostpone?
-    alt postpone
-        PostpC->>BBRM: queue postponed resp until next sherpa milestone
-    else send now
-        ReqH->>RespS: new ResourceRespSender(payload, ...)
-        RespS->>RespS: fillNrCellIdentity, handleResourcePrb (TDD or FDD)
-        RespS->>RespS: fillPrbAndCellTputIes
-        RespS->>RespS: handlePwrPoolResources
-        RespS->>RespS: fillZabData (if partialZab)
-        RespS->>RespS: doNeedToFillInTheSherpaIe → fillSherpa
-        RespS->>RespS: subCellInfoFiller.fill + cellScheUeInfoFiller.fill
-        RespS->>Sched: ResourceResp
-        RespS->>RespS: reportTtiTrace(msg)
-    end
-```
+![[diagrams/l2ps-bbrm-resource-request-response-flow]]
 
 ### 8.1 Hot-path timing budget (per ResourceReq)
 
@@ -765,47 +190,47 @@ The `ResourceRespPostponeController` keeps the worst-case bounded: when the resp
 
 ## 9. Pool Deployment Flow (Startup)
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant CNFG
-    participant BBRM as BBRM EventRouter
-    participant DataM as DataModelFacade
-    participant Caps as L1PoolsMaxCapacities (UL/DL)
-    participant TputCaps as TputPoolingMaxCapacities
-    participant Zab as MultiPoolZabPrivilegeCtrl
-    participant Tput as ThroughputPoolingMapper
-    participant SubDeact as SubcellDeactivationFacade
-    participant IsCfg as InterSubPoolsConfig (UL/DL)
-    participant PdrH as PoolingDeploymentReqHandler
-    participant SchedUe as SchedUeAllocator
-    participant CTM as CommonTriggerManager
+```plantuml
+@startuml BBRM Pool Deployment Flow
+participant "CNFG" as CNFG
+participant "BBRM EventRouter" as BBRM
+participant "DataModelFacade" as DataM
+participant "L1PoolsMaxCapacities (UL/DL)" as Caps
+participant "TputPoolingMaxCapacities" as TputCaps
+participant "MultiPoolZabPrivilegeCtrl" as Zab
+participant "ThroughputPoolingMapper" as Tput
+participant "SubcellDeactivationFacade" as SubDeact
+participant "InterSubPoolsConfig (UL/DL)" as IsCfg
+participant "PoolingDeploymentReqHandler" as PdrH
+participant "SchedUeAllocator" as SchedUe
+participant "CommonTriggerManager" as CTM
 
-    CNFG->>BBRM: PoolingDeploymentReq (bbPoolInfos + freqRange + duplexMode)
-    BBRM->>DataM: handlePoolingDeployment(bbPoolInfos, freqRange, duplexMode)
+    CNFG->BBRM: PoolingDeploymentReq (bbPoolInfos + freqRange + duplexMode)
+    BBRM->DataM: handlePoolingDeployment(bbPoolInfos, freqRange, duplexMode)
     alt bbPoolMode == LOADBASED
-        BBRM->>Caps: storePoolsCapacities(bbPoolInfos)
+        BBRM->Caps: storePoolsCapacities(bbPoolInfos)
         opt rdAllowZeroAllocationBypass || partialZabEnabled
-            BBRM->>Zab: poolingDeploymentReq()
+            BBRM->Zab: poolingDeploymentReq()
         end
         opt tddInstTputPoolingAllowed
-            BBRM->>TputCaps: storeTputPoolingCapacities(bbPoolInfos)
-            BBRM->>TputCaps: computeNominalCellSpecEff(isTddEcpri72eUlAllowed, isTddEcpri72eDlAllowed)
+            BBRM->TputCaps: storeTputPoolingCapacities(bbPoolInfos)
+            BBRM->TputCaps: computeNominalCellSpecEff(isTddEcpri72eUlAllowed, isTddEcpri72eDlAllowed)
         end
     end
-    BBRM->>SubDeact: handle(payload)
-    BBRM->>IsCfg: checkPoolingDeployment(payload) (UL+DL)
-    BBRM->>PdrH: handle(payload)
-    BBRM->>SchedUe: setSchedUePolicy(payload)
-    BBRM->>CTM: setBbPoolEvalPeriod(globalDb.bbPoolEvalPeriod)
+    BBRM->SubDeact: handle(payload)
+    BBRM->IsCfg: checkPoolingDeployment(payload) (UL+DL)
+    BBRM->PdrH: handle(payload)
+    BBRM->SchedUe: setSchedUePolicy(payload)
+    BBRM->CTM: setBbPoolEvalPeriod(globalDb.bbPoolEvalPeriod)
 
-    Note over CNFG,CTM: PoolConfigurationReq also routed here<br/>for RIM-RS sub-config validation
-    CNFG->>BBRM: PoolConfigurationReq (l2RtPoolId)
-    BBRM->>BBRM: validate l2RtPoolId vs GlobalDb[*]
+    note over CNFG,CTM: PoolConfigurationReq also routed here\nfor RIM-RS sub-config validation
+    CNFG->BBRM: PoolConfigurationReq (l2RtPoolId)
+    BBRM->BBRM: validate l2RtPoolId vs GlobalDb[*]
     alt valid
-        BBRM->>BBRM: rimRs.notifyRimRsPoolingConfig(config)
+        BBRM->BBRM: rimRs.notifyRimRsPoolingConfig(config)
     end
-    BBRM-->>CNFG: PoolConfigurationResp (OK/NOK)
+    BBRM-->CNFG: PoolConfigurationResp (OK/NOK)
+@enduml
 ```
 
 ---
@@ -832,7 +257,7 @@ BBRM does **not** send `CellSetupResp` / `CellDeleteResp` directly — those go 
 
 | #   | Issue                                                                                                                              | Location                                              | Impact                                                                              |
 | --- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 1   | **`EventRouter` is a god class** (~30 members, ~50 collaborators, ~20 message handlers)                                          | `bbrm/EventRouter.hpp` + `.cpp`                       | Adding any new message touches `EventRouter`; constructor init list has 30+ deps    |
+| 1   | **`EventRouter` is a god class** (~30 members, ~50 collaborators, **22** top-level `processEvent` cases + `default`)                                          | `bbrm/EventRouter.hpp` + `.cpp`                       | Adding any new message touches `EventRouter`; constructor init list has 30+ deps    |
 | 2   | **Six pooling sub-systems coexist with implicit ordering** (PRB, SubCell, SchedUE, Tput, Power, RIM-RS, ZAB)                       | Throughout `bbrm/`                                    | Hard to verify "what happens when PRB pool changes mid-Sherpa-period?"             |
 | 3   | **Cell-setup distributed state**: `CellSetupManager.cellSetupContextList` + `CellList` + `BbPoolDeployInfo` track overlapping facts | `CellSetupManager.hpp`, `cellList/CellList.hpp`, `BbPoolDeployInfo.hpp` | Drift risk if one is updated and another is not                       |
 | 4   | **DL / UL symmetry maintained via 2× duplicated code paths** (`processBbResourceReconfRespUl/Dl`, `L1AddressExchangeManagerUl/Dl`, `InterSubPoolsPrbManagerUl/Dl`) | `EventRouter.cpp` | Same logic in two places; diverges easily on fixes                      |
@@ -849,67 +274,7 @@ BBRM does **not** send `CellSetupResp` / `CellDeleteResp` directly — those go 
 
 ### Proposed Module Structure (7 modules)
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    subgraph Dispatcher["Module 1: Event Dispatcher"]
-        DISP[EventDispatcher<br/>1. dispatchLifecycle<br/>2. dispatchMetric<br/>3. dispatchResourceReq<br/>4. dispatchInfrastructure]
-    end
-
-    subgraph Lifecycle["Module 2: Lifecycle Manager"]
-        LC[LifecycleManager<br/>1. handleCellSetup<br/>2. handleCellDelete<br/>3. handleCellReconfig<br/>4. handlePoolDeployment]
-    end
-
-    subgraph PrbModule["Module 3: PRB Pooling Engine"]
-        PRB[PrbPoolingEngine<br/>1. notifyCellChange<br/>2. recomputePrbBudget<br/>3. notifyMetric]
-    end
-
-    subgraph UeModule["Module 4: UE Pooling Engine"]
-        UE[UePoolingEngine<br/>1. notifyCellChange<br/>2. allocateSchedUe<br/>3. notifyMetric]
-    end
-
-    subgraph SubCellModule["Module 5: SubCell Pooling Engine"]
-        SC[SubCellPoolingEngine<br/>1. notifyCellChange<br/>2. allocateSubCells<br/>3. notifyMetric]
-    end
-
-    subgraph SyncModule["Module 6: Period Synchronizer"]
-        SYNC[PeriodSynchronizer<br/>1. updateSynchroSfn<br/>2. fireMilestones<br/>3. executePeriodicWork]
-    end
-
-    subgraph RespModule["Module 7: Response Builder"]
-        RB[ResponseBuilder<br/>1. buildResourceResp<br/>2. buildRimResourceResp<br/>3. postpone]
-    end
-
-    DISP -->|cellSetup/delete/reconfig/poolDep| LC
-    DISP -->|metricInd| PRB
-    DISP -->|metricInd| UE
-    DISP -->|metricInd| SC
-    DISP -->|resourceReq| SYNC
-    DISP -->|resourceReq| RB
-    LC -->|cell change events| PRB
-    LC -->|cell change events| UE
-    LC -->|cell change events| SC
-    SYNC -.->|milestone fires| PRB
-    SYNC -.->|milestone fires| UE
-    SYNC -.->|milestone fires| SC
-    RB -.->|reads| PRB
-    RB -.->|reads| UE
-    RB -.->|reads| SC
-
-    subgraph Stores["DB Stores"]
-        PRB_DB["PRB Pool DB<br/>(Writer: PrbPoolingEngine)"]
-        UE_DB["UE Pool DB<br/>(Writer: UePoolingEngine)"]
-        SUBCELL_DB["SubCell Pool DB<br/>(Writer: SubCellPoolingEngine)"]
-        CELL_DB["Cell / Pool Config DB<br/>(Writer: LifecycleManager)"]
-        SYNC_DB["Period / Milestone DB<br/>(Writer: PeriodSynchronizer)"]
-    end
-
-    PRB -->|writes| PRB_DB
-    UE -->|writes| UE_DB
-    SC -->|writes| SUBCELL_DB
-    LC -->|writes| CELL_DB
-    SYNC -->|writes| SYNC_DB
-```
+![[diagrams/l2ps-bbrm-proposed-module-structure]]
 
 ### Module Responsibilities
 
@@ -968,7 +333,7 @@ flowchart TB
 
 ## 13. Cross-EO Refactoring Consistency
 
-This section validates that the BBRM refactoring above is mutually consistent with the parallel proposals in `l2ps_srsbm_mermaid.md`, `l2ps_dlsch_mermaid.md`, `l2ps_ulsch_mermaid.md`, and `l2ps_fd_mermaid.md`. **You are here: BBRM**.
+This section validates that the BBRM refactoring above is mutually consistent with the parallel proposals in `l2ps-srsbm.md`, `l2ps-dlsch.md`, `l2ps-ulsch.md`, and `l2ps-fd.md`. **You are here: BBRM**.
 
 ### 13.1 Common refactoring shape
 
@@ -1087,8 +452,27 @@ Each EO owns its DB stores; identically-named stores in different docs are disti
 | `bbrm/InterPoolingSwitchingFacade.hpp`                          | Inter-pooling switching trigger                                                 |
 | `bbrm/BbrmContext.hpp`                                          | Cross-cutting BBRM context (alCellId, EMF validation flag)                      |
 
+## Document sync (source)
+
+| Field | Value |
+|-------|--------|
+| **Sync date** | 2026-06-11 |
+| **gNB `/workspace` git** | `45617cfb9a73` |
+| **EO source** | `/workspace/uplane/L2-PS/src/bbrm/` |
+
+**Verified**
+
+- `bbrm/Eo.hpp` — `queueName` = `L2PsBrmXxXx`, `EQ_PRIO_2`, `ATOMIC_QUEUE`.
+- `bbrm/EventRouter.cpp` — `processEvent` switch: **22** explicit message arms (through `PdschSkipSpecialSlot` → `buddyCellEventHandler`) plus `default` → `processUnexpectedEmFsmEvent`. Includes `SysInfoConfigReq` (alias `SystemInfoConfigurationReq`), `PoolConfigurationReq`, `RimRsPoolingPeriodInd`, inter-sub-pool sync, L1 pool address responses, BBRM reconf responses, metrics, pooling deployment, cell/group lifecycle, artificial load, streams.
+
+**Doc corrections this pass**
+
+- FSM note and design table: handler count **~20 → 22** to match current `EventRouter.cpp`.
+- **`diagrams/`** — YAML verification stamps on all diagram notes; PlantUML updates in `l2ps-bbrm-event-id-dispatch.md` (split UL/DL BB reconf labels; SysInfo type clarification), `l2ps-bbrm-top-level-bbrm-overview.md` (expanded `EventRouter` + completeness note), `l2ps-bbrm-top-level-bbrm-pooling.md` (UL/DL `InterSubPoolsPrbManager` clarification).
+- **Ordered review (dlsch → fd → ulsch → srsbm → bbrm)** — BBRM is last in the sequence; this revision re-confirmed `EventRouter.cpp` arm count and diagram notes against `/workspace` at the git hash in the table above (no further PlantUML edits required in this pass).
+
 ## Related
 
 - [[navigation-nokia-home]]
 - [[navigation-implementation]]
-- [[L2PS]]
+

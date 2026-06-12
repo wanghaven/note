@@ -172,43 +172,65 @@ Then the standard footer `Used Agent: **L2PS Feature Pipeline**`.
 <a id="overview"></a>
 ## Pipeline overview
 
-```mermaid
-flowchart TD
-    SPEC[Feature spec / file] --> INTAKE
-    INTAKE["[0] Spec Intake<br/>(pipeline-internal)<br/>extract FPs, depends-on hints"] --> PLANNER
-    PLANNER["[1] Feature Planner<br/>DAG + topo order + cross-FP blueprint"] --> LOOP_START
-    LOOP_START{For each FP in topo order}
+```plantuml
+@startuml l2ps-feature-pipeline.agent Pipeline overview
+!pragma graphviz svg
+' scale 1920*1080
 
-    LOOP_START -->|next FP| ARCH
-    ARCH["[2] per-FP Architect"] --> ARCH_REV
-    ARCH_REV["[2r] per-FP Arch Reviewer<br/>design audit"] -->|APPROVED| DEV
-    ARCH_REV -->|CHANGES_REQUIRED (DESIGN), cycle<3| ARCH
-    DEV["[3] Developer (per-FP)"] --> UT
-    UT["[4] UT Tester (per-FP)"] --> SCT
-    SCT["[5] SCT Tester (per-FP)"] --> REV
-    REV["[6] Reviewer (per-FP)<br/>robustness scan + code review"] -->|APPROVED| COMMIT
-    COMMIT["[7] Commit<br/>(pipeline-internal)<br/>pre-checks + message + git commit"] -->|local commit SHA| MARK
-    MARK[Mark FP as COMMITTED] --> LOOP_START
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
 
-    LOOP_START -->|all done| BUNDLE_OK
-    BUNDLE_OK["[8] Bundle<br/>(pipeline-internal)<br/>enrich RUN_ROOT in place + sibling tarball"] --> DONE[ALL MERGE-READY]
+rectangle "Feature spec / file" as SPEC
+rectangle "[0] Spec Intake\n(pipeline-internal)\nextract FPs, depends-on hints" as INTAKE
+rectangle "[1] Feature Planner\nDAG + topo order + cross-FP blueprint" as PLANNER
+rectangle "For each FP in topo order" as LOOP_START
+rectangle "[2] per-FP Architect" as ARCH
+rectangle "[2r] per-FP Arch Reviewer\ndesign audit" as ARCH_REV
+rectangle "[3] Developer (per-FP)" as DEV
+rectangle "[4] UT Tester (per-FP)" as UT
+rectangle "[5] SCT Tester (per-FP)" as SCT
+rectangle "[6] Reviewer (per-FP)\nrobustness scan + code review" as REV
+rectangle "[7] Commit\n(pipeline-internal)\npre-checks + message + git commit" as COMMIT
+rectangle "Mark FP as COMMITTED" as MARK
+rectangle "[8] Bundle\n(pipeline-internal)\nenrich RUN_ROOT in place + sibling tarball" as BUNDLE_OK
+rectangle "ALL MERGE-READY" as DONE
+rectangle "ESCALATE to User" as ESC
+rectangle "[8] Bundle\n(pipeline-internal)\npartial / escalated archive" as BUNDLE_ESC
+rectangle "Stop — awaiting user" as STOP
 
-    INTAKE   -->|UNCLEAR| ESC
-    PLANNER  -->|cycle or unclear| ESC
-    ARCH     -->|BLUEPRINT_MISMATCH| ESC
-    ARCH_REV -->|BLUEPRINT issue / OPEN_QUESTION| ESC
-    ARCH_REV -->|cycle == 3| ESC
-    DEV      -->|3 build retries fail| ESC
-    UT       -->|UNCLEAR| ESC
-    UT       -->|PRODUCTION_CODE| DEV
-    SCT      -->|UNCLEAR| ESC
-    SCT      -->|PRODUCTION_CODE| DEV
-    REV      -->|CHANGES_REQUIRED non-BP, cycle<3| DEV
-    REV      -->|BLUEPRINT issue| ESC
-    REV      -->|cycle == 3| ESC
-    COMMIT   -->|commit fail| ESC
-    ESC[ESCALATE to User] --> BUNDLE_ESC
-    BUNDLE_ESC["[8] Bundle<br/>(pipeline-internal)<br/>partial / escalated archive"] --> STOP[Stop — awaiting user]
+SPEC --> INTAKE
+INTAKE --> PLANNER
+PLANNER --> LOOP_START
+LOOP_START --> ARCH : next FP
+ARCH --> ARCH_REV
+ARCH_REV --> DEV : APPROVED
+ARCH_REV --> ARCH : CHANGES_REQUIRED (DESIGN), cycle<3
+DEV --> UT
+UT --> SCT
+SCT --> REV
+REV --> COMMIT : APPROVED
+COMMIT --> MARK : local commit SHA
+MARK --> LOOP_START
+LOOP_START --> BUNDLE_OK : all done
+BUNDLE_OK --> DONE
+INTAKE --> ESC : UNCLEAR
+PLANNER --> ESC : cycle or unclear
+ARCH --> ESC : BLUEPRINT_MISMATCH
+ARCH_REV --> ESC : BLUEPRINT issue / OPEN_QUESTION
+ARCH_REV --> ESC : cycle == 3
+DEV --> ESC : 3 build retries fail
+UT --> ESC : UNCLEAR
+UT --> DEV : PRODUCTION_CODE
+SCT --> ESC : UNCLEAR
+SCT --> DEV : PRODUCTION_CODE
+REV --> DEV : CHANGES_REQUIRED non-BP, cycle<3
+REV --> ESC : BLUEPRINT issue
+REV --> ESC : cycle == 3
+COMMIT --> ESC : commit fail
+ESC --> BUNDLE_ESC
+BUNDLE_ESC --> STOP
+@enduml
 ```
 
 Steps `0` (Spec Intake), `7` (Commit), and `8` (Bundle) are performed **inline by this pipeline agent** (no separate sub-agent). All other steps invoke a specialist sub-agent. Stage `8` runs **on every termination** — successful (all FPs merge-ready), partial (some FPs DROPPED / BLOCKED / ABANDONED), and escalated (user must intervene before further progress is possible).
@@ -236,30 +258,35 @@ Stages `0` (Intake), `7` (Commit), and `8` (Bundle) are performed **inline by th
 
 The feature-level machine (outer loop):
 
-```mermaid
-stateDiagram-v2
+```plantuml
+@startuml l2ps-feature-pipeline.agent Pipeline state machine
+!pragma graphviz svg
+' scale 1920*1080
+
     [*]         --> INTAKING
     INTAKING    --> PLANNING:   NORMALIZED
     INTAKING    --> ESCALATED:  UNCLEAR
     PLANNING    --> RUNNING_FP: plan ready (DAG + blueprint)
     PLANNING    --> ESCALATED:  cycle in DAG / UNCLEAR / NEED_CLARIFICATION
-
     RUNNING_FP  --> RUNNING_FP: per-FP pipeline completes; move to next ready FP
     RUNNING_FP  --> ALL_DONE:   no more FPs to run, none blocked
     RUNNING_FP  --> ESCALATED:  an FP escalates and dependencies block
     RUNNING_FP  --> PLANNING:   user amends Plan (incl. blueprint) during escalation
-
     ESCALATED   --> RUNNING_FP: user resumes / drops FP
     ESCALATED   --> PLANNING:   user requests Plan / Blueprint revision
     ALL_DONE    --> [*]
+@enduml
 ```
 
 The `PLANNING -> RUNNING_FP -> PLANNING` back-edge covers the rare case where the user, during an escalation, chooses to amend the FEATURE PLAN (typically its blueprint sub-sections) rather than fix the FP. Already-COMMITTED FPs are NOT replayed; the revised Plan only applies to subsequent FPs (and the current re-running FP).
 
 The per-FP machine (inner loop), reused for every FP:
 
-```mermaid
-stateDiagram-v2
+```plantuml
+@startuml l2ps-feature-pipeline.agent Diagram
+!pragma graphviz svg
+' scale 1920*1080
+
     [*]            --> ARCHITECTING
     ARCHITECTING   --> ARCH_REVIEWING: design ready
     ARCHITECTING   --> ESCALATED:      gate fail / BLUEPRINT_MISMATCH
@@ -281,6 +308,7 @@ stateDiagram-v2
     COMMITTING     --> COMMITTED:   local commit OK
     COMMITTING     --> ESCALATED:   commit fail
     COMMITTED      --> [*]
+@enduml
 ```
 
 <a id="fp-state"></a>

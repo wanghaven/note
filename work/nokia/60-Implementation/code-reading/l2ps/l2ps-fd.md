@@ -1,15 +1,17 @@
 ---
-title: L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And Mermaid Diagrams
+title: L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And PlantUML Diagrams
 date: 2026-06-11
 tags:
   - work/nokia/implementation
   - l2ps
 status: draft
+last_verified_src_date: '2026-06-11'
+last_verified_gnb_git: '45617cfb9a73'
 aliases:
-  - L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And Mermaid Diagrams
+  - L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And PlantUML Diagrams
 ---
 
-# L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And Mermaid Diagrams
+# L2-PS FD Scheduler EO (`L2PsFdYySch`) Architecture And PlantUML Diagrams
 
 **Scope.** This document describes the **DL-only** FD Scheduler Execution Object (`L2RtPool<P>_L2PsFdYySch`, queue name pattern `L2PsFdsDDYy`). It is the back-half of the DL scheduling pipeline that the **DL Scheduler EO** (`L2PsDlYySch`) hands work off to. The FD EO performs per-UE MCS/TBS computation, PDSCH/PDCCH L1 message building, SIB / Paging / MSG2 scheduling, throughput pooling shaving, and L1 message emission for one subcell at a time.
 
@@ -17,11 +19,14 @@ aliases:
 
 **Deployment.** Count `F` of FD EOs per pool = output of `FdDlCoresProvider::getListOfCoreFdDl()`. Site-mode: `F = S` (one FD per cell-group scheduler). TDD FR1 with `rdEnableDlFdSchOnULCores = 1`: `F = 2·S` (FD EOs share UL cores). When `dlFdParallelSchedulerEnabled = false`, DL SCH and FD EO share a core and communicate via `FdSchMsgBufferingService::send(FdScheduleReq)` instead of EM event-queue dispatch.
 
-> **Mermaid rendering notes.**
-> - `flowchart LR` for Runtime Position uses `curve: "basis"` for smooth routing.
-> - `flowchart TB` for pipelines uses `curve: "linear"`.
-> - `classDiagram` uses `%%{init: {"layout": "elk"}}%%` for complex layouts.
-> - `sequenceDiagram` has no special init.
+**Reference baseline.** EO architecture layout follows `/home/ptr476/work/doc/ai/.cursor/agents/l2ps-eo-architecture.agent.md` (editor mirror: `/home/ptr476/work/doc/ai/.github/agents/l2ps-eo-architecture.agent.md`). **§2** uses a *Package / subsystem connection overview* plus *Detailed class views*, per that agent (canonical split example: [`l2ps-bbrm.md`](./l2ps-bbrm.md) in this folder). Optional cross-check: Nokia-internal `l2ps-architecture.md` where maintained. Source-backed statements assume `/workspace/uplane/L2-PS/src/` and `/home/ptr476/work/doc/ai/storage/L2PS_Architecture.md` when those paths are available in the environment.
+
+> **PlantUML rendering notes.**
+> - Diagrams use fenced ` ```plantuml ` blocks with `@startuml` / `@enduml`; large figures live in sibling `diagrams/*.md` notes and are embedded from this vault folder. Each diagram note carries **`last_verified_src_date`** / **`last_verified_gnb_git`** when reconciled with `/workspace`.
+> - Component and class diagrams use `package`, explicit arrow directions, and hidden links to guide layout.
+> - Large class diagrams are split into overview and focused diagram notes under `diagrams/` where useful.
+> - Sequence diagrams keep the original lifeline order and use PlantUML `alt` / `opt` blocks.
+> - `skinparam linetype ortho` is intentionally left disabled unless strict right-angle routing improves readability.
 
 ---
 
@@ -29,47 +34,7 @@ aliases:
 
 The FD EO is **slave to the DL Scheduler EO**: it receives initialisation and per-slot work via `FdInitInd` / `FdScheduleReq` / `FdDeleteInd` / `TdMetricOrderReq`, processes them, and replies with `FdScheduleResp`. It directly sends PDSCH / PDCCH L1 messages to L1-DL (the only EO outside DL SCH that talks directly to L1 for DL data).
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 50}}}%%
-flowchart LR
-    %% --- L2-PS subgraph ---
-    subgraph L2PS["L2 · PS"]
-        direction LR
-        SGNL["Signaling"]
-        DLSCH["DL SCH"]
-        ULSCH["UL SCH"]
-        SRSBM["SRS-BM"]
-        FDSCH["FD SCH (this EO)"]
-    end
-
-    %% --- L1 ---
-    subgraph L1["L1"]
-        direction LR
-        L1TX[L1 DL]
-    end
-
-    %% DL → FD per-cell init / delete
-    DLSCH -->|FdInitInd / FdDeleteInd| FDSCH
-    %% DL → FD per-slot
-    DLSCH -->|FdScheduleReq| FDSCH
-    %% DL → FD TD metric pre-compute hint
-    DLSCH -->|TdMetricOrderReq| FDSCH
-    %% Streaming
-    DLSCH -->|StreamStartInd / StreamStopInd| FDSCH
-
-    %% FD → DL
-    FDSCH -.->|FdScheduleResp| DLSCH
-    %% FD → UL (DL FD complete notification)
-    FDSCH -->|FdSchCompleteIndToUl| ULSCH
-    %% FD → SRS-BM continuation
-    FDSCH -->|SlotSynchroIndCont| SRSBM
-
-    %% FD → L1 (the only DL data path to L1)
-    FDSCH -->|PdschSendReq / PdcchSendReq| L1TX
-
-    %% Background config (radParams) via SGNL
-    SGNL -.->|radParams notifications| FDSCH
-```
+![[diagrams/l2ps-fd-runtime-position]]
 
 **Key facts:**
 - One FD EO covers **one or more subcells** (`MAX_NUM_DL_SUBCELLS_PER_L2_PS_CORE`) — it owns a `SchedulerArray` of per-subcell `dl::sch::fd::Scheduler` instances created by `createFdScheduler(...)` on each `FdInitInd`.
@@ -80,102 +45,19 @@ flowchart LR
 
 ## 2. Top-Level Class Overview
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
+### Package / subsystem connection overview
 
-namespace fd_em {
-    class Eo {
-        -queue : EmQueue
-        -queueDbItem : EmQueueDbItem
-        -eventHandler : EventHandler
-        +init() bool
-        +start() EmStatus
-        +stop() EmStatus
-    }
-    class EventHandler {
-        -mainComponent : unique_ptr~fd::sch::MainComponent~
-        -intelPtSupport : IntelPtSupport
-        -schedulerIndex : SchedulerIndex
-        +processEvent(EmFsmEvent)
-        +stop()
-        -processFdInitInd(FdInitInd)
-        -processFdDeleteInd(FdDeleteInd)
-        -processFdScheduleReq(FdScheduleReq)
-        -processStreamStartInd(StreamStartInd)
-        -processStreamStopInd(StreamStopInd)
-        -lockDlDatabases()
-        -unlockDlDatabases()
-    }
-}
+Coarse map of the FD EO **event shell** (`EventHandler` / `MainComponent`), per-subcell **scheduler array**, and **EoDb** scratch state relative to DL SCH hand-off and L1.
 
-namespace fd_sch {
-    class FdMainComponent["fd::sch::MainComponent"] {
-        -schedulers : SchedulerArray
-        -cellPrbInfos : CellPrbInfoArray
-        -beamSelection : BeamSelectionResultSender
-        -fdScheludeResp : unique_ptr~Event~FdScheduleResp~~
-        -fdSchCompleteIndToUl : Event~FdSchCompleteIndToUl~
-        -metricsDetermination : MetricsDetermination
-        -periodicLog : PeriodicLog
-        -slotSynchroIndContSender : SlotSynchroIndContSender
-        -eoDb : eoDb::EoDb
-        +createFdScheduler(FdInitInd, CellConfigData)
-        +handleFdDeleteInd(FdDeleteInd)
-        +handleEventFdScheduleReq(FdScheduleReq)
-        +handleTdMetricOrderReq(TdMetricOrderReq)
-        +stop()
-    }
-    class FdSubScheduler["dl::sch::fd::Scheduler"] {
-        -cellDynamicData
-        -rtCellDynamicData
-        -cell
-        -pagingScheduler : PagingScheduler
-        -sibScheduler : SibScheduler
-        -uesScheduler : UesScheduler
-        -xpdsch : Xpdsch
-        -xpdcch : Xpdcch
-        -prbResourceAllocation : PrbResourceAllocation
-        -throughputHandler : throughputPooling::ThroughputHandler
-        -tbParameterHandler : TbParameterHandler
-        -fdScheduleRespFiller : FdScheduleRespFiller
-        -fdMsgSchedulerCommon : FdMsgSchedulerCommon
-        -alCounter : AlCounter
-        -mcsDowngradeForDataRate : McsDowngradeForMaxDataRate
-        -pdschAvailableCalculator : PdschAvailableCalculator
-        +schedule(...)
-        +fillPdcch(...)
-        +postProcessPdcch(...)
-        +activateOutputBuffer(xsfn)
-    }
-    class UesScheduler {
-        -newTxScheduler : NewTxScheduler
-        -reTxScheduler : ReTxScheduler
-        -msg2Scheduler : Msg2Scheduler
-        -pdschSymbolAllocator : PdschSymbolAllocator
-        -tbSizeCalculation : TbSizeCalculation
-        +scheduleUes(...) uint8_t
-    }
-    class EoDb {
-        -scheduledUesInEo : UeInFdEo
-        -indexer : UeIndexer
-        -subCellsInThisEo : SubcellArray
-        -numFdUes / numScheduled
-        +addUe(ue) Result~EoUe~
-        +getUe(rnti) Result~EoUe~
-        +saveSubCellIdsInEo(req)
-        +resetFd()
-    }
-}
+![[diagrams/l2ps-fd-top-level-class-overview]]
 
-Eo *-- EventHandler
-EventHandler *-- FdMainComponent
-FdMainComponent *-- FdSubScheduler : per-subcell
-FdMainComponent *-- EoDb
-FdSubScheduler *-- UesScheduler
-FdSubScheduler ..> EoDb : shared eoDb
-```
+### Detailed class views
+
+**Per-subcell** `dl::sch::fd::Scheduler` composition and collaborators (MCS/TBS, PDSCH/PDCCH builders, pooling hooks):
+
+![[diagrams/l2ps-fd-per-subcell-scheduler-class-diagram]]
+
+**DB model (`EoDb` / shared stores):** see **§7** — `diagrams/l2ps-fd-db-model` (embedded there).
 
 **Notes:**
 - `EventHandler` extends `EmFsmBase` — but the FD EO does **not** use a multi-state FSM. There is only one functional state (Running) since the per-cell lifecycle is driven by `FdInitInd` / `FdDeleteInd` messages, not by state transitions.
@@ -188,23 +70,21 @@ FdSubScheduler ..> EoDb : shared eoDb
 
 Unlike DL SCH / UL SCH, the FD EO has **no state machine** — it processes events via a single `switch` on `event.getEventId()` in `EventHandler::processEvent()`. Lifecycle is implicit: each subcell becomes "active" when its `FdInitInd` is processed and "inactive" when its `FdDeleteInd` arrives.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-stateDiagram-v2
-direction LR
+```plantuml
+@startuml l2ps-fd 3. EO FSM And Event Dispatch
+!pragma graphviz svg
+' scale 1920*1080
 
 [*] --> Idle
 Idle --> Running : FdInitInd / create subcell Scheduler
 Running --> Idle : FdDeleteInd / resetCellDbIndex
 Running --> [*] : Eo.stop
-
 note right of Running
     Self-loop events (all processed in-place):
     - FdScheduleReq -> processFdScheduleReq
     - TdMetricOrderReq -> handleTdMetricOrderReq
     - StreamStartInd / StreamStopInd
     - subsequent FdInitInd for additional subcells
-
     Locks before each msg:
       CellDb, CellGroupDb, UeDb,
       RemoteCellDbBase (DL databases)
@@ -212,6 +92,7 @@ note right of Running
     No multi-state gating —
     all msgs processed immediately.
 end note
+@enduml
 ```
 
 ### Event ID dispatch table (`EventHandler::processEvent`)
@@ -228,25 +109,27 @@ end note
 
 **Scheduler-index handoff.** Before processing any event the handler captures the **current** `SchedulerIndexDb` value, overrides it with the FD EO's own index (`schedulerIndex` from `FdInitInd`), and restores the previous value on exit. This lets shared per-scheduler data (e.g. rad-params) follow whichever cell-group the FD EO is currently servicing.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant L1 as DL Scheduler
-    participant EH as fd::em::EventHandler
-    participant MC as fd::sch::MainComponent
-    participant DB as DL DBs (locked)
+```plantuml
+@startuml l2ps-fd Event ID dispatch table (EventHandler::processEvent)
+!pragma graphviz svg
+' scale 1920*1080
 
-    L1->>EH: FdScheduleReq (EM event)
-    EH->>EH: tracerOp = OlcEventTracer(eventId)
-    EH->>DB: lockDlDatabases()
-    EH->>EH: useRxMessage(event)
-    EH->>MC: handleEventFdScheduleReq(msg)
-    MC->>MC: setOwnSchedulerIndexForProcessing
-    MC->>MC: checkBeforeFdScheduleReqProcessing
-    MC->>MC: processFdScheduleReq (see §5)
-    MC->>MC: cleanupOwnSchedulerIndexForProcessing
-    EH->>DB: unlockDlDatabases()
-    EH->>EH: intelPtSupport.resetPmcCounterForPebs()
+participant "DL Scheduler" as L1
+participant "fd::em::EventHandler" as EH
+participant "fd::sch::MainComponent" as MC
+participant "DL DBs (locked)" as DB
+    L1->EH: FdScheduleReq (EM event)
+    EH->EH: tracerOp = OlcEventTracer(eventId)
+    EH->DB: lockDlDatabases()
+    EH->EH: useRxMessage(event)
+    EH->MC: handleEventFdScheduleReq(msg)
+    MC->MC: setOwnSchedulerIndexForProcessing
+    MC->MC: checkBeforeFdScheduleReqProcessing
+    MC->MC: processFdScheduleReq (see §5)
+    MC->MC: cleanupOwnSchedulerIndexForProcessing
+    EH->DB: unlockDlDatabases()
+    EH->EH: intelPtSupport.resetPmcCounterForPebs()
+@enduml
 ```
 
 ---
@@ -255,112 +138,7 @@ sequenceDiagram
 
 This is the heart of the FD EO. Each `dl::sch::fd::Scheduler` instance handles **one subcell**.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-class Scheduler["dl::sch::fd::Scheduler"] {
-    -cellDynamicData : CellDynamicData&
-    -rtCellDynamicData : RtCellDynamicData&
-    -cell : Cell&
-    -slotConfiguration : SlotConfiguration&
-    -slotTypeSelector : SlotTypeSelectorBase&
-    -beamSelectionResultSender : BeamSelectionResultSender&
-    -alCounter : AlCounter
-    -mcsDowngradeForDataRate : McsDowngradeForMaxDataRate
-    -pdschAvailableCalculator : PdschAvailableCalculator
-    -prbResourceAllocation : PrbResourceAllocation
-    -fdMsgSchedulerCommon : FdMsgSchedulerCommon
-    -fdOverlapRePtrsAndTrs : FdOverlapRePtrsAndTrs
-    -fdScheduleRespFiller : FdScheduleRespFiller
-    -spectralEfficiencyData : SpectralEfficiencyData
-    -throughputHandler : throughputPooling::ThroughputHandler
-    -pagingScheduler : PagingScheduler
-    -artificialLoadScheduler : ArtificialLoadScheduler
-    -sibScheduler : SibScheduler
-    -pagingHandler : paging::PagingHandler
-    -xpdsch : Xpdsch
-    -uesScheduler : UesScheduler
-    -xpdcch : Xpdcch
-    -tbParameterHandler : TbParameterHandler
-    -streamIndexAllocator8X4MimoMode : StreamIndexAllocator8X4MimoMode
-    -msg2InCsiImSlot : Msg2InCsiImSlot
-    +schedule(subcellConfig, commonData, fdFeedBack, ...)
-    +fillPdcch(sfn, slot, scheduledPdcchPrbsInfoList)
-    +postProcessPdcch(sfn, slot)
-    +initFdScheduleRespFiller(fdFeedBack)
-    +activateOutputBuffer(xsfn) RtCellDlOutputData
-    +updateMsg3Allocations(...)
-}
-
-class UesScheduler {
-    -newTxScheduler : NewTxScheduler
-    -reTxScheduler : ReTxScheduler
-    -msg2Scheduler : Msg2Scheduler
-    -pdschSymbolAllocator : PdschSymbolAllocator
-    -tbSizeCalculation : TbSizeCalculation
-    -mcsDowngradeUeSelectorDl : McsDowngradeUeSelectorDl
-    -fdPoliteHandler : fdPolite::Handler
-    -beforePoliteCountersUpdater : BeforePoliteCountersUpdater
-    -pucchTokenHandler : pucch::PucchTokenHandler
-    -pdcchOrderScheduler : PdcchOrderScheduler
-    -rimPartialSlotMutingHandler : RimPartialSlotMutingHandler
-    -beamScheduleInfoAdd : BeamScheduleInfoAdd
-    +scheduleUes(xhfn, slotConfig, numOfUesInSlotFr1, ...) uint8_t
-    +getFdBlockUes() FdUeBlockArray
-}
-
-class PagingScheduler {
-    +schedulePaging(...)
-}
-class SibScheduler {
-    +scheduleSib(...)
-}
-class ArtificialLoadScheduler {
-    +scheduleArtificialLoad(...)
-}
-class ThroughputHandler["throughputPooling::ThroughputHandler"] {
-    +handle(tbSize, rnti, xsfn, ...) bool
-    +handle(ue, eoUe, xsfn, tbSizeCalc, ...) bool
-    +handleSibOrPaging(tbSize)
-    +handleTputLimitReached(...)
-    +isTputLimitReached() bool
-}
-class Xpdsch {
-    +fillPdsch(...)
-}
-class Xpdcch {
-    +fillPdcch(...)
-    +postProcessPdcch(...)
-}
-class TbParameterHandler {
-    +computeTbs(...)
-    +computeMcs(...)
-}
-class PdschAvailableCalculator {
-    +updateAvailablePdschPrb(xsfn)
-    +calculateAvailablePrb(...)
-}
-class FdScheduleRespFiller {
-    +fillScheduledUe(...)
-    +fillPaging(...)
-    +fillSib(...)
-}
-
-Scheduler *-- UesScheduler
-Scheduler *-- PagingScheduler
-Scheduler *-- SibScheduler
-Scheduler *-- ArtificialLoadScheduler
-Scheduler *-- ThroughputHandler
-Scheduler *-- Xpdsch
-Scheduler *-- Xpdcch
-Scheduler *-- TbParameterHandler
-Scheduler *-- PdschAvailableCalculator
-Scheduler *-- FdScheduleRespFiller
-UesScheduler ..> ThroughputHandler : tput shaving
-UesScheduler ..> TbParameterHandler : MCS/TBS lookup
-```
+*PlantUML class diagram:* **§2 — Detailed class views** (`diagrams/l2ps-fd-per-subcell-scheduler-class-diagram.md`).
 
 ### Sub-component responsibilities
 
@@ -386,55 +164,11 @@ UesScheduler ..> TbParameterHandler : MCS/TBS lookup
 
 This is the FD EO's main pipeline, executed once per `FdScheduleReq`.
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    A([FdScheduleReq from DL SCH])
-    A --> A0[setOwnSchedulerIndex<br/>save & override SchedulerIndexDb]
-    A0 --> A1[checkBeforeFdScheduleReqProcessing<br/>verify isEoFdEnabled, fdScheludeResp allocated]
-    A1 --> A2[Event tracing<br/>OlcEventTracer, IntelPt PEBS prepare]
-    A2 --> A3[beamSelection.toggle DOWNLINK]
-    A3 --> A4[initSlot<br/>rtCellDynamicData.specific.initSlot]
-    A4 --> A5[prepareSchedulerContext<br/>FdConstCellGroupDb.setPointer, eoDb.numFdUes]
-    A5 --> A6[handleSkippedSlots<br/>detect missed slots vs lastHandledXsfn]
-    A6 --> A7[preScheduling<br/>updateNumberOfUesToScheduleForFr1]
-    A7 --> B[fillFdScheduleRespMessage<br/>see §5.1]
-    B --> C[isPdcchSchedulerEnabled?]
-    C -->|yes| D[fillPdcchPower → PdschLoadMeasurements.updatePdschPrbUsed → fillPdcch → sendFdScheduleResp → postProcessFdScheduler]
-    C -->|no| E[runPostProcessFdSchedulerAndPdschLoadUpdate → sendFdScheduleResp]
-    D --> F[isDlFdSchOnULCoreEnabled?]
-    E --> F
-    F -->|yes| G[createAndFillFdSchCompIndToUlSchEvent<br/>send FdSchCompleteIndToUl to UL SCH]
-    F -->|no| H[postScheduling<br/>updateAvgFdScheduleTime, drop output buffer pointers]
-    G --> H
-    H --> I[logLoadModelFdCompletionCellEnd<br/>cleanupOwnSchedulerIndex]
-```
+![[diagrams/l2ps-fd-slot-level-processing-flow]]
 
 ### 5.1 `fillFdScheduleRespMessage` (the work)
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    A([fillFdScheduleRespMessage]) --> B[processScheduleReqContents<br/>loop over fdSchSubcellConfig array]
-    B --> C[Per-subcell: scheduleSubcell]
-    C --> D[handleTpLimitReached check]
-    D --> E[Scheduler.schedule subcellConfig, commonData, fdFeedBack, numUesFr1, pmqapUpdater]
-    E --> E1[updateBeam<br/>updateAvailablePdschPrb]
-    E1 --> E2[updateMsg3Allocations]
-    E2 --> E3[PagingScheduler.schedulePaging<br/>SibScheduler.scheduleSib]
-    E3 --> E4[UesScheduler.scheduleUes<br/>NewTx/ReTx/Msg2 per CS2 UE]
-    E4 --> E5[ArtificialLoadScheduler.scheduleArtificialLoad if test mode]
-    E5 --> E6[ThroughputHandler.handle<br/>per-UE shave for TDD inst tput]
-    E6 --> E7[Xpdsch.fillPdsch + Xpdcch.fillPdcch]
-    E7 --> E8[FdScheduleRespFiller.fillScheduledUe]
-    E8 --> F[areWeLateForFd? tickSlotEnd check]
-    F -->|late| G[handleLateFd / tooLateCounter++]
-    F -->|on-time| H[sendBeamSelectionEvent]
-    G --> I[fillCommonPartFdScheduleResp]
-    H --> I
-    I --> J[OverloadControlMeasurements.fillMeasurements]
-    J --> K[cpuMeasurementFd.stopTimeFdScheduler<br/>cpuMeasurementFd.fillMsg]
-```
+![[diagrams/l2ps-fd-fill-fd-schedule-resp-message]]
 
 ### 5.2 Timing budget (TDD FR1 30 kHz, slot = 500 µs)
 
@@ -453,102 +187,7 @@ flowchart TB
 
 End-to-end view of one `FdScheduleReq` from DL SCH all the way to L1-DL and back to DL SCH as `FdScheduleResp`. This shows the **collaborators of `dl::sch::fd::Scheduler` for one subcell** inside `MainComponent::fillFdScheduleRespMessage`.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    autonumber
-    participant DLS as DL Scheduler EO
-    participant EQ as FdY EQ
-    participant EH as fd::em::EventHandler
-    participant MC as fd::sch::MainComponent
-    participant DBP as FdConst*Db / FdRtCellDb<br/>(pointer-injection)
-    participant SCH as dl::sch::fd::Scheduler<br/>(per subcell)
-    participant TPUT as throughputPooling::<br/>ThroughputHandler
-    participant UES as UesScheduler
-    participant TB as TbParameterHandler
-    participant MSG2 as Msg2Scheduler
-    participant PAG as PagingScheduler
-    participant SIB as SibScheduler
-    participant DCI as Xpdcch / DciFormat1x
-    participant TBR as Xpdsch
-    participant FILL as FdScheduleRespFiller
-    participant EODB as eoDb::EoDb (scratch)
-    participant L1DL as L1-DL
-    participant DLDISP as DL Dispatcher
-
-    DLS->>EQ: FdScheduleReq.send (per cell-group)
-    EQ->>EH: dispatch event
-    EH->>EH: OlcEventTracer start, prepareIntelPtPebs
-    EH->>EH: lockDlDatabases (CellDb, CellGroupDb, UeDb, RemoteCellDbBase)
-    EH->>MC: handleEventFdScheduleReq(msg)
-
-    MC->>MC: setOwnSchedulerIndexForProcessing
-    MC->>MC: checkBeforeFdScheduleReqProcessing
-    MC->>DBP: setPointer(payload) for FdCellDb /<br/>FdCellGroupDb / FdConstCellDb / FdConstCellGroupDb
-    MC->>EODB: resetFd + saveSubCellIdsInEo(req)
-    MC->>MC: handleSkippedSlots(xsfn)
-    MC->>MC: preScheduling -- updateNumberOfUesToScheduleForFr1
-
-    loop for each subcell in fdSchSubcellConfig
-        MC->>SCH: schedule(subcellConfig, commonData, fdFeedBack, numUesFr1)
-        SCH->>SCH: updateBeam + updateAvailablePdschPrb
-        SCH->>SCH: updateMsg3Allocations
-
-        SCH->>PAG: schedulePaging(slot, beam)
-        SCH->>SIB: scheduleSib(slot, beam)
-        SCH->>MSG2: scheduleMsg2 (RACH msg2 from CS2)
-
-        loop for each UE in CS2 (UesScheduler.scheduleUes)
-            SCH->>UES: scheduleUes(xhfn, slotCfg, numUes)
-            alt isRaMsg2TxPending(ue)
-                UES->>MSG2: scheduleMsg2(ue)
-                Note over UES,MSG2: RACH RAR path — TBS is fixed,<br/>uses common search space.
-            else newTx (no pending HARQ retx)
-                UES->>UES: NewTxScheduler.scheduleNewTx(ue)
-                UES->>TB: TbSizeCalculation.calculateTbs(ue, prbCount, mcs)
-                TB-->>UES: tbs
-            else reTx (HARQ retransmission)
-                UES->>UES: ReTxScheduler.prepareReTxScheduling(ue)
-                UES->>UES: ReTxScheduler.scheduleReTx(ue)
-                Note over UES: TBS reused from previous tx;<br/>MCS may be adapted.
-            end
-            UES->>TB: computeMcs (LA outer-loop + CQI)
-            TB-->>UES: mcs
-            UES->>TPUT: handle(ue, eoUe, xsfn, tbsCalc)
-            alt limit not reached
-                TPUT-->>UES: keep
-            else over throughput cap
-                TPUT-->>UES: shave / drop
-                UES->>UES: mcsDowngradeUeSelectorDl
-            end
-            UES->>EODB: addUe(ue) → EoUe handle
-        end
-
-        SCH->>TBR: fillPdsch(scheduledUes, beam, prb)
-        SCH->>DCI: fillPdcch / build DCI 1_0 / 1_1
-        SCH->>FILL: fillScheduledUe per UE (TBS, MCS, harq pid, dmrs)
-    end
-
-    MC->>MC: areWeLateForFd? tickSlotEnd
-    alt late
-        MC->>MC: handleLateFd, tooLateCounter++
-    end
-
-    MC->>MC: fillCommonPartFdScheduleResp
-    MC->>L1DL: PdcchSendReq.send
-    MC->>L1DL: PdschSendReq.send (per UE / per subcell)
-    MC-->>DLDISP: FdScheduleResp.send (back to DL Scheduler EO)
-
-    MC->>MC: runPostProcessFdSchedulerAndPdschLoadUpdate
-    opt isDlFdSchOnULCoreEnabled
-        MC->>MC: createAndFillFdSchCompIndToUlSchEvent
-    end
-    MC->>DBP: resetPointer for FdConstCellDb / FdConstCellGroupDb
-    MC->>MC: cleanupOwnSchedulerIndexForProcessing
-    EH->>EH: unlockDlDatabases
-    EH->>EH: intelPtSupport.resetPmcCounterForPebs
-    Note over DLDISP: WaitFdSchedResp → DispatcherDefault<br/>postSchedule runs in DL SCH EO
-```
+![[diagrams/l2ps-fd-complete-scheduling-sequence-per-slot-per-cell-group-per-subcell]]
 
 ---
 
@@ -556,19 +195,24 @@ sequenceDiagram
 
 The FD EO is a one-way producer to L1-DL; **L1 responses go back to the DL Scheduler EO**, not the FD EO. The FD EO has no incoming L1 traffic at all.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant DL as DL Scheduler EO
-    participant FD as FD EO
-    participant L1DL as L1-DL
+```plantuml
+@startuml l2ps-fd 6. L1 Response / Feedback Processing
+!pragma graphviz svg
+' scale 1920*1080
 
-    DL->>FD: FdScheduleReq (per slot)
-    FD->>FD: schedule + build PDSCH/PDCCH
-    FD->>L1DL: PdschSendReq
-    FD->>L1DL: PdcchSendReq
-    FD-->>DL: FdScheduleResp (TBS / MCS / actual PRBs / late info)
-    Note over L1DL: L1 ACK / NACK go to DL SCH<br/>via PucchReceiveRespHarqD on L1-UL
+participant "DL Scheduler EO" as DL
+participant "FD EO" as FD
+participant "L1-DL" as L1DL
+    DL->FD: FdScheduleReq (per slot)
+    FD->FD: schedule + build PDSCH/PDCCH
+    FD->L1DL: PdschSendReq
+    FD->L1DL: PdcchSendReq
+    FD-->DL: FdScheduleResp (TBS / MCS / actual PRBs / late info)
+    note over L1DL
+      L1 ACK / NACK go to DL SCH
+      via PucchReceiveRespHarqD on L1-UL
+    end note
+@enduml
 ```
 
 ---
@@ -577,74 +221,7 @@ sequenceDiagram
 
 The FD EO does NOT own any persistent DB. It accesses **shared DL databases** (write-locked during processing) and maintains a small per-EO scratch DB (`EoDb`).
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-class FdCellDb {
-    <<dl::db::FdCellDb (singleton)>>
-    +setPointer(payload)
-    +db().getCellConfigDataSafe()
-    +db().getCellDynamicDataSafe()
-}
-class FdCellGroupDb {
-    <<dl::db::FdCellGroupDb (singleton)>>
-    +setPointer(payload)
-    +db().getCellGroupConfigData()
-    +db().setCellGroupConfigDataPtr(ptr)
-}
-class FdConstCellDb {
-    <<dl::db::FdConstCellDb (singleton)>>
-    +setPointer(fdSchSubcellConfig)
-    +resetPointer()
-}
-class FdConstCellGroupDb {
-    <<dl::db::FdConstCellGroupDb (singleton)>>
-    +setPointer(fdSchCommonData)
-    +resetPointer()
-}
-class FdRtCellDb {
-    <<dl::db::FdRtCellDb (singleton)>>
-    +setAvailableRtCellDbTo(ptr)
-    +getRtCellDynamicDataSafe(nrCellIdentity)
-    +resetCellDbIndexBySubCellIndex(idx)
-}
-class FdUeDb {
-    <<dl::db::FdUeDb (singleton)>>
-}
-class CellDbDl {
-    <<l2ps::dl::db::CellDb>>
-    +lockDb / unlockDb
-}
-class UeDbDl {
-    <<l2ps::dl::db::UeDb>>
-    +lockDb / unlockDb
-}
-class RemoteCellDb {
-    <<l2ps::db::RemoteCellDbBase>>
-    +lockDb / unlockDb
-}
-class SchedulerIndexDb {
-    +getSchedulerIndex()
-    +updateSchedulerIndex(idx)
-}
-class EoDbPerSlot["dl::sch::fd::eoDb::EoDb"] {
-    -scheduledUesInEo : UeInFdEo
-    -indexer : UeIndexer
-    -subCellsInThisEo : bitset
-    +numFdUes / numScheduled
-    +addUe(ue) Result~EoUe~
-    +saveSubCellIdsInEo(req)
-    +resetFd()
-}
-
-FdCellDb --> CellDbDl : pointer
-FdCellGroupDb --> CellDbDl : pointer
-FdRtCellDb --> CellDbDl : pointer
-EoDbPerSlot ..> FdUeDb : reads via FdConstCellGroupDb
-SchedulerIndexDb <.. EoDbPerSlot : not directly, swapped per event
-```
+![[diagrams/l2ps-fd-db-model]]
 
 **Pointer-injection pattern.** Because the FD EO runs on a different core than the DL SCH EO (or sharing core via FdSchMsgBufferingService), it cannot directly access DL SCH-owned cell/UE structures. The DL SCH packs **raw pointers** into `FdInitInd` (for cell config) and `FdScheduleReq.fdSchCommonData` (per-slot data) at the start of every slot, and the FD EO's `EventHandler::setDbPointers` / `MainComponent::setCellGroupConfigDataPtr` install them as transient "const" views (`FdConstCellDb`, `FdConstCellGroupDb`). The pointers are reset after the event finishes.
 
@@ -656,41 +233,46 @@ This is a **lock-free zero-copy data hand-off** but requires the DL SCH to keep 
 
 Triggered by DL SCH on cell setup / delete; the FD EO simply maintains its per-subcell scheduler array.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL psCell
-    participant DL as DL Scheduler
-    participant FD as FD EO
-    participant DB as FdRtCellDb / FdCellDb
+```plantuml
+@startuml l2ps-fd 8. Cell Bring-Up And Delete Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    Note over SGNL,FD: Cell Setup
-    SGNL->>DL: InternalCellSetupReq
-    DL->>DL: performCellSetup (allocate Cell DB)
+participant "SGNL psCell" as SGNL
+participant "DL Scheduler" as DL
+participant "FD EO" as FD
+participant "FdRtCellDb / FdCellDb" as DB
+    note over SGNL,FD
+      Cell Setup
+    end note
+    SGNL->DL: InternalCellSetupReq
+    DL->DL: performCellSetup (allocate Cell DB)
     loop For each subcell
-        DL->>FD: FdInitInd (subcellIdx, rtCellDbPtr,<br/>cellGroupConfigDataPtr, slotTypeSelectorSetPtr,<br/>fdSchedulerIndex, schedulerIndex)
-        FD->>FD: EventHandler.processFdInitInd
-        FD->>FD: setOwnSchedulerIndexForProcessing
-        FD->>DB: setDbPointers (FdCellDb, FdCellGroupDb)
-        FD->>FD: MainComponent.createFdScheduler(subIdx)
-        FD->>FD: → initializeSchedulerForSubcell<br/>schedulers[subIdx] = make_unique<Scheduler>()
-        FD->>FD: ++nbCreatedFdSchedulers
-        FD->>FD: handleCounterMeasurement
-        FD->>FD: resetDbPointers / cleanupOwnSchedulerIndex
+        DL->FD: FdInitInd (subcellIdx, rtCellDbPtr,\ncellGroupConfigDataPtr, slotTypeSelectorSetPtr,\nfdSchedulerIndex, schedulerIndex)
+        FD->FD: EventHandler.processFdInitInd
+        FD->FD: setOwnSchedulerIndexForProcessing
+        FD->DB: setDbPointers (FdCellDb, FdCellGroupDb)
+        FD->FD: MainComponent.createFdScheduler(subIdx)
+        FD->FD: → initializeSchedulerForSubcell\nschedulers[subIdx] = make_unique<Scheduler>()
+        FD->FD: ++nbCreatedFdSchedulers
+        FD->FD: handleCounterMeasurement
+        FD->FD: resetDbPointers / cleanupOwnSchedulerIndex
     end
-    DL-->>SGNL: CellSetupResp (after FD ack via FdScheduleResp on first slot)
-
-    Note over SGNL,FD: Cell Delete
-    SGNL->>DL: CellStopSchedulingReq → CellDeleteReq
-    DL->>FD: FdDeleteInd (nrCellId, dlSubcellIds[])
-    FD->>FD: EventHandler.processFdDeleteInd
-    FD->>FD: setOwnSchedulerIndexForProcessing
-    FD->>FD: removeCounterByNrCellId
+    DL-->SGNL: CellSetupResp (after FD ack via FdScheduleResp on first slot)
+    note over SGNL,FD
+      Cell Delete
+    end note
+    SGNL->DL: CellStopSchedulingReq → CellDeleteReq
+    DL->FD: FdDeleteInd (nrCellId, dlSubcellIds[])
+    FD->FD: EventHandler.processFdDeleteInd
+    FD->FD: setOwnSchedulerIndexForProcessing
+    FD->FD: removeCounterByNrCellId
     loop For each dlSubcellId
-        FD->>DB: FdCellDb.resetCellDbIndexBySubCellIndex(subId)
+        FD->DB: FdCellDb.resetCellDbIndexBySubCellIndex(subId)
     end
-    FD->>FD: periodicLog.flush
-    FD->>FD: cleanupOwnSchedulerIndex
+    FD->FD: periodicLog.flush
+    FD->FD: cleanupOwnSchedulerIndex
+@enduml
 ```
 
 **Note:** The FD EO does **not** delete the per-subcell `Scheduler` from the `schedulers` array on `FdDeleteInd` — only the DB index is reset. The scheduler slot is overwritten on a subsequent `FdInitInd` for the same subcell index. This keeps memory pre-allocated and avoids heap activity.
@@ -703,25 +285,30 @@ The FD EO does NOT have a per-UE setup/delete message path. UEs become visible t
 
 The `EoDb` (per-slot scratch DB) tracks the UEs currently being scheduled within the FD EO. It is **cleared at slot end** via `eoDb.init()` / `resetFd()`.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant DL as DL Scheduler
-    participant FD as FD EO
-    participant EoDb as fd::eoDb::EoDb
-    participant UES as UesScheduler
+```plantuml
+@startuml l2ps-fd 9. UE Lifecycle In FD EO
+!pragma graphviz svg
+' scale 1920*1080
 
-    DL->>FD: FdScheduleReq (scheduledUes[]: rnti, subcellIdx, ...)
-    FD->>EoDb: numFdUes() = commonData.numFdUes
-    FD->>EoDb: saveSubCellIdsInEo(fdScheduleReq)
+participant "DL Scheduler" as DL
+participant "FD EO" as FD
+participant "fd::eoDb::EoDb" as EoDb
+participant "UesScheduler" as UES
+    DL->FD: FdScheduleReq (scheduledUes[]: rnti, subcellIdx, ...)
+    FD->EoDb: numFdUes() = commonData.numFdUes
+    FD->EoDb: saveSubCellIdsInEo(fdScheduleReq)
     loop Per scheduled UE
-        FD->>UES: scheduleUes(xhfn, slotConfig, ...)
-        UES->>EoDb: addUe(ue, xsfn)
-        EoDb->>EoDb: indexer.insert(rnti)<br/>scheduledUesInEo.emplace_back
-        UES->>EoDb: updateFirstUeTime(true, rnti)
+        FD->UES: scheduleUes(xhfn, slotConfig, ...)
+        UES->EoDb: addUe(ue, xsfn)
+        EoDb->EoDb: indexer.insert(rnti)\nscheduledUesInEo.emplace_back
+        UES->EoDb: updateFirstUeTime(true, rnti)
     end
-    FD->>FD: postScheduling → eoDb.numScheduled() updated
-    Note over FD,EoDb: Next slot: eoDb.init() resets indexer<br/>and scheduledUesInEo
+    FD->FD: postScheduling → eoDb.numScheduled() updated
+    note over FD,EoDb
+      Next slot: eoDb.init() resets indexer
+      and scheduledUesInEo
+    end note
+@enduml
 ```
 
 ---
@@ -784,52 +371,7 @@ When `cellGroupConfigData->isPdcchSchedulerEnabled() && dlFdSchOnPairCoreInCurrS
 
 ### Proposed Module Structure (6 modules)
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart TB
-    subgraph Dispatcher["Module 1: Event Dispatcher"]
-        DISP[EventDispatcher<br/>1. dispatchScheduleReq<br/>2. dispatchInitInd<br/>3. dispatchDeleteInd<br/>4. dispatchTdMetric]
-    end
-
-    subgraph SlotPipeline["Module 2: Slot Pipeline Orchestrator"]
-        SP[SlotPipeline<br/>1. preSchedule<br/>2. runSubcellScheduling<br/>3. postSchedule<br/>4. sendResponse]
-    end
-
-    subgraph UeSched["Module 3: UE Scheduling Engine"]
-        UE[UeSchedulingEngine<br/>1. scheduleNewTx<br/>2. scheduleReTx<br/>3. scheduleMsg2]
-    end
-
-    subgraph CommonCh["Module 4: Common Channel Engine"]
-        CC[CommonChannelEngine<br/>1. schedulePaging<br/>2. scheduleSib<br/>3. scheduleArtificialLoad]
-    end
-
-    subgraph L1Builder["Module 5: L1 Message Builder"]
-        L1B[L1MessageBuilder<br/>1. buildPdsch<br/>2. buildPdcch<br/>3. emitL1Messages]
-    end
-
-    subgraph TputShaper["Module 6: Throughput Shaper"]
-        TS[ThroughputShaper<br/>1. checkLimit<br/>2. shavePrbs<br/>3. updateCellTput]
-    end
-
-    DISP -->|invokes| SP
-    SP -->|schedule UEs| UE
-    SP -->|schedule paging/sib| CC
-    SP -->|after scheduling| L1B
-    UE -.->|consults| TS
-    SP -.->|finalize| TS
-
-    subgraph Stores["DB Stores"]
-        SLOT_STORE[Per-slot Scratch DB<br/>Writer: SlotPipeline]
-        UE_STORE[UE Schedule Store<br/>Writer: UeSchedulingEngine]
-        L1_STORE[L1 Message Store<br/>Writer: L1MessageBuilder]
-        TPUT_STORE[Tput Pool Store<br/>Writer: ThroughputShaper]
-    end
-
-    SP -->|writes| SLOT_STORE
-    UE -->|writes| UE_STORE
-    L1B -->|writes| L1_STORE
-    TS -->|writes| TPUT_STORE
-```
+![[diagrams/l2ps-fd-proposed-module-structure]]
 
 ### Module Responsibilities
 
@@ -888,7 +430,7 @@ flowchart TB
 
 ## 14. Cross-EO Refactoring Consistency
 
-This section validates that the FD EO refactoring above is mutually consistent with the parallel proposals in `l2ps_srsbm_mermaid.md`, `l2ps_dlsch_mermaid.md`, `l2ps_ulsch_mermaid.md`, and `l2ps_bbrm_mermaid.md`. **You are here: FD EO**.
+This section validates that the FD EO refactoring above is mutually consistent with the parallel proposals in `l2ps-srsbm.md`, `l2ps-dlsch.md`, `l2ps-ulsch.md`, and `l2ps-bbrm.md`. **You are here: FD EO**.
 
 ### 14.1 Common refactoring shape
 
@@ -993,8 +535,27 @@ Each EO owns its DB stores; identically-named stores in different docs are disti
 | `dl/sch/fd/FdCellDb.hpp` / `FdCellGroupDb.hpp` / `FdUeDb.hpp`   | FD-side database pointer wrappers                                              |
 | `dl/sch/bfgroup/SchedulerFdHandle.hpp` + `.cpp`                 | **DL-side** counterpart: builds & sends FdInitInd to FD EO                     |
 
+## Document sync (source)
+
+| Field | Value |
+|-------|--------|
+| **Sync date** | 2026-06-11 |
+| **gNB `/workspace` git** | `45617cfb9a73` |
+| **EO source** | `/workspace/uplane/L2-PS/src/fd/` (+ `dl/sch/fd/` for scheduler body) |
+
+**Verified**
+
+- `fd/em/EventHandler.cpp` — `TdMetricOrderReq` handled **before** DB locks; `switch` covers `FdInitInd`, `FdDeleteInd`, `FdScheduleReq`, `StreamStartInd`, `StreamStopInd`; `default` → `CommonIf::logUnexpectedMsg` (matches §3 event table).
+- `fd/em/Eo.hpp` — EO shell / queue wiring spot-checked against §1–§2 narrative.
+
+**Doc corrections this pass**
+
+- First **Phase 5** vault sync block added; no behavioural contradictions found vs the above entry points.
+- **`diagrams/`** — verification YAML on all FD diagram notes; `l2ps-fd-runtime-position.md` clarifies **`TdMetricOrderReq`** early path (no DL DB lock) per `EventHandler::processEvent`.
+- **Ordered review (FD)** — `l2ps-fd-top-level-class-overview.md`: `EventHandler` now documents **TdMetricOrderReq** early dispatch to `MainComponent::handleTdMetricOrderReq` before DB locks; added source pointer comment.
+
 ## Related
 
 - [[navigation-nokia-home]]
 - [[navigation-implementation]]
-- [[L2PS]]
+

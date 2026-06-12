@@ -23,19 +23,20 @@ aliases: []
 *   **开发者体验优化**：引入了**缓存输入（Cached Input）**计费项和**预测性输出（Predicted outputs）**等新特性，帮助开发者在降低成本的同时，提升应用的响应速度和用户体验。
 
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-graph TD
-    A["初步了解GPT-5"] --> B["网页版与API Key详解"];
-    B --> C["在Obsidian中集成GPT-5"];
-    C --> D["Obsidian中不同GPT5模型的应用场景与成本分析"];
-    D --> E["个人使用案例：GPT-5的代码能力-Obsidian彩虹文件夹CSS"];
+```plantuml
+@startuml obsidian-gpt5  GPT-5
+!pragma graphviz svg
+' scale 1920*1080
 
-    style A fill:#B5EAD7,stroke:#333,stroke-width:2px
-    style B fill:#FFDAB9,stroke:#333,stroke-width:2px
-    style C fill:#C7CEEA,stroke:#333,stroke-width:2px
-    style D fill:#FADADD,stroke:#333,stroke-width:2px
-    style E fill:#FFFACD,stroke:#333,stroke-width:2px
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "初步了解GPT-5" as A
+rectangle "B" as B
+rectangle "C" as C
+rectangle "D" as D
+@enduml
 ```
 
 ---

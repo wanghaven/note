@@ -1,229 +1,124 @@
 ---
-title: L2-PS SRS-BM Architecture And Mermaid Diagrams
+title: L2-PS SRS-BM Architecture And PlantUML Diagrams
 date: 2026-06-11
 tags:
   - work/nokia/implementation
   - l2ps
 status: draft
+last_verified_src_date: '2026-06-11'
+last_verified_gnb_git: '45617cfb9a73'
 aliases:
-  - L2-PS SRS-BM Architecture And Mermaid Diagrams
+  - L2-PS SRS-BM Architecture And PlantUML Diagrams
 ---
 
-# L2-PS SRS-BM Architecture And Mermaid Diagrams
+# L2-PS SRS-BM Architecture And PlantUML Diagrams
 
-本文档根据 `/workspace/uplane/L2-PS/src/srsBm/` 代码和 `L2PS_Architecture.md` 更新。它不再只是 PlantUML 到 Mermaid 的机械转换，而是把 SRS Beam Management 在 L2-PS 运行时中的位置、类关系、主要事件流、当前设计问题和可重构方向放在一起。
+本文档描述 SRS Beam Management 在 L2-PS 运行时中的位置、类关系、主要事件流、当前设计问题和可重构方向。
 
 范围：TDD FR1 下的 L2-PS SRS-BM EO。FDD 或 `actSrsBmCalcInL1 == true` 时，SRS-BM EO 不会作为 per-cell-group EO 参与调度。
 
-> Mermaid 渲染说明：`flowchart` 图已配置为 `curve: step`，连线会尽量使用水平/垂直折线。`classDiagram` 对连线形状的控制较弱，本文对复杂类图启用 `layout: elk` 以改善层次布局；如果当前预览器不支持 ELK，会自动退回默认布局。
+**Reference baseline.** EO architecture layout follows `/home/ptr476/work/doc/ai/.cursor/agents/l2ps-eo-architecture.agent.md`（编辑器镜像：`/home/ptr476/work/doc/ai/.github/agents/l2ps-eo-architecture.agent.md`）。**§2** 采用 *Package / subsystem connection overview* 与 *Detailed class views* 分层，与同目录 [`l2ps-bbrm.md`](./l2ps-bbrm.md) 的范式一致。可选对照：内部维护的 `l2ps-architecture.md`。与源码一致的表述以环境中可访问的 `/workspace/uplane/L2-PS/src/` 及 `/home/ptr476/work/doc/ai/storage/L2PS_Architecture.md` 为准。
+
+> **PlantUML rendering notes.**
+> - Diagrams use fenced ` ```plantuml ` blocks with `@startuml` / `@enduml`; large figures live in sibling `diagrams/*.md` notes and are embedded from this vault folder。每个 `diagrams/*.md` 在与 `/workspace` 核对后应在 YAML 中填写 **`last_verified_src_date`** / **`last_verified_gnb_git`**。
+> - Component and class diagrams use `package`, explicit arrow directions, and hidden links to guide layout.
+> - Large class diagrams are split into overview and focused diagram notes under `diagrams/` where useful.
+> - Sequence diagrams keep the original lifeline order and use PlantUML `alt` / `opt` blocks.
+> - `skinparam linetype ortho` is intentionally left disabled unless strict right-angle routing improves readability.
 
 ## 1. Runtime Position
 
 SRS-BM 是 L2-PS per-cell-group EO 之一，EO 名称形态为 `L2RtPool<P>_L2PsSrsBmYy`。每个 SRS-BM EO 有两个 atomic queue：普通事件队列 `L2PsSrsXxYy` 和调度时间队列 `L2PsSrtXxYy`。它消费来自 SGNL、DL、UL、L1-UL 和平台 slot timer 的内部事件，输出 DL/UL beam selection 结果以及 DL CoMa power/correlation measurement。
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 50}}}%%
-flowchart LR
-    %% External sources
-    CPRT["L3 · CP-RT"]
-
-    %% L2-PS subgraph
-    subgraph L2PS["L2 · PS"]
-        direction LR
-        SGNL["Signaling"]
-        SYNC[SlotSynchro]
-        DLSCH[DL SCH]
-        ULSCH[UL SCH]
-        SRSBM[SRS-BM]
-    end
-
-    %% L1 subgraph
-    subgraph L1["L1"]
-        L1RX[L1 UL]
-    end
-
-    %% L3 → SGNL → SRS-BM
-    CPRT -->|CellSetupReq / UserSetupReq| SGNL
-    SGNL -->|InternalCellSetupReq / InternalUserSetupReq / BeamConfigUpdateReq| SRSBM
-
-    %% L2-PS internal inputs
-    SYNC -->|SlotSynchroInd / Start-StopSlotSynchroInd| SRSBM
-    DLSCH -->|DlToSrsBmIntraUpdate / SlotTypeTrigger| SRSBM
-    ULSCH -->|UlToSrsSlotTypeSync| SRSBM
-
-    %% L1 feedback
-    L1RX -->|SrsReceiveRespBmPs| SRSBM
-
-    %% SRS-BM outputs
-    SRSBM -->|SrsBeamSelectionInd / SrsComaMeasurementInd| DLSCH
-    SRSBM -->|UlSrsBeamSelectionInd| ULSCH
-
-    %% Responses
-    SRSBM -.->|InternalSetupResp| SGNL
-    SGNL -.->|SetupResp| CPRT
-```
+![[diagrams/l2ps-srsbm-runtime-position]]
 
 ## 2. Top-Level Class Overview
 
+### Package / subsystem connection overview
+
 `Eo` owns queues and the FSM. `MainComponentSrsBm` is the central coordinator: it owns the SRS-BM cell DB, DL/UL managers, slot timing/synchro state, flexible bi-slot timing facade, measurement objects, and continuation-slot handler. DL and UL managers own direction-specific data handlers, beam selection algorithms, timers, UE state handlers, response handlers, and optional power senders.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
+![[diagrams/l2ps-srsbm-top-level-class-overview]]
 
-namespace l2ps_srsBm_em {
-  class Eo {
-    -EmQueue queue
-    -EmQueue queueSchTime
-    -EmQueueDbItem queueDbItem
-    -EmQueueDbItem queueDbItemSchTime
-    -shared_ptr~MainComponentSrsBm~ mainComponentSrsBm
-    -QueueFsm fsm
-    +start() EmStatus
-    +stop() EmStatus
-    +init() bool
-  }
+### Detailed class views
 
-  class QueueFsm {
-    <<typedef>>
-    EmFsm~QueueFsmImpl~
-  }
-}
+Further class-level slices are **not** duplicated here — each lives in its numbered section with the matching diagram note:
 
-namespace l2ps_srsBm_management {
-  class MainComponentSrsBm {
-    -SlotConfiguration slotConfiguration
-    -SrsBmCellDb srsBmCellDb
-    -DlSrsBmManager dlSrsBmManager
-    -UlSrsBmManager ulSrsBmManager
-    -SlotSynchroManager synchro5GTimeManager
-    -Timer750UsController timer750UsController
-    -Maybe~ProcessingTimingPatternFacade~ processingTimingPattern
-    -TickSlotFacade tickSlotFacade
-    -SrsBmSlotMeasurements srsBmSlotMeasurements
-    -MeasurementSlotTrigger measurementSlotTrigger
-    -SlotSynchroIndContHandler slotSynchroIndContHandler
-    -SlotTypeSelectorBase* slotTypeSelectorPtr
-    +handleCellSetupReq(msg)
-    +handleStartSlotSynchroInd(msg)
-    +handleSlotSynchroInd(msg)
-    +handleSlotSynchroIndCont(msg)
-    +handleSrsReceiveRespBmPs(event)
-    +handleUlToSrsSlotTypeSync(msg)
-  }
-
-  class SlotSynchroIndContHandler
-  class MeasurementSlotTrigger
-  class SrsBmSlotMeasurements
-}
-
-namespace l2ps_srsBm_db {
-  class SrsBmCellDb
-  class SrsBmCell
-}
-
-namespace l2ps_srsBm_dl {
-  class DlSrsBmManager
-}
-
-namespace l2ps_srsBm_ul {
-  class UlSrsBmManager
-}
-
-Eo *-- QueueFsm
-Eo o-- MainComponentSrsBm
-MainComponentSrsBm *-- SrsBmCellDb
-SrsBmCellDb *-- SrsBmCell
-MainComponentSrsBm *-- DlSrsBmManager
-MainComponentSrsBm *-- UlSrsBmManager
-MainComponentSrsBm *-- SrsBmSlotMeasurements
-MainComponentSrsBm *-- MeasurementSlotTrigger
-MainComponentSrsBm *-- SlotSynchroIndContHandler
-SlotSynchroIndContHandler --> DlSrsBmManager
-SlotSynchroIndContHandler --> UlSrsBmManager
-SlotSynchroIndContHandler --> SrsBmCell
-```
+| Concern | Section | Diagram note |
+|--------|---------|----------------|
+| CRTP direction managers + shared template layer | §4 | `diagrams/l2ps-srsbm-direction-managers-and-shared-template-layer` |
+| DL beam / CoMa / selection stack | §5 | `diagrams/l2ps-srsbm-dl-srs-bm-details` |
+| UL beam / selection stack | §6 | `diagrams/l2ps-srsbm-ul-srs-bm-details` |
+| Cell + UE DB | §7 | `diagrams/l2ps-srsbm-cell-and-ue-db-model` |
 
 ## 3. EO FSM And Event Dispatch
 
 SRS-BM 使用 `boost::sml` 经 `emBase::EmFsm<QueueFsmImpl>` 包装。三个状态分别对应 cell bring-up、normal operation 和 delete phase。状态动作返回 `true` 时才触发到下一个状态：startup 处理 `CellSetupReq` 后进 default；default 处理 `CellStopSchedulingReq` 后进 delete；delete 处理 `CellDeleteReq` 后回 startup。
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-stateDiagram-v2
-direction TB
+```plantuml
+@startuml l2ps-srsbm 3. EO FSM And Event Dispatch
+!pragma graphviz svg
+' scale 1920*1080
 
 [*] --> startUpState
-
-state startUpState {
-    [*] : wait for CellGroupSetupReq + CellSetupReq
-}
-state defaultState {
-    [*] : normal operation
-}
-state deleteState {
-    [*] : cell teardown
-}
-
+state "startUpState\nwait for CellGroupSetupReq + CellSetupReq" as startUpState
+state "defaultState\nnormal operation" as defaultState
+state "deleteState\ncell teardown" as deleteState
 startUpState --> defaultState : CellSetupReq / true
 defaultState --> deleteState : CellStopSchedulingReq / true
 deleteState --> startUpState : CellDeleteReq / true
-
 note right of startUpState
     self-loop: CellGroupSetupReq / false
 end note
-
 note right of defaultState
     self-loop: SlotSynchroInd,
     SrsReceiveRespBmPs, User*,
     Reconfig*, Trigger* / false
 end note
-
 note right of deleteState
     self-loop: StopSlotSynchroInd / false
 end note
-
 startUpState --> [*] : StopEvent
 defaultState --> [*] : StopEvent
 deleteState --> [*] : StopEvent
+@enduml
 ```
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction LR
+```plantuml
+@startuml l2ps-srsbm Diagram
+!pragma graphviz svg
+' scale 1920*1080
 
-namespace l2ps_srsBm_em {
+' skinparam linetype ortho
+set namespaceSeparator ::
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package l2ps_srsBm_em {
   class QueueFsmImpl {
     +Data
     +Table
   }
-
-  class QueueFsmData["QueueFsmImpl.Data"] {
+  class "QueueFsmImpl.Data" as QueueFsmData {
     +QueueStateStartup startupSrsBmHandler
     +QueueStateDefault defaultSrsBmHandler
     +QueueStateDelete deleteSrsBmHandler
   }
-
   class QueueStateStartup {
     -shared_ptr~MainComponentSrsBm~ mainComponentSrsBm
     -EScs scs
     -ActFlexibleBiSlotDurationMode actFlexibleBiSlotDurationMode
     +handleEvent(msgId, event, type) bool
   }
-
   class QueueStateDefault {
     -shared_ptr~MainComponentSrsBm~ mainComponentSrsBm
     +handleEvent(msgId, event, type) bool
   }
-
   class QueueStateDelete {
     -shared_ptr~MainComponentSrsBm~ mainComponentSrsBm
     +handleEvent(msgId, event, type) bool
   }
 }
-
 QueueFsmImpl *-- QueueFsmData
 QueueFsmData *-- QueueStateStartup
 QueueFsmData *-- QueueStateDefault
@@ -231,6 +126,7 @@ QueueFsmData *-- QueueStateDelete
 QueueStateStartup --> MainComponentSrsBm : creates on first CellSetupReq
 QueueStateDefault --> MainComponentSrsBm : dispatches runtime events
 QueueStateDelete --> MainComponentSrsBm : stop/delete cleanup
+@enduml
 ```
 
 Default-state handled events include `CellReconfigurationReq`, `StartSlotSynchroInd`, `SlotSynchroInd`, `SlotSynchroIndCont`, `UserSetupReq`, `UserModifyReq`, `UserDeleteInd`, `UserBundleDeleteReq`, `PowerSavingConfigurationReq`, `SrsReceiveRespBmPs`, `SlotTypeTrigger`, `DlToSrsBmIntraUpdate`, `DynamicSwitchReq`, `StreamStartInd`, `StreamStopInd`, `SrsPortsUpdateInd`, `BeamConfigUpdateReq`, and `UlToSrsSlotTypeSync`.
@@ -239,342 +135,94 @@ Default-state handled events include `CellReconfigurationReq`, `StartSlotSynchro
 
 DL and UL managers both inherit `common::SrsBmManager<Implementation>` through CRTP. The template layer owns the generic procedure handling for UE add/modify/delete and delegates direction-specific details such as SRS resource extraction, UE DB update, rollback, beam calculation, and timer handling.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-namespace common {
-  class SrsBmManager~Implementation~ {
-    <<CRTP>>
-    +processMessage(msg)
-    +processCellSetupReq(msg)
-    +processCellReconfigurationReq(msg)
-    +processCellStopSchedulingReq()
-    +processSrsReceiveRespBmPs(event)
-    -handle(UserSetupReq)
-    -handle(UserModifyReq)
-    -handle(UserDeleteInd)
-    -handle(UserBundleDeleteReq)
-  }
-
-  class SrsReceiveRespBmPsHandler~BeamSelection,DataHandler,PowerSender~ {
-    <<template>>
-    -SrsReceiveRespBmPsList srsReceiveRespBmPsList
-    -SrsBmOverloadControl srsBmOverloadControl
-    -SrsBmBudget srsBmBudget
-    +handleSlotSynchroInd(onAirTime, pooling)
-    +handleSrsReceiveRespBmPs(event, pooling)
-    +handleSlotTypeTrigger(msg)
-    +handleSlotSynchroIndCont(pooling)
-  }
-
-  class BeamSelection~Implementation,UeDb,Message,CalculatorManager~ {
-    <<CRTP>>
-    -BroadcastEventUlDlEos~Message~ event
-    -UeDb srsBmUeDb
-    -BeamCalculatorManager beamCalculatorManager
-    -StaticVectorFixedSize~Rnti~ ues
-    +initialize(cell, pooling)
-    +addUe(rnti)
-    +removeUe(rnti, cause)
-    +handleUesBeamCalculation(ues)
-    +sendEvent(ueNum)
-  }
-
-  class SrsBmTimerHandler~BeamSelection,DataHandler~
-  class UeStatesHandler~BeamSelection,DataHandler~
-}
-
-namespace dl {
-  class DlSrsBmManager
-  class DlBeamSelection["BeamSelection"]
-  class DlSrsBmDataHandler["SrsBmDataHandler"]
-  class DlSrsReceiveRespBmPsHandler["SrsReceiveRespBmPsHandler"]
-  class DlSrsComaPowerSender
-}
-
-namespace ul {
-  class UlSrsBmManager
-  class UlBeamSelection["BeamSelection"]
-  class UlSrsBmDataHandler["SrsBmDataHandler"]
-  class UlSrsReceiveRespBmPsHandler["SrsReceiveRespBmPsHandler"]
-  class UlSrsComaPowerSender
-}
-
-DlSrsBmManager --|> SrsBmManager~Implementation~
-UlSrsBmManager --|> SrsBmManager~Implementation~
-DlBeamSelection --|> BeamSelection~Implementation,UeDb,Message,CalculatorManager~
-UlBeamSelection --|> BeamSelection~Implementation,UeDb,Message,CalculatorManager~
-DlSrsReceiveRespBmPsHandler --|> SrsReceiveRespBmPsHandler~BeamSelection,DataHandler,PowerSender~
-UlSrsReceiveRespBmPsHandler --|> SrsReceiveRespBmPsHandler~BeamSelection,DataHandler,PowerSender~
-```
+![[diagrams/l2ps-srsbm-direction-managers-and-shared-template-layer]]
 
 ## 5. DL SRS-BM Details
 
 DL SRS-BM uses TAS/codebook SRS resources, optional subband CoMa/correlation calculation, DFT beam selection, tapering beam calculation, and LB-MIMO power-saving calculator. It sends `SrsBeamSelectionInd` to DL/UL scheduler targets via broadcast event, and sends `SrsComaMeasurementInd` to the DL user EQ.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-namespace l2ps_srsBm_dl {
-  class DlSrsBmManager {
-    -SrsBmDataHandler srsBmDataHandler
-    -SrsBmCell& srsBmCell
-    -BeamSelection dlSrsBmSelection
-    -SrsBmTimerHandler srsBmTimerHandler
-    -UeStatesHandler ueStatesHandler
-    -DlSrsComaPowerSender dlSrsComaPowerSender
-    -SrsReceiveRespBmPsHandler srsReceiveRespBmPsHandler
-    +handleCellSetupReq(msg)
-    +handleSlotSynchroInd(onAirTime, delayInUs, isDlFdOnUlCore)
-    +handleSlotSynchroIndCont(onAirTime)
-    +handleSrsReceiveRespBmPs(event)
-  }
-
-  class BeamSelection {
-    -DlSrsBmLoadTrace& dlTraceData
-    +initializeSpecific()
-    +reconfig(cell)
-    +rollbackToLegacyBeam(rnti)
-    +fill(SrsBeamSelectionIndEvent, gain, rnti, index)
-    +traceSrsBmData(...)
-  }
-
-  class BeamCalculatorManager {
-    -unique_ptr~BeamBaseCalculator~ dlBeamCalculator
-    -unique_ptr~BeamBaseCalculator~ dlTaperingBeamCalculator
-    -unique_ptr~BeamBaseCalculator~ lbMMimoPowerSavingDlSrsBmCalculator
-    +runBeamCalculator(ueDb, rnti, gain)
-    +reconfig(cell)
-  }
-
-  class SrsBmDataHandler {
-    -shared_ptr~SrsBmUeDbBase~ srsBmUeDb
-    -SbSrsComaCorrCalculator corrCalculator
-    +updateCoMa(xsfn, polarization, symbolPos, data, valid, pm)
-    +tryCalculateCorr(maxUeNums)
-    +getComaCorr(rnti)
-  }
-
-  class SrsReceiveRespBmPsHandler
-  class DlSrsComaPowerSender {
-    -PowerReadyUes powerReadyUes
-    +addUe(rnti, validCoMa)
-    +handleSlotSynchroInd(onAirTime)
-  }
-}
-
-DlSrsBmManager *-- SrsBmDataHandler
-DlSrsBmManager *-- BeamSelection
-DlSrsBmManager *-- SrsReceiveRespBmPsHandler
-DlSrsBmManager *-- DlSrsComaPowerSender
-BeamSelection *-- BeamCalculatorManager
-BeamCalculatorManager o-- "up to 3" BeamBaseCalculator
-SrsBmDataHandler *-- SbSrsComaCorrCalculator
-SrsReceiveRespBmPsHandler --> SrsBmDataHandler
-SrsReceiveRespBmPsHandler --> BeamSelection
-SrsReceiveRespBmPsHandler --> DlSrsComaPowerSender
-DlSrsComaPowerSender --> SrsBmDataHandler
-```
+![[diagrams/l2ps-srsbm-dl-srs-bm-details]]
 
 ## 6. UL SRS-BM Details
 
 UL SRS-BM is structurally similar, but the power sender is currently a no-op and UL sends `UlSrsBeamSelectionInd` through `UlSrsBeamSelectionIndSender`. UL beam calculation has combined/separated method implementations and UL MU-MIMO/tapering-specific payload filling.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-namespace l2ps_srsBm_ul {
-  class UlSrsBmManager {
-    -SrsBmCell& srsBmCell
-    -SrsBmDataHandler srsBmDataHandler
-    -BeamSelection ulSrsBmSelection
-    -SrsBmTimerHandler srsBmTimerHandler
-    -UeStatesHandler ueStatesHandler
-    -UlSrsComaPowerSender ulSrsComaPowerSender
-    -SrsReceiveRespBmPsHandler srsReceiveRespBmPsHandler
-    +handleCellSetupReq(msg)
-    +handleSlotSynchroInd(onAirTime, delayInUs)
-    +handleSlotSynchroIndCont()
-    +handleSrsReceiveRespBmPs(event)
-  }
-
-  class BeamSelection {
-    -uint32_t limitUeNumPerSlot
-    -UlSrsBmLoadTrace& ulTraceData
-    +initializeSpecific()
-    +updateLimitUeNumPerSlot(ueNum)
-    +fill(UlSrsBeamSelectionIndEvent, gain, rnti, index)
-    +rollbackToLegacyBeam(rnti)
-  }
-
-  class BeamCalculatorManager {
-    -unique_ptr~BeamBaseCalculator~ ulBeamCalculator
-    +runBeamCalculator(ueDb, rnti, gain)
-  }
-
-  class SrsBmDataHandler {
-    -shared_ptr~SrsBmUeDbBase~ srsBmUeDb
-    +updateCoMa(xsfn, polarization, symbolPos, data, valid, pm)
-    +modifyUe(rnti, nrofSrsPorts)
-  }
-
-  class UlSrsBeamSelectionIndSender {
-    -unique_ptr~BroadcastEventUlDlEos~ event
-    -uint8_t ueNum
-    +add()
-    +sendEvent()
-  }
-
-  class UlSrsComaPowerSender {
-    <<no-op adapter>>
-  }
-}
-
-UlSrsBmManager *-- SrsBmDataHandler
-UlSrsBmManager *-- BeamSelection
-UlSrsBmManager *-- SrsReceiveRespBmPsHandler
-UlSrsBmManager *-- UlSrsComaPowerSender
-BeamSelection *-- BeamCalculatorManager
-BeamCalculatorManager o-- "1" BeamBaseCalculator
-BeamSelection ..> UlSrsBeamSelectionIndSender
-SrsReceiveRespBmPsHandler --> SrsBmDataHandler
-SrsReceiveRespBmPsHandler --> BeamSelection
-SrsReceiveRespBmPsHandler --> UlSrsComaPowerSender
-```
+![[diagrams/l2ps-srsbm-ul-srs-bm-details]]
 
 ## 7. Cell And UE DB Model
 
 SRS-BM has a small per-EO cell DB and direction-specific UE DBs. The cell object is shared by DL/UL managers by reference. UE DB access is hidden behind `SrsBmUeDbBase`, while concrete DBs use the common `UeDatabase<T>` storage.
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction LR
-
-namespace l2ps_srsBm_db_cell {
-  class SrsBmCellDb {
-    +SrsBmCell srsBmCell
-  }
-
-  class SrsBmCell {
-    -CellInfoCommon common
-    -DlBfInfoSrs dl
-    -UlBfInfoSrs ul
-    -float dftCandidateThresholdH
-    -float dftCandidateThresholdV
-    -bool actRedPeriodicSrsProcessing
-    +configCell(msg)
-    +reconfigCell(msg)
-    +updateBeamConfig(msg)
-    +handleSlotSynchroInd(onAirTime, measurements)
-  }
-}
-
-namespace l2ps_srsBm_db_ue {
-  class SrsBmUeDbBase {
-    <<interface>>
-    +addUe(rnti, coMaParam, resources)
-    +modifyUe(...)
-    +deleteUe(rnti)
-    +updateCoMa(...)
-    +setSrsBmUeState(rnti, state)
-    +needAddToSrsBmSelectionList(rnti, msgCnt)
-  }
-
-  class SrsBmUeDbDl~T~ {
-    -UeDatabase~T~ object
-  }
-
-  class SrsBmUeDbUl {
-    -UeDatabase~SrsBmUeDataUl~ object
-  }
-
-  class SrsBmUeDataDl
-  class SrsBmUeDataUl
-}
-
-SrsBmCellDb *-- SrsBmCell
-SrsBmCell *-- CellInfoCommon
-SrsBmCell *-- DlBfInfoSrs
-SrsBmCell *-- UlBfInfoSrs
-SrsBmUeDbDl~T~ --|> SrsBmUeDbBase
-SrsBmUeDbUl --|> SrsBmUeDbBase
-SrsBmUeDbDl~T~ *-- SrsBmUeDataDl
-SrsBmUeDbUl *-- SrsBmUeDataUl
-```
+![[diagrams/l2ps-srsbm-cell-and-ue-db-model]]
 
 ## 8. Cell Bring-Up And Delete Flow
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL psCell
-    participant FSM as SRS-BM QueueFsm
-    participant Startup as QueueStateStartup
-    participant Main as MainComponentSrsBm
-    participant CellDb as SrsBmCell
-    participant DL as DlSrsBmManager
-    participant UL as UlSrsBmManager
-    participant Del as QueueStateDelete
+```plantuml
+@startuml l2ps-srsbm 8. Cell Bring-Up And Delete Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    SGNL->>FSM: CellGroupSetupReq
-    FSM->>Startup: save scs + flexible bi-slot mode
-    Startup-->>FSM: stay startup
-    SGNL->>FSM: CellSetupReq
-    FSM->>Startup: initialize MainComponentSrsBm if null
-    Startup->>Main: handleCellSetupReq
-    Main->>CellDb: configCell
-    Main->>DL: processCellSetupReq
-    Main->>UL: processCellSetupReq
-    Startup-->>FSM: true -> default
-
-    SGNL->>FSM: CellStopSchedulingReq
-    FSM->>Main: handleCellStopSchedulingReq
-    Main->>DL: processCellStopSchedulingReq
-    Main->>UL: processCellStopSchedulingReq
-    Main->>CellDb: reconstruct SrsBmCell
-    FSM-->>Del: default -> delete
-
-    SGNL->>FSM: StopSlotSynchroInd
-    FSM->>Main: handleStopSlotSynchroInd
-    SGNL->>FSM: CellDeleteReq
-    FSM->>Main: handleCellDeleteReq
-    FSM-->>Startup: delete -> startup
+participant "SGNL psCell" as SGNL
+participant "SRS-BM QueueFsm" as FSM
+participant "QueueStateStartup" as Startup
+participant "MainComponentSrsBm" as Main
+participant "SrsBmCell" as CellDb
+participant "DlSrsBmManager" as DL
+participant "UlSrsBmManager" as UL
+participant "QueueStateDelete" as Del
+    SGNL->FSM: CellGroupSetupReq
+    FSM->Startup: save scs + flexible bi-slot mode
+    Startup-->FSM: stay startup
+    SGNL->FSM: CellSetupReq
+    FSM->Startup: initialize MainComponentSrsBm if null
+    Startup->Main: handleCellSetupReq
+    Main->CellDb: configCell
+    Main->DL: processCellSetupReq
+    Main->UL: processCellSetupReq
+    Startup-->FSM: true -> default
+    SGNL->FSM: CellStopSchedulingReq
+    FSM->Main: handleCellStopSchedulingReq
+    Main->DL: processCellStopSchedulingReq
+    Main->UL: processCellStopSchedulingReq
+    Main->CellDb: reconstruct SrsBmCell
+    FSM-->Del: default -> delete
+    SGNL->FSM: StopSlotSynchroInd
+    FSM->Main: handleStopSlotSynchroInd
+    SGNL->FSM: CellDeleteReq
+    FSM->Main: handleCellDeleteReq
+    FSM-->Startup: delete -> startup
+@enduml
 ```
 
 ## 9. UE Configuration Flow
 
 User setup/modify/delete is one-way from psUser to SRS-BM; SRS-BM does not contribute to the aggregated psUser response. `MainComponentSrsBm::processDlUlManagers` dispatches to both managers. The common CRTP layer filters inactive direction, invalid add causes, SCell-addition corner cases, and absent BWP configs; direction-specific managers extract usable SRS resources and update their UE DBs.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant SGNL as SGNL psUser
-    participant Main as MainComponentSrsBm
-    participant DL as DlSrsBmManager
-    participant UL as UlSrsBmManager
-    participant Common as common::SrsBmManager
-    participant DBDL as DL SrsBmUeDb
-    participant DBUL as UL SrsBmUeDb
-    participant Timer as SrsBmTimerHandler
+```plantuml
+@startuml l2ps-srsbm 9. UE Configuration Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    SGNL->>Main: UserSetupReq / UserModifyReq / UserDeleteInd
-    Main->>DL: processMessage(msg)
-    Main->>UL: processMessage(msg)
-    DL->>Common: generic handle(msg)
-    UL->>Common: generic handle(msg)
-    Common->>DL: fillSrsResourcesInfo / addOrUpdateOrRemove UE
-    Common->>UL: fillSrsResourcesInfo / addOrUpdateOrRemove UE
-    DL->>DBDL: addUe / modifyUe / deleteUe
-    UL->>DBUL: addUe / modifyUe / deleteUe
-    DL->>Timer: stop/restart timers when resource set changes
-    UL->>Timer: stop/restart timers when resource set changes
+participant "SGNL psUser" as SGNL
+participant "MainComponentSrsBm" as Main
+participant "DlSrsBmManager" as DL
+participant "UlSrsBmManager" as UL
+participant "common::SrsBmManager" as Common
+participant "DL SrsBmUeDb" as DBDL
+participant "UL SrsBmUeDb" as DBUL
+participant "SrsBmTimerHandler" as Timer
+    SGNL->Main: UserSetupReq / UserModifyReq / UserDeleteInd
+    Main->DL: processMessage(msg)
+    Main->UL: processMessage(msg)
+    DL->Common: generic handle(msg)
+    UL->Common: generic handle(msg)
+    Common->DL: fillSrsResourcesInfo / addOrUpdateOrRemove UE
+    Common->UL: fillSrsResourcesInfo / addOrUpdateOrRemove UE
+    DL->DBDL: addUe / modifyUe / deleteUe
+    UL->DBUL: addUe / modifyUe / deleteUe
+    DL->Timer: stop/restart timers when resource set changes
+    UL->Timer: stop/restart timers when resource set changes
+@enduml
 ```
 
 ## 10. Slot-Level SRS Response And Beam Selection Flow
@@ -584,75 +232,74 @@ SRS-BM has two processing modes:
 - Non-pooled or non-TDD-FR1 path: `SrsReceiveRespBmPs` is processed immediately, and normal beam selection runs from slot sync.
 - TDD FR1 with `scheUePoolingAllowed`: L1 SRS responses are stored in `CircularFifoSrsReceiveRespBmPs`; slot sync, slot-type trigger, and slot continuation decide when and how much to process. Atomic mode can stop mid-message when `SrsBmBudget` is exceeded and resume later.
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 20, "rankSpacing": 50}}}%%
-flowchart TB
-    Resp[L1 SrsReceiveRespBmPs]
-    Handler[SrsReceiveRespBmPsHandler]
-    Pooling{scheUePoolingAllowed<br/>and TDD FR1?}
+```plantuml
+@startuml l2ps-srsbm 10. Slot-Level SRS Response And Beam Selection Flow
+!pragma graphviz svg
+' scale 1920*1080
 
-    subgraph directPath["Non-pooled path"]
-        direction TB
-        Immediate[Process immediately]
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
 
-    subgraph pooledPath["Pooled path"]
-        direction TB
-        Aged{response aged?}
-        Drop[Discard + update counters]
-        Store[Store in circular FIFO]
-        Slot[SlotSynchroInd<br/>SlotTypeTrigger<br/>SlotSynchroIndCont]
-        ProcessList[Process stored FIFO]
-        Budget{Budget exceeded?}
-    end
+package "Non-pooled path" as directPath {
+  rectangle "Process immediately" as Immediate
+}
 
-    subgraph result["Common output"]
-        direction TB
-        UpdateCoMa[DataHandler.updateCoMa]
-        UeState[UeStatesHandler.update states]
-        Selection[BeamSelection.handleUesBeamCalculation]
-        Output[Send SrsBeamSelectionInd<br/>UlSrsBeamSelectionInd]
-        Power[DL: SrsComaMeasurementInd]
-    end
+package "Pooled path" as pooledPath {
+  rectangle "response aged?" as Aged
+  rectangle "Discard + update counters" as Drop
+  rectangle "Store in circular FIFO" as Store
+  rectangle "SlotSynchroInd\nSlotTypeTrigger\nSlotSynchroIndCont" as Slot
+  rectangle "Process stored FIFO" as ProcessList
+  rectangle "Budget exceeded?" as Budget
+}
 
-    Resp --> Handler --> Pooling
-    Pooling -- no --> Immediate
-    Immediate --> UpdateCoMa
-    Pooling -- yes --> Aged
-    Aged -- yes --> Drop
-    Aged -- no --> Store
-    Slot --> ProcessList
-    Store -.-> ProcessList
-    ProcessList --> Budget
-    Budget -.->|yes: retry next slot| ProcessList
-    Budget -- no --> UpdateCoMa
-    UpdateCoMa --> UeState --> Selection --> Output
-    UpdateCoMa --> Power
+package "Common output" as result {
+  rectangle "DataHandler.updateCoMa" as UpdateCoMa
+  rectangle "UeStatesHandler.update states" as UeState
+  rectangle "BeamSelection.handleUesBeamCalculation" as Selection
+  rectangle "Send SrsBeamSelectionInd\nUlSrsBeamSelectionInd" as Output
+  rectangle "DL: SrsComaMeasurementInd" as Power
+}
+
+rectangle "L1 SrsReceiveRespBmPs" as Resp
+rectangle "SrsReceiveRespBmPsHandler" as Handler
+rectangle "scheUePoolingAllowed\nand TDD FR1?" as Pooling
+
+Immediate --> UpdateCoMa
+Slot --> ProcessList
+Store ..> ProcessList
+ProcessList --> Budget
+Budget ..> ProcessList : yes: retry next slot
+UpdateCoMa --> Power
+@enduml
 ```
 
 ## 11. Parallel Scheduling And Slot Continuation
 
 When SRS-BM runs on the same core as the UL scheduler and DL FD is enabled on UL cores, `UlToSrsSlotTypeSync` provides a `SlotTypeSelectorBase*` and a flag. `MainComponentSrsBm` uses this pointer to detect DL-only slots and coordinates `SlotSynchroIndCont` through `SlotSynchroIndContHandler`.
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant UL as UL Scheduler
-    participant Main as MainComponentSrsBm
-    participant Selector as SlotTypeSelectorBase
-    participant Cont as SlotSynchroIndContHandler
-    participant DL as DlSrsBmManager
-    participant ULM as UlSrsBmManager
+```plantuml
+@startuml l2ps-srsbm 11. Parallel Scheduling And Slot Continuation
+!pragma graphviz svg
+' scale 1920*1080
 
-    UL->>Main: UlToSrsSlotTypeSync(slotTypeSelectorPtr, dlFdSchOnULCoreEnabled)
-    Main->>Main: set isDlFdSchOnULCoreEnabled when pooling/rad params allow
-    Main->>Selector: getSlotAttributes(current on-air slot)
-    Selector-->>Main: UL grant applicable? DL grant applicable?
-    Main->>Cont: mark current XSFN for DL-only parallel slot
-    UL->>Main: SlotSynchroIndCont
-    Main->>Cont: handleSlotSynchroIndCont
-    Cont->>DL: handleSlotSynchroIndCont(onAirTime)
-    Cont->>ULM: handleSlotSynchroIndCont()
+participant "UL Scheduler" as UL
+participant "MainComponentSrsBm" as Main
+participant "SlotTypeSelectorBase" as Selector
+participant "SlotSynchroIndContHandler" as Cont
+participant "DlSrsBmManager" as DL
+participant "UlSrsBmManager" as ULM
+    UL->Main: UlToSrsSlotTypeSync(slotTypeSelectorPtr, dlFdSchOnULCoreEnabled)
+    Main->Main: set isDlFdSchOnULCoreEnabled when pooling/rad params allow
+    Main->Selector: getSlotAttributes(current on-air slot)
+    Selector-->Main: UL grant applicable? DL grant applicable?
+    Main->Cont: mark current XSFN for DL-only parallel slot
+    UL->Main: SlotSynchroIndCont
+    Main->Cont: handleSlotSynchroIndCont
+    Cont->DL: handleSlotSynchroIndCont(onAirTime)
+    Cont->ULM: handleSlotSynchroIndCont()
+@enduml
 ```
 
 ## 12. Output Messages
@@ -687,256 +334,57 @@ sequenceDiagram
 
 ### 14.1 Module Decomposition
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 30, "rankSpacing": 60}}}%%
-flowchart LR
-    subgraph shell["EO Shell"]
-        direction TB
-        FSM[Lifecycle FSM<br/>startup/default/delete]
-        Router[Event Router]
-    end
-
-    subgraph modules["Independent Modules"]
-        direction TB
-        Lifecycle[1. Lifecycle<br/>Cell + UE Config]
-        Buffer[2. Response Buffer<br/>Queue + Aging]
-        CoMa[3. CoMa Updater<br/>Signal Processing]
-        DlCalc[4. DL Beam Calculator<br/>Pure Algorithm]
-        UlCalc[5. UL Beam Calculator<br/>Pure Algorithm]
-        Output[6. Output Gateway<br/>Message Formatting]
-        Sched[7. Slot Scheduler<br/>Orchestration + Budget]
-    end
-
-    subgraph db["Shared DB Layer"]
-        direction TB
-        CellCfg[(CellConfig)]
-        UeReg[(UE Registry)]
-        DlCoMa[(DL CoMa Store)]
-        UlCoMa[(UL CoMa Store)]
-        DlBeam[(DL Beam Result)]
-        UlBeam[(UL Beam Result)]
-        Policy[(Runtime Policy)]
-    end
-
-    Router --> Lifecycle
-    Router --> Buffer
-    Router --> Sched
-
-    Sched -.->|fetchBatch| Buffer
-    Sched -.->|update| CoMa
-    Sched -.->|calculate| DlCalc
-    Sched -.->|calculate| UlCalc
-    Sched -.->|send| Output
-
-    Lifecycle -->|write| CellCfg
-    Lifecycle -->|write| UeReg
-    Lifecycle -->|write| Policy
-    Buffer -->|read| UeReg
-    CoMa -->|read| UeReg
-    CoMa -->|write| DlCoMa
-    CoMa -->|write| UlCoMa
-    DlCalc -->|read| DlCoMa
-    DlCalc -->|read| CellCfg
-    DlCalc -->|write| DlBeam
-    UlCalc -->|read| UlCoMa
-    UlCalc -->|read| CellCfg
-    UlCalc -->|write| UlBeam
-    Output -->|read| DlBeam
-    Output -->|read| UlBeam
-    Output -->|read| DlCoMa
-    Sched -->|read| Policy
-```
+![[diagrams/l2ps-srsbm-module-decomposition]]
 
 ### 14.2 DB Isolation Design
 
 每个 DB Store 有且仅有 **一个 Writer**，多个 Reader 只拿到 read-only view。任何模块不能同时读写同一个 Store（CoMa Updater 写 CoMa Store，但不读它自己写的结果；DL Beam Calculator 读 CoMa Store 但不写它）。
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction LR
-
-class CellConfigStore {
-    <<DB Store>>
-    +Writer: Lifecycle
-    +Readers: ALL modules
-    ---
-    slotPattern
-    beamParams
-    dftThresholds
-    nrofAntennas
-    srsResourceSets
-}
-
-class UeRegistry {
-    <<DB Store>>
-    +Writer: Lifecycle
-    +Readers: Buffer, CoMaUpdater, Scheduler
-    ---
-    rnti -> SrsResources
-    rnti -> ActiveDirection
-    rnti -> NrofPorts
-    rnti -> Periodicity
-    rnti -> UeState
-}
-
-class DlCoMaStore {
-    <<DB Store>>
-    +Writer: CoMaUpdater
-    +Readers: DL BeamCalc, OutputGateway
-    ---
-    rnti -> CoMaMatrix
-    rnti -> Correlation
-    rnti -> Power
-    rnti -> LastUpdateXsfn
-}
-
-class UlCoMaStore {
-    <<DB Store>>
-    +Writer: CoMaUpdater
-    +Readers: UL BeamCalc
-    ---
-    rnti -> CoMaMatrix
-    rnti -> LastUpdateXsfn
-}
-
-class DlBeamResultStore {
-    <<DB Store>>
-    +Writer: DL BeamCalc
-    +Reader: OutputGateway
-    ---
-    rnti -> SelectedBeam
-    rnti -> PairBeams
-    rnti -> GainRatio
-    rnti -> DOA
-}
-
-class UlBeamResultStore {
-    <<DB Store>>
-    +Writer: UL BeamCalc
-    +Reader: OutputGateway
-    ---
-    rnti -> SelectedBeam
-    rnti -> MuMimoData
-    rnti -> TaperingData
-}
-
-class RuntimePolicy {
-    <<immutable after cell setup>>
-    +Writer: Lifecycle
-    +Readers: Scheduler, Buffer
-    ---
-    isTddFr1
-    scheUePoolingAllowed
-    atomicResponseHandling
-    isSrsBmOnUlCore
-    dlFdOnUlCoreEnabled
-    flexibleBiSlotMode
-}
-```
+![[diagrams/l2ps-srsbm-db-isolation-design]]
 
 ### 14.3 Module Interface Definitions
 
 每个模块暴露 **1-3 个公开方法**，无隐式依赖。
 
-```mermaid
-%%{init: {"layout": "elk"}}%%
-classDiagram
-direction TB
-
-class ILifecycle {
-    <<interface>>
-    +onCellSetup(msg) void
-    +onCellReconfig(msg) void
-    +onCellDelete() void
-    +onUserSetup(msg) void
-    +onUserModify(msg) void
-    +onUserDelete(rnti) void
-}
-
-class IResponseBuffer {
-    <<interface>>
-    +enqueue(event) void
-    +fetchNextBatch(maxCount) span~SrsResponse~
-    +hasPending() bool
-    +discardAged(currentXsfn) uint32
-}
-
-class ICoMaUpdater {
-    <<interface>>
-    +update(responses) CoMaUpdateResult
-}
-
-class CoMaUpdateResult {
-    +span~Rnti~ dlUpdatedUes
-    +span~Rnti~ ulUpdatedUes
-}
-
-class IDlBeamCalculator {
-    <<interface>>
-    +calculate(ues) DlBeamResults
-}
-
-class IUlBeamCalculator {
-    <<interface>>
-    +calculate(ues) UlBeamResults
-}
-
-class IOutputGateway {
-    <<interface>>
-    +sendDlBeamSelection(results) void
-    +sendUlBeamSelection(results) void
-    +sendDlComaMeasurement(ues) void
-}
-
-class ISlotScheduler {
-    <<interface>>
-    +onSlotSynchroInd(onAirTime) void
-    +onSlotTypeTrigger(msg) void
-    +onSlotContinuation() void
-}
-
-ICoMaUpdater ..> CoMaUpdateResult
-```
+![[diagrams/l2ps-srsbm-module-interface-definitions]]
 
 ### 14.4 Orchestration Pipeline
 
 Slot Scheduler 是唯一知道执行顺序的模块。它不包含业务逻辑，只负责 timing + budget + 调用顺序。
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-sequenceDiagram
-    participant Timer as SlotSynchroInd
-    participant Sched as Slot Scheduler
-    participant Buf as Response Buffer
-    participant CoMa as CoMa Updater
-    participant DlCalc as DL Beam Calc
-    participant UlCalc as UL Beam Calc
-    participant Out as Output Gateway
+```plantuml
+@startuml l2ps-srsbm 14.4 Orchestration Pipeline
+!pragma graphviz svg
+' scale 1920*1080
 
-    Timer->>Sched: onSlotSynchroInd(xsfn)
-    Sched->>Buf: discardAged(xsfn)
-    Buf-->>Sched: agedCount
-
+participant "SlotSynchroInd" as Timer
+participant "Slot Scheduler" as Sched
+participant "Response Buffer" as Buf
+participant "CoMa Updater" as CoMa
+participant "DL Beam Calc" as DlCalc
+participant "UL Beam Calc" as UlCalc
+participant "Output Gateway" as Out
+    Timer->Sched: onSlotSynchroInd(xsfn)
+    Sched->Buf: discardAged(xsfn)
+    Buf-->Sched: agedCount
     loop while budget remains and buffer not empty
-        Sched->>Buf: fetchNextBatch(remainingBudget)
-        Buf-->>Sched: batch (span of responses)
-        Sched->>CoMa: update(batch)
-        CoMa-->>Sched: {dlUpdatedUes, ulUpdatedUes}
+        Sched->Buf: fetchNextBatch(remainingBudget)
+        Buf-->Sched: batch (span of responses)
+        Sched->CoMa: update(batch)
+        CoMa-->Sched: {dlUpdatedUes, ulUpdatedUes}
     end
-
     alt dlUpdatedUes not empty
-        Sched->>DlCalc: calculate(dlUpdatedUes)
-        DlCalc-->>Sched: dlResults
-        Sched->>Out: sendDlBeamSelection(dlResults)
-        Sched->>Out: sendDlComaMeasurement(dlUpdatedUes)
+        Sched->DlCalc: calculate(dlUpdatedUes)
+        DlCalc-->Sched: dlResults
+        Sched->Out: sendDlBeamSelection(dlResults)
+        Sched->Out: sendDlComaMeasurement(dlUpdatedUes)
     end
-
     alt ulUpdatedUes not empty
-        Sched->>UlCalc: calculate(ulUpdatedUes)
-        UlCalc-->>Sched: ulResults
-        Sched->>Out: sendUlBeamSelection(ulResults)
+        Sched->UlCalc: calculate(ulUpdatedUes)
+        UlCalc-->Sched: ulResults
+        Sched->Out: sendUlBeamSelection(ulResults)
     end
+@enduml
 ```
 
 ### 14.5 Module Details
@@ -1034,19 +482,41 @@ sequenceDiagram
 
 ### 14.6 Coupling Analysis
 
-```mermaid
-%%{init: {"flowchart": {"curve": "basis"}}}%%
-flowchart TB
-    subgraph coupling["Module Dependency Matrix"]
-        direction LR
-        L[Lifecycle] ---|"0 deps"| NONE1[" "]
-        B[Buffer] ---|"1 DB read"| NONE2[" "]
-        C[CoMa Updater] ---|"1 DB read"| NONE3[" "]
-        DC[DL Beam Calc] ---|"2 DB reads"| NONE4[" "]
-        UC[UL Beam Calc] ---|"2 DB reads"| NONE5[" "]
-        O[Output Gateway] ---|"3 DB reads"| NONE6[" "]
-        S[Scheduler] ---|"5 interface calls + 1 DB read"| NONE7[" "]
-    end
+```plantuml
+@startuml l2ps-srsbm 14.6 Coupling Analysis
+!pragma graphviz svg
+' scale 1920*1080
+
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+package "Module Dependency Matrix" as coupling {
+  rectangle "Lifecycle" as L
+  rectangle "NONE1" as NONE1
+  rectangle "Buffer" as B
+  rectangle "NONE2" as NONE2
+  rectangle "CoMa Updater" as C
+  rectangle "NONE3" as NONE3
+  rectangle "DL Beam Calc" as DC
+  rectangle "NONE4" as NONE4
+  rectangle "UL Beam Calc" as UC
+  rectangle "NONE5" as NONE5
+  rectangle "Output Gateway" as O
+  rectangle "NONE6" as NONE6
+  rectangle "Scheduler" as S
+  rectangle "NONE7" as NONE7
+}
+
+
+L --> NONE1 : 0 deps
+B --> NONE2 : 1 DB read
+C --> NONE3 : 1 DB read
+DC --> NONE4 : 2 DB reads
+UC --> NONE5 : 2 DB reads
+O --> NONE6 : 3 DB reads
+S --> NONE7 : 5 interface calls + 1 DB read
+@enduml
 ```
 
 | 模块               |  依赖其他模块?   |          DB Read          |    DB Write    | 接口方法数 |
@@ -1197,7 +667,7 @@ srsBm/
 
 ## 15. Cross-EO Refactoring Consistency
 
-This section validates that the SRS-BM refactoring above is mutually consistent with the parallel proposals in `l2ps_dlsch_mermaid.md`, `l2ps_ulsch_mermaid.md`, `l2ps_fd_mermaid.md`, and `l2ps_bbrm_mermaid.md`. **You are here: SRS-BM**.
+This section validates that the SRS-BM refactoring above is mutually consistent with the parallel proposals in `l2ps-dlsch.md`, `l2ps-ulsch.md`, `l2ps-fd.md`, and `l2ps-bbrm.md`. **You are here: SRS-BM**.
 
 ### 15.1 Common refactoring shape
 
@@ -1265,8 +735,25 @@ Each EO owns its DB stores; identically-named stores in different docs are disti
 | SRS response hot path                 | `/workspace/uplane/L2-PS/src/srsBm/common/SrsReceiveRespBmPsHandler.hpp`, `/workspace/uplane/L2-PS/src/srsBm/common/SrsReceiveRespBmPsHandler.tpl.hpp`                                  |
 | Cell and UE DB                        | `/workspace/uplane/L2-PS/src/srsBm/db/cell/SrsBmCell.hpp`, `/workspace/uplane/L2-PS/src/srsBm/db/ue/SrsBmUeDbDl.hpp`, `/workspace/uplane/L2-PS/src/srsBm/db/ue/SrsBmUeDbUl.hpp`         |
 
+## Document sync (source)
+
+| Field | Value |
+|-------|--------|
+| **Sync date** | 2026-06-11 |
+| **gNB `/workspace` git** | `45617cfb9a73` |
+| **EO source** | `/workspace/uplane/L2-PS/src/srsBm/` |
+
+**Verified**
+
+- `srsBm/em/QueueFsm.hpp` — Boost.SML transition table uses `startupAction` / `defaultAction` / `deleteAction` delegating to `QueueStateStartup` / `QueueStateDefault` / `QueueStateDelete` (matches §3 high-level lifecycle).
+- Reading-map paths (`Eo.hpp`, `MainComponentSrsBm.hpp`, `SrsBmManager.hpp`, `QueueStateDefault.cpp`, …) — spot-checked for presence under `/workspace`.
+
+**Doc corrections this pass**
+
+- First **Phase 5** vault sync block added; no path renames required vs the checked revision.
+- **`diagrams/`** — verification YAML on all SRS-BM diagram notes; **`l2ps-srsbm-top-level-class-overview.md`**: added explicit source verification paragraph (Eo shell matches `Eo.hpp`; `MainComponentSrsBm` remains a curated subset of the full private member list).
+
 ## Related
 
 - [[navigation-nokia-home]]
 - [[navigation-implementation]]
-- [[L2PS]]

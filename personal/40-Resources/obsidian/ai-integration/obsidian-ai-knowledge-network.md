@@ -26,27 +26,29 @@ aliases:
 
 ## **第一阶段：生成学习报告**
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-graph TD
-    subgraph " "
-        Title1["<b>第一阶段：生成学习报告</b>"]
-        Input("输入")
-        Scenario1("<b>场景一:</b><br/>探索未知领域")
-        Scenario2("<b>场景二:</b><br/>学习已有资料")
-        Action1("<b>动作:</b><br/>AI深度研究<br/>(工具: Google Gemini)")
-        Action2("<b>动作:</b><br/>三步工作流<br/>(工具: NotebookLM)")
-        Output("<b>产出:</b><br/>详尽的学习报告")
+```plantuml
+@startuml obsidian-ai-knowledge-network
+!pragma graphviz svg
+' scale 1920*1080
 
-        Title1 --> Input
-        Input --> Scenario1 & Scenario2
-        Scenario1 --> Action1
-        Scenario2 --> Action2
-        Action1 --> Output
-        Action2 --> Output
-        
-        style Title1 fill:#fff,stroke:#fff,stroke-width:0px,font-weight:bold,font-size:16px
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "<b>第一阶段：生成学习报告</b>" as Title1
+rectangle "输入" as Input
+rectangle "<b>场景一:</b>\n探索未知领域" as Scenario1
+rectangle "<b>场景二:</b>\n学习已有资料" as Scenario2
+rectangle "<b>动作:</b>\nAI深度研究\n(工具: Google Gemini)" as Action1
+rectangle "<b>动作:</b>\n三步工作流\n(工具: NotebookLM)" as Action2
+rectangle "<b>产出:</b>\n详尽的学习报告" as Output
+
+Title1 --> Input
+Scenario1 --> Action1
+Scenario2 --> Action2
+Action1 --> Output
+Action2 --> Output
+@enduml
 ```
 
 ### **场景一：学习一个全新的领域**
@@ -69,21 +71,24 @@ graph TD
 
 ## **第二阶段：将报告转换为Markdown大纲**
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-graph TD
-    subgraph " "
-        Title2["<b>第二阶段：将报告转换为Markdown大纲</b>"]
-        Input2["<b>输入:</b><br/>学习报告"]
-        Action2["<b>动作:</b><br/>使用严格的提示词进行转换<br/>(工具: 通用大语言模型)"]
-        Output2["<b>产出:</b><br/>结构化的Markdown大纲"]
-        
-        Title2 --> Input2
-        Input2 --> Action2
-        Action2 --> Output2
+```plantuml
+@startuml obsidian-ai-knowledge-network Markdown
+!pragma graphviz svg
+' scale 1920*1080
 
-        style Title2 fill:#fff,stroke:#fff,stroke-width:0px,font-weight:bold,font-size:16px
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "<b>第二阶段：将报告转换为Markdown大纲</b>" as Title2
+rectangle "<b>输入:</b>\n学习报告" as Input2
+rectangle "<b>动作:</b>\n使用严格的提示词进行转换\n(工具: 通用大语言模型)" as Action2
+rectangle "<b>产出:</b>\n结构化的Markdown大纲" as Output2
+
+Title2 --> Input2
+Input2 --> Action2
+Action2 --> Output2
+@enduml
 ```
 
 第一阶段产出的学习报告，是适合人类阅读的“文章”。为了让自动化工具能够理解，我们必须进行第二步：将其转换为机器可读的格式。
@@ -100,27 +105,30 @@ graph TD
 
 ## **第三阶段：自动化创建知识库框架**
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-graph TD
-    subgraph " "
-        Title3["<b>第三阶段：自动化创建知识库框架</b>"]
-        Input3["<b>输入:</b><br/>Markdown大纲"]
-        Action3_1["<b>Step 1:</b><br/>创建顶级文件夹"]
-        Action3_2["<b>Step 2:</b><br/>创建主题文件夹与MOC"]
-        Action3_3["<b>Step 3:</b><br/>创建并链接原子笔记"]
-        Action3_4["<b>Step 4:</b><br/>创建总览笔记"]
-        Output3["<b>产出:</b><br/>Obsidian知识库“脚手架”"]
-        
-        Title3 --> Input3
-        Input3 -->|使用Cursor分步执行| Action3_1
-        Action3_1 --> Action3_2
-        Action3_2 --> Action3_3
-        Action3_3 --> Action3_4
-        Action3_4 --> Output3
+```plantuml
+@startuml obsidian-ai-knowledge-network
+!pragma graphviz svg
+' scale 1920*1080
 
-        style Title3 fill:#fff,stroke:#fff,stroke-width:0px,font-weight:bold,font-size:16px
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "<b>第三阶段：自动化创建知识库框架</b>" as Title3
+rectangle "<b>输入:</b>\nMarkdown大纲" as Input3
+rectangle "<b>Step 1:</b>\n创建顶级文件夹" as Action3_1
+rectangle "<b>Step 2:</b>\n创建主题文件夹与MOC" as Action3_2
+rectangle "<b>Step 3:</b>\n创建并链接原子笔记" as Action3_3
+rectangle "<b>Step 4:</b>\n创建总览笔记" as Action3_4
+rectangle "<b>产出:</b>\nObsidian知识库“脚手架”" as Output3
+
+Title3 --> Input3
+Input3 --> Action3_1 : 使用Cursor分步执行
+Action3_1 --> Action3_2
+Action3_2 --> Action3_3
+Action3_3 --> Action3_4
+Action3_4 --> Output3
+@enduml
 ```
 
 这是整个流程中效率提升最显著的环节。我们将上一步生成的Markdown大纲，交给AI执行工具，让它在几分钟内，为我们搭建起知识库的完整框架。
@@ -138,27 +146,29 @@ graph TD
 
 ## **第四阶段：填充笔记与内化知识**
 
-```mermaid
-%%{init: {'theme': 'base', 'flowchart': {'curve': 'basis'}}}%%
-graph TD
-    subgraph " "
-        Title4["<b>第四阶段：填充笔记与内化知识</b>"]
-        Input4["<b>输入:</b><br/>Obsidian知识库“脚手架”"]
-        Action4_1["填充原子笔记<br/>(工具: Obsidian, AI辅助)"]
-        Action4_2["建立连接与丰富MOC"]
-        Action4_3["实践与输出"]
-        Output4["<b>产出:</b><br/>个人知识体系"]
-        
-        Title4 --> Input4
-        Input4 --> Action4_1
-        Action4_1 --> Action4_2
-        Action4_2 --> Action4_3
-        Action4_3 --> Output4
-        
-        Action4_3 -.->|持续迭代| Action4_1
+```plantuml
+@startuml obsidian-ai-knowledge-network
+!pragma graphviz svg
+' scale 1920*1080
 
-        style Title4 fill:#fff,stroke:#fff,stroke-width:0px,font-weight:bold,font-size:16px
-    end
+' skinparam linetype ortho
+skinparam componentStyle rectangle
+top to bottom direction
+
+rectangle "<b>第四阶段：填充笔记与内化知识</b>" as Title4
+rectangle "<b>输入:</b>\nObsidian知识库“脚手架”" as Input4
+rectangle "填充原子笔记\n(工具: Obsidian, AI辅助)" as Action4_1
+rectangle "建立连接与丰富MOC" as Action4_2
+rectangle "实践与输出" as Action4_3
+rectangle "<b>产出:</b>\n个人知识体系" as Output4
+
+Title4 --> Input4
+Input4 --> Action4_1
+Action4_1 --> Action4_2
+Action4_2 --> Action4_3
+Action4_3 --> Output4
+Action4_3 ..> Action4_1 : 持续迭代
+@enduml
 ```
 
 
