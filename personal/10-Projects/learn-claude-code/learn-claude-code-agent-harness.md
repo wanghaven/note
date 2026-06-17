@@ -6,7 +6,7 @@ status: in-progress
 aliases: [Agent Harness 学习记录, learn-claude-code]
 ---
 
-# Agent Harness 基础架构（s01-s06）
+# Agent Harness 基础架构（s01-s07）
 
 ## Related
 
@@ -22,15 +22,16 @@ aliases: [Agent Harness 学习记录, learn-claude-code]
 
 ## Progress
 
-| 章节 | 主题                 | 状态   | 架构增量                   |
-| ---- | -------------------- | ------ | -------------------------- |
-| s01  | Agent Loop           | 完成   | LLM 与工具结果回灌形成闭环 |
-| s02  | Tool Use             | 完成   | 工具注册与分发             |
-| s03  | Permission           | 完成   | 工具执行前的安全闸门       |
-| s04  | Hooks                | 完成   | 生命周期扩展点             |
-| s05  | TodoWrite / Plan     | 完成   | 显式任务计划与 reminder    |
-| s06  | Subagent             | 完成   | 独立 messages[] 与任务委派 |
-| s07+ | Skill Loading 及以后 | 待学习 | 按需加载上下文知识         |
+| 章节   | 主题                  | 状态  | 架构增量                |
+| ---- | ------------------- | --- | ------------------- |
+| s01  | Agent Loop          | 完成  | LLM 与工具结果回灌形成闭环     |
+| s02  | Tool Use            | 完成  | 工具注册与分发             |
+| s03  | Permission          | 完成  | 工具执行前的安全闸门          |
+| s04  | Hooks               | 完成  | 生命周期扩展点             |
+| s05  | TodoWrite / Plan    | 完成  | 显式任务计划与 reminder    |
+| s06  | Subagent            | 完成  | 独立 messages[] 与任务委派 |
+| s07  | Skill Loading       | 完成  | 两级技能注入（目录+按需内容）     |
+| s08+ | Context Compact 及以后 | 待学习 | 上下文压缩与长期会话管理        |
 
 ## Plan
 
@@ -40,7 +41,7 @@ aliases: [Agent Harness 学习记录, learn-claude-code]
 - [x] s04：理解 hook 如何避免主循环膨胀
 - [x] s05：理解计划如何从模型记忆外化为结构化状态
 - [x] s06：理解 Subagent 如何解决大任务上下文污染
-- [ ] s07：理解 Skill Loading 如何按需注入知识
+- [x] s07：理解 Skill Loading 如何按需注入知识
 
 ## Problem Statement
 
@@ -62,10 +63,10 @@ Agent Harness 的核心不是一条直线，而是一个围绕 `messages` 反复
 messages -> LLM -> assistant message -> tool execution -> tool_result user message -> messages -> LLM
 ```
 
-s01 到 s06 的演进是在这个循环的固定位置插入机制，而不是推翻循环：
+s01 到 s07 的演进是在这个循环的固定位置插入机制，而不是推翻循环：
 
 ```text
-Agent Loop -> Tool System -> Permission Gate -> Hook System -> Planning State -> Subagent Context Isolation
+Agent Loop -> Tool System -> Permission Gate -> Hook System -> Planning State -> Subagent Context Isolation -> Skill Loading
 ```
 
 核心原则：**loop 负责维护消息闭环和工具调度；工具、权限、hook、plan、subagent 都是在循环的明确插入点上扩展。**
@@ -105,6 +106,11 @@ s01-s05 已改为优先嵌入 SVG，draw.io 源文件作为可编辑源保留。
 ![[diagrams/s06-subagent.svg]]
 ![[diagrams/s06-subagent-sequence.svg]]
 
+### s07 Skill Loading
+
+![[diagrams/s07-skill-loading.svg]]
+![[diagrams/s07-skill-loading-sequence.svg]]
+
 ## Design Evolution
 
 | 阶段 | 核心变化                           | 设计意义                   |
@@ -115,6 +121,7 @@ s01-s05 已改为优先嵌入 SVG，draw.io 源文件作为可编辑源保留。
 | s04  | `HOOKS` + `trigger_hooks()`        | 横切逻辑从 loop 中移出     |
 | s05  | `todo_write` + `rounds_since_todo` | 计划从隐式记忆变成显式状态 |
 | s06  | `task` + `spawn_subagent()`        | 大任务拆分到独立上下文     |
+| s07  | `SKILL_REGISTRY` + `load_skill`    | 知识按需注入而非常驻提示   |
 
 ## Chapter Notes
 
@@ -184,6 +191,17 @@ s06 还做了三个保护性取舍：
 - Architecture：主 Agent 负责编排与结果回灌，Subagent 负责独立子任务循环，中间上下文不回灌父上下文。
 - Sequence：`task(description)` 先触发 `spawn_subagent`，子循环完成工具调用与 hook 检查后只返回 summary text 给父 Agent，父 Agent 继续主循环。
 
+### s07 Skill Loading
+
+s07 的核心是把“知识”从静态 system prompt 拆成两级加载：启动时只注入技能目录（name/description），运行时通过 `load_skill(name)` 按需加载完整 `SKILL.md`。
+
+这让上下文成本更可控：不再每轮都携带完整规范文档，而是在模型判断“需要某个技能”时才注入全文。dispatch 主干不变，`load_skill` 仍通过 `TOOL_HANDLERS` 进入同一执行路径。
+
+设计上有两个关键点：
+
+- 安全边界：`load_skill` 走 `SKILL_REGISTRY` 查找，不接受任意路径，避免路径遍历。
+- 演进衔接：s07 解决“无关知识不要提前带”，s08 再解决“历史上下文如何压缩”。
+
 ## Reusable Pattern
 
 ### Pattern
@@ -207,6 +225,7 @@ Stable Core Loop + Layered Capabilities
 - Hook System: 注入横切逻辑
 - Planning State: 管理多步任务进度
 - Subagent: 隔离探索过程，只把结论交还主上下文
+- Skill Loading: 目录常驻、内容按需注入，降低常驻上下文负担
 
 ### Tradeoffs
 
@@ -224,6 +243,7 @@ Claude Code / Cursor / OpenAI Agents SDK 的生产实现会更复杂，但方向
 - tool 不只是函数，而是 schema、validation、permission、execution 的组合。
 - hook 不止几个事件，而是覆盖 session、permission、compact、subagent 等生命周期。
 - TodoWrite 适合轻量任务；更大的任务需要持久化 Task System、依赖图和上下文隔离。
+- Skill Loading 适合“规范文档较多但并非每轮都需要”的场景；生产系统通常还会叠加权限、版本和缓存策略（本地/远程技能源）。
 - Claude Code 的真实 Subagent 不只有 fresh messages[]，还存在 fork/prompt-cache 友好的路径；教学版刻意省略这些优化，先突出“中间上下文不回灌父 Agent”的核心思想。
 
 ## Architecture Impact
@@ -234,12 +254,12 @@ Claude Code / Cursor / OpenAI Agents SDK 的生产实现会更复杂，但方向
 | Maintainability | 主循环保持小，横切逻辑外移。                                                                         |
 | Safety          | 权限检查位于执行前，而不是依赖模型自觉。                                                             |
 | Observability   | tool log、debug JSON、todo state 可以还原执行过程。                                                  |
-| Scalability     | s06 通过子 Agent 隔离中间探索过程，但仍是同步单机模型，后续需要 async/task system 才能支撑更大规模。 |
+| Scalability     | s06 通过子 Agent 隔离中间探索过程，s07 通过按需技能加载控制上下文膨胀；后续仍需要 compact/async 才能支撑更长会话。 |
 
 ## Key Insights
 
-本阶段最核心的收获是：Agent 能否稳定完成任务，主要取决于 Harness 的运行时架构，而不是 prompt 技巧。s01-s06 的演进证明了一个可复用模式：保持主 loop 稳定，把工具、权限、hooks、plan、subagent 作为分层机制逐步接入。这样既能持续扩展能力，也能维持安全边界和可维护性；其中 subagent 重点解决上下文污染问题，权限控制仍必须统一落在工具执行路径上。
+本阶段最核心的收获是：Agent 的稳定性来自运行时分层而不是单次 prompt 技巧。s01-s07 的演进说明了可复用路线：主 loop 稳定，能力通过工具、权限、hooks、plan、subagent、skill loading 分层接入；其中 s07 明确解决了“知识注入过重”问题，把全文规范从常驻改成按需加载。
 
 ## One Sentence Summary
 
-s01-s06 展示了一个 Agent Harness 如何从最小执行闭环演进为具备工具分发、权限控制、hook 扩展、显式计划状态和子 Agent 上下文隔离的分层运行时。
+s01-s07 展示了一个 Agent Harness 如何从最小执行闭环演进为具备工具分发、权限控制、hook 扩展、显式计划、子 Agent 隔离与按需技能加载的分层运行时。

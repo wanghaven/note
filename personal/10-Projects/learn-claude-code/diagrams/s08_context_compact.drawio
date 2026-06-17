@@ -1,0 +1,152 @@
+<mxfile host="Electron">
+  <diagram id="s08arch" name="s08_context_compact">
+    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="940" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="s08 Context Compact Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=20;fontStyle=1;fontColor=#111827;" parent="1" vertex="1">
+          <mxGeometry x="660" y="18" width="420" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="zone-parent" value="Parent Agent (s07 base + s08 compact)" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=4;strokeColor=#B266FF;verticalAlign=top;spacingTop=8;fillColor=#F3E9FF;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#6600cc;" parent="1" vertex="1">
+          <mxGeometry x="120" y="72" width="1080" height="760" as="geometry"/>
+        </mxCell>
+        <mxCell id="zone-sub" value="Sub Agent (unchanged from s07/s06)" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=4;strokeColor=#B266FF;verticalAlign=top;spacingTop=8;fillColor=#F3E9FF;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#6600cc;" parent="1" vertex="1">
+          <mxGeometry x="1240" y="72" width="430" height="760" as="geometry"/>
+        </mxCell>
+        <mxCell id="user" value="User Query" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f0f4ff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1e3a5f;fontSize=12;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="30" y="164" width="140" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="messages" value="messages[]" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=1.6;fontColor=#0f172a;fontSize=11;fontStyle=1;dashed=1;dashPattern=4 2;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="200" y="164" width="120" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="loop" value="agent_loop" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f0f4ff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1e3a5f;fontSize=12;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="350" y="164" width="120" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm" value="LLM&#xa;(content + stop_reason)" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f0f4ff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1e3a5f;fontSize=11;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="510" y="164" width="150" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="dispatch" value="TOOL_HANDLERS&#xa;dispatch" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f0f4ff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1e3a5f;fontSize=11;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="700" y="164" width="160" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="result" value="tool_result&#xa;append to messages[]" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=1.6;fontColor=#0f172a;fontSize=11;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="710" y="702" width="150" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="skill-box" value="s07 preserved: load_skill + SKILL_REGISTRY&#xa;catalog in SYSTEM, full skill content on demand" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#fff7ed;strokeColor=#b45309;strokeWidth=1.6;fontColor=#92400e;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="350" y="250" width="520" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="compact-frame" value="s08 compact pipeline before each LLM call" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=top;spacingTop=6;fillColor=#fff8e8;strokeColor=#d39b2a;strokeWidth=2;dashed=1;dashPattern=8 4;fontColor=#b45309;fontSize=12;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="350" y="332" width="520" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3" value="tool_result_budget()&#xa;persist large tool_result first" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#ecfeff;strokeColor=#0891b2;strokeWidth=1.6;fontColor=#0f766e;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="382" y="374" width="456" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="l1" value="snip_compact()&#xa;trim middle history safely" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#ecfeff;strokeColor=#0891b2;strokeWidth=1.6;fontColor=#0f766e;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="382" y="438" width="456" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="l2" value="micro_compact()&#xa;compact old tool_result placeholders" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#ecfeff;strokeColor=#0891b2;strokeWidth=1.6;fontColor=#0f766e;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="382" y="502" width="456" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="l4" value="compact_history()&#xa;write transcript + summary replacement" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#fff7ed;strokeColor=#b45309;strokeWidth=1.6;fontColor=#92400e;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="382" y="566" width="456" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="manual" value="compact tool&#xa;manual compact trigger" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#fff7ed;strokeColor=#b45309;strokeWidth=1.6;fontColor=#92400e;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="382" y="630" width="220" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="reactive" value="reactive_compact() on PTL&#xa;(retry limit = 1)" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#ffe4e6;strokeColor=#e11d48;strokeWidth=1.6;fontColor=#9f1239;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="618" y="630" width="220" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="persist" value=".task_outputs/tool-results/*.txt + .transcripts/transcript_*.jsonl" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.6;fontColor=#166534;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="900" y="374" width="280" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="sub-runtime" value="SUB_SYSTEM + fresh messages[]" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F3DDFF;strokeColor=#B277FF;strokeWidth=2;fontColor=#7c3aed;fontSize=12;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="1260" y="166" width="350" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="sub-loop" value="own while loop&#xa;(max 30 rounds)" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F3E9FF;strokeColor=#B266FF;strokeWidth=1.6;fontColor=#7c3aed;fontSize=11;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="1326" y="266" width="218" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="sub-summary" value="summary only back to parent" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F3E9FF;strokeColor=#B266FF;strokeWidth=1.6;fontColor=#7c3aed;fontSize=10;fontStyle=1;fontFamily=Helvetica;" parent="1" vertex="1">
+          <mxGeometry x="1326" y="346" width="218" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-old-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E9FF;strokeColor=#B266FF;strokeWidth=1.2;" parent="1" vertex="1">
+          <mxGeometry x="132" y="844" width="12" height="12" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-old-text" value="S07 Preserved: subagent split + on-demand skill loading path." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#7c3aed;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="152" y="841" width="980" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-new-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#b45309;strokeWidth=1.2;" parent="1" vertex="1">
+          <mxGeometry x="132" y="866" width="12" height="12" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-new-text" value="S08 New: compact pipeline (budget/snip/micro/auto) + manual compact + reactive fallback + persistence." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#b45309;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="152" y="863" width="1320" height="18" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1d4ed8;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="user" target="messages" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="messages" target="loop" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="before LLM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d39b2a;strokeWidth=2;endArrow=block;endFill=1;fontColor=#b45309;fontSize=10;fontFamily=Helvetica;" parent="1" source="loop" target="compact-frame" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="334" y="188"/>
+              <mxPoint x="334" y="512"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="then call model" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1d4ed8;strokeWidth=2;endArrow=block;endFill=1;fontColor=#1d4ed8;fontSize=10;fontFamily=Helvetica;" parent="1" source="compact-frame" target="llm" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="888" y="512"/>
+              <mxPoint x="888" y="188"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="llm" target="dispatch" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="dispatch" target="result" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="790" y="684"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#475569;strokeWidth=2;endArrow=block;endFill=1;dashed=1;dashPattern=6 3;" parent="1" source="result" target="messages" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="728"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" value="persist large output + transcript snapshot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#16a34a;strokeWidth=2;endArrow=block;endFill=1;fontColor=#166534;fontSize=10;fontFamily=Helvetica;" parent="1" source="l3" target="persist" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e9" value="tool name = compact" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b45309;strokeWidth=2;endArrow=block;endFill=1;fontColor=#b45309;fontSize=10;fontFamily=Helvetica;" parent="1" source="dispatch" target="manual" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="190"/>
+              <mxPoint x="880" y="653"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" value="PTL fallback" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e11d48;strokeWidth=2;endArrow=block;endFill=1;fontColor=#9f1239;fontSize=10;fontFamily=Helvetica;" parent="1" source="llm" target="reactive" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="902" y="188"/>
+              <mxPoint x="902" y="653"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" value="task(description)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#B266FF;strokeWidth=3;endArrow=block;endFill=1;fontColor=#7c3aed;fontSize=10;fontFamily=Helvetica;" parent="1" source="dispatch" target="sub-runtime" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1202" y="190"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#B266FF;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="sub-runtime" target="sub-loop" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#B266FF;strokeWidth=2;endArrow=block;endFill=1;" parent="1" source="sub-loop" target="sub-summary" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e14" value="summary only" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#B266FF;strokeWidth=3;endArrow=block;endFill=1;fontColor=#7c3aed;fontSize=10;fontFamily=Helvetica;" parent="1" source="sub-summary" target="result" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1202" y="374"/>
+              <mxPoint x="1202" y="728"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
